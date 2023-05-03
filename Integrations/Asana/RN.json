@@ -1,0 +1,50 @@
+[
+    {
+        "ChangeDescription": "NEW! Asana Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Asana",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1602500675
+    },
+    {
+        "ChangeDescription": "Fixed integration Manager.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Asana",
+        "ItemType": "Manager",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1621338391
+    },
+    {
+        "ChangeDescription": "Fixed integration parameters.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Asana",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1621530898
+    },
+    {
+        "ChangeDescription": "Fixed integration Manager + Mandatory Params",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 4.0,
+        "ItemName": "Asana",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1632129695
+    }
+]

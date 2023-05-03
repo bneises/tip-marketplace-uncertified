@@ -1,0 +1,73 @@
+{
+  "RunIntervalInSeconds": 900,
+  "Parameters": [
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145650,
+      "ModificationTimeUnixTimeInMs": 1624368145650,
+      "DefaultValue": "",
+      "Description": "Commit message",
+      "IsMandatory": true,
+      "Name": "Commit",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145650,
+      "ModificationTimeUnixTimeInMs": 1624368145650,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Repo URL",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145650,
+      "ModificationTimeUnixTimeInMs": 1624368145650,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Branch",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145650,
+      "ModificationTimeUnixTimeInMs": 1624368145650,
+      "DefaultValue": "",
+      "Description": "List of jobs, sepereted by a comma, to push to the repo",
+      "IsMandatory": true,
+      "Name": "Job Whitelist",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625653885423,
+      "ModificationTimeUnixTimeInMs": 1625653885423,
+      "DefaultValue": "",
+      "Description": "Appends markdown to the end of the readme file of all jobs pushed this run",
+      "IsMandatory": false,
+      "Name": "Readme Addon",
+      "Type": 2
+    }
+  ],
+  "Integration": "GitSync",
+  "Name": "Push Job",
+  "Description": "Export a job to the repo",
+  "CreationTimeUnixTimeInMs": 1627224569031,
+  "ModificationTimeUnixTimeInMs": 1627224569031,
+  "Script": "",
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1,
+  "PythonVersion": "None",
+  "Id": 0
+}

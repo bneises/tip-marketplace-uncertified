@@ -1,0 +1,41 @@
+{
+  "Name": "Enrich Entity With Field",
+  "Description": "The action adds enrichment fields to the entity based on a list of key values ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n\n    json_data = siemplify.parameters.get(\"Fields to enrich\")\n    fields_to_enrich = json.loads(json_data)\n\n    updated_entities = []\n    \n    for entity in siemplify.target_entities:\n        for field in fields_to_enrich:\n            entity.additional_properties[field['entity_field_name']] = field['entity_field_value']\n        updated_entities.append(entity)\n        \n    count_updated_entities = len(updated_entities)\n    \n    if count_updated_entities > 0:\n        siemplify.update_entities(updated_entities)\n    \n    for updated_entity in updated_entities:\n        siemplify.result.add_json(updated_entity.identifier, json.dumps(fields_to_enrich))\n\n    siemplify.end('{0} entities were successfully were enriched'.format(count_updated_entities), count_updated_entities, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Enrichment",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 7.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "[   {     \"entity_field_name\": \"Title\",     \"entity_field_value\": \"SalseManager\"   },   {     \"entity_field_name\": \"City\",     \"entity_field_value\": \"NewYork\"   } ]",
+      "Description": "Takes a list of key/value pairs and enriches the entity with that data. Can be used to add multiple static values easily.",
+      "Name": "Fields to enrich",
+      "Value": "[   {     \"entity_field_name\": \"Title\",     \"entity_field_value\": \"SalseManager\"   },   {     \"entity_field_name\": \"City\",     \"entity_field_value\": \"NewYork\"   } ]",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568154,
+      "ModificationTimeUnixTimeInMs": 1610732568154
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610732568150,
+  "ModificationTimeUnixTimeInMs": 1610732568150
+}

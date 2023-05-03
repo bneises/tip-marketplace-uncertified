@@ -1,0 +1,110 @@
+{
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Integration": "DUO",
+  "DocumentationLink": null,
+  "Name": "DUO - Trust Monitor Connector",
+  "Description": "Creates cases from last X days of DUO Trust Monitor Events.\nhttps://duo.com/docs/adminapi#trust-monitor",
+  "Creator": "John",
+  "Script": "from SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyConnectorsDataModel import CaseInfo\nfrom SiemplifyUtils import output_handler, unix_now\nfrom random import randrange\nimport copy\nimport uuid\nimport sys\n\nimport duo_client\nimport json\nimport time\n\n#==============================================================================\n# This is a Connector Template + mock generator. This file objective is to demonstrate how to build a connector, and exmplain the objective of each field.\n# All the data generated here, is MOCK data. Enjoy.\n#==============================================================================\n\nINTEGRATION_NAME = \"DUO\"\nCONNECTOR_NAME = \"DUO-Trust Monitor Connector\"\nNAME = \"DUO Trust Monitor\"\nVENDOR = \"CISCO\"\nPRODUCT = \"DUO MFA\"\nRULE_GENERATOR = \"DUO Trust Monitor\"\nNO_RESULTS = \"No Trust Monitor Events found\"\nRANDOM_ALERT_COUNT_MAX = 3\nRANDOM_EVENT_COUNT_PER_ALERT_MAX = 5\ndef get_unicode(test):\n    return str(test)\n\ndef dict_to_flat(target_dict):\n    \"\"\"\n    Receives nested dictionary and returns it as a flat dictionary.\n    :param target_dict: {dict}\n    :return: Flat dict : {dict}\n    \"\"\"\n    target_dict = copy.deepcopy(target_dict)\n\n    def expand(raw_key, raw_value):\n        key = raw_key\n        value = raw_value\n        \"\"\"\n        :param key: {string}\n        :param value: {string}\n        :return: Recursive function.\n        \"\"\"\n        if value is None:\n            return [(get_unicode(key), u\"\")]\n        elif isinstance(value, dict):\n            # Handle dict type value\n            return [(u\"{0}_{1}\".format(get_unicode(key),\n                                       get_unicode(sub_key)),\n                     get_unicode(sub_value)) for sub_key, sub_value in dict_to_flat(value).items()]\n        elif isinstance(value, list):\n            # Handle list type value\n            count = 1\n            l = []\n            items_to_remove = []\n            for value_item in value:\n                if isinstance(value_item, dict):\n                    # Handle nested dict in list\n                    l.extend([(u\"{0}_{1}_{2}\".format(get_unicode(key),\n                                                     get_unicode(count),\n                                                     get_unicode(sub_key)),\n                               sub_value)\n                              for sub_key, sub_value in dict_to_flat(value_item).items()])\n                    items_to_remove.append(value_item)\n                    count += 1\n                elif isinstance(value_item, list):\n                    l.extend(expand(get_unicode(key) + u'_' + get_unicode(count), value_item))\n                    count += 1\n                    items_to_remove.append(value_item)\n            for value_item in items_to_remove:\n                value.remove(value_item)\n            for value_item in value:\n                l.extend([(get_unicode(key) + u'_' + get_unicode(count), value_item)])\n                count += 1\n            return l\n        else:\n            return [(get_unicode(key), get_unicode(value))]\n\n    items = [item for sub_key, sub_value in target_dict.items() for item in\n             expand(sub_key, sub_value)]\n    return dict(items)\n\n\ndef create_event(siemplify, alert_id, trust_mon_event_data):\n    \"\"\"\n    Returns the digested data of a single unread email\n    \"\"\"\n    siemplify.LOGGER.info(f\"--- Started processing Event: alert_id: {alert_id} | event_id: {alert_id}\")\n    \n    event = {}\n    #event = trust_mon_event_data\n    event[\"message_id\"] = alert_id\n    event[\"name\"] = NAME\n    event[\"time\"] = trust_mon_event_data['surfaced_auth']['timestamp']*1000\n    event[\"StartTime\"] = trust_mon_event_data['surfaced_auth']['timestamp']*1000\n    event[\"EndTime\"] = trust_mon_event_data['surfaced_auth']['timestamp']*1000\n    event[\"event_name\"] = \"DUO Trust Monitor Event\"\n    event[\"device_product\"] = PRODUCT\n    event[\"device_vendor\"] = VENDOR\n    event[\"Subject\"] = trust_mon_event_data['type']+\" event for \"+trust_mon_event_data['surfaced_auth']['user']['name']\n    event[\"SourceUserName\"] = trust_mon_event_data['surfaced_auth']['user']['name']\n    event[\"events\"] = [dict_to_flat(trust_mon_event_data)]\n    \n    \n    siemplify.LOGGER.info(f\"--- Finished processing Event: alert_id: {alert_id} | event_id: {alert_id}\")\n    \n    return event\n\n\ndef create_alert(siemplify, alert_id, trust_mon_event_data):\n    '''\n    Returns an alert which is one event that contains one Trust Monitor Connector event\n    '''\n    siemplify.LOGGER.info(f\"-------------- Started processing Alert {alert_id}\")\n    \n    created_event = create_event(siemplify, alert_id, trust_mon_event_data)\n    \n    \n    case_info = CaseInfo()\n    case_info.name = trust_mon_event_data['type']+\" event for \"+trust_mon_event_data['surfaced_auth']['user']['name']\n    case_info.rule_generator = RULE_GENERATOR\n    case_info.start_time = trust_mon_event_data['surfaced_auth']['timestamp']*1000\n    case_info.end_time = trust_mon_event_data['surfaced_auth']['timestamp']*1000\n    case_info.identifier = alert_id\n    case_info.ticket_id = alert_id\n    case_info.display_id = alert_id\n    case_info.priority = 60 # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n    case_info.device_vendor = VENDOR\n    case_info.device_product = PRODUCT\n    #case_info.events = [trust_mon_event_data]\n    #case_info.events = [dict_to_flat(trust_mon_event_data)]\n    case_info.events = [dict_to_flat(created_event)]\n    #case_info.events.append([dict_to_flat(created_event)])\n    \n    \n    \n    siemplify.LOGGER.info(f\"-------------- Events creating started for {alert_id}\")\n    \n    \n    return case_info\n\n\n\ndef get_duo_trust_mon_data(duoApi, adminSec, adminIntKey, days_back):\n    '''\n    Returns trusted monitor events in past x days    '''\n    \n    \n    days_back = int(days_back)\n    x_days_back = (86400*1000) * days_back\n    timestamp_now = int(time.time()*1000)\n    timestamp_x_days_ago = timestamp_now - x_days_back\n    \n    trust_monitor = \"None\"\n    try:\n        # parameters\n        x_days_back = (86400*1000) * days_back\n        timestamp_now = int(time.time()*1000)\n        timestamp_x_days_ago = timestamp_now - x_days_back\n    \n        admin_api = duo_client.Admin(ikey=adminIntKey, skey=adminSec, host=duoApi)\n        trust_monitor = admin_api.get_trust_monitor_events_by_offset(maxtime=timestamp_now, mintime=timestamp_x_days_ago)\n        #json_result = json.dumps(tru)\n        #output_message = \"Results: {}\".format(json_result)\n    \n    except Exception as e:\n        raise Exception(e)\n    \n    return trust_monitor\n\n    \n\n@output_handler\ndef main(is_test_run=False):\n    alerts = [] # The main output of each connector run\n    siemplify = SiemplifyConnectorExecution() # Siemplify main SDK wrapper\n    siemplify.script_name = CONNECTOR_NAME\n\n    if (is_test_run):\n        siemplify.LOGGER.info(\"***** This is an \\\"IDE Play Button\\\"\\\\\\\"Run Connector once\\\" test run ******\")\n    else:\n        siemplify.LOGGER.info(\"==================== Begin DUO Connector ====================\")\n    duoApi = siemplify.extract_connector_param(param_name=\"API Hostname\")\n    adminIntKey = siemplify.extract_connector_param(param_name=\"Admin Integration Key\")\n    adminSec = siemplify.extract_connector_param(param_name=\"Admin Secret Key\")\n    days_back = siemplify.extract_connector_param(param_name=\"Days Back\")\n\n    \n    siemplify.LOGGER.info(\"------------------- Main - Started -------------------\")\n    \n    duo_trust_mon_data = get_duo_trust_mon_data(duoApi, adminSec, adminIntKey, days_back)\n\n    #print(duo_trust_mon_data['events'])\n    for data in duo_trust_mon_data['events']:\n        \n        alert_id = data['surfaced_auth']['txid']\n        \n        created_alert = create_alert(siemplify, alert_id, data)\n        alerts.append(created_alert)\n        siemplify.LOGGER.info(f\"Added Alert {alert_id} to package results\")\n        \n    \n    # Return created alerts\n    siemplify.return_package(alerts)\n    \n        \n    \nif __name__ == \"__main__\":\n    # Connectors are run in iterations. The interval is configurable from the ConnectorsScreen UI.\n    is_test_run = not (len(sys.argv) < 2 or sys.argv[1] == 'True')\n    main(is_test_run)",
+  "Version": 138,
+  "MappingRules": [],
+  "ProductToVisualFamilyRecords": [],
+  "SimulationUseCases": {
+    "CasesForUseCase": [],
+    "UseCaseName": null
+  },
+  "Parameters": [
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "30",
+      "Name": "PythonProcessTimeout",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The timeout limit (in seconds) for the python process running current script",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    },
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "event_name",
+      "Name": "EventClassId",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the event name (sub-type)",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    },
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "device_product",
+      "Name": "DeviceProductField",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the device product",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    },
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Name": "Days Back",
+      "Type": 1,
+      "Mode": 2,
+      "Description": "The max days back to retrieve data from",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    },
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "api-XXXXXXXX.duosecurity.com",
+      "Name": "API Hostname",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "API hostname for your tenant: api-XXXXXXXX.duosecurity.com.",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    },
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "x",
+      "Name": "Admin Secret Key",
+      "Type": 3,
+      "Mode": 2,
+      "Description": "DUO Admin API Secret Key\nhttps://duo.com/docs/adminapi",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    },
+    {
+      "ConnectorDefinitionId": 85,
+      "IsMandatory": true,
+      "DefaultValue": "x",
+      "Name": "Admin Integration Key",
+      "Type": 3,
+      "Mode": 2,
+      "Description": "DUO Admin API Integration Key\nhttps://duo.com/docs/adminapi",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539470,
+      "ModificationTimeUnixTimeInMs": 1635867539470
+    }
+  ],
+  "Rules": [],
+  "IsConnectorRulesSupported": true,
+  "IsSystem": false,
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635867539464,
+  "ModificationTimeUnixTimeInMs": 1635867539464
+}

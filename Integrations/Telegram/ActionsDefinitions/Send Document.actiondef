@@ -1,0 +1,53 @@
+{
+  "Name": "Send Document",
+  "Description": "Send document by URL to a chat.",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Send Document\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n\n    chat_id = siemplify.extract_action_param(\"Chat ID\")\n    doc_url = siemplify.extract_action_param(\"Document URL\")\n\n    sent_doc = {}\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n        sent_doc = telegram_manager.send_doc(chat_id, doc_url)\n    except Exception as e:\n        output_message = f\"Failed to send document. Error: {e}\"\n        return_value = False\n        status = EXECUTION_STATE_FAILED\n    else:\n        output_message = \"The document was sent successfully\"\n        return_value = True\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n\n    siemplify.result.add_result_json(sent_doc)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ok\": true,\r\n\t\"result\": {\r\n\t\t\"message_id\": 8,\r\n\t\t\"sender_chat\": {\r\n\t\t\t\"id\": -1111,\r\n\t\t\t\"title\": \"TestChannel\",\r\n\t\t\t\"type\": \"channel\"\r\n\t\t},\r\n\t\t\"chat\": {\r\n\t\t\t\"id\": -111,\r\n\t\t\t\"title\": \"TestChannel\",\r\n\t\t\t\"type\": \"channel\"\r\n\t\t},\r\n\t\t\"date\": 1640516830,\r\n\t\t\"document\": {\r\n\t\t\t\"file_name\": \"lorem-ipsum.pdf\",\r\n\t\t\t\"mime_type\": \"application/pdf\",\r\n\t\t\t\"thumb\": {\r\n\t\t\t\t\"file_id\": \"AAMCBAADHQRpAch6AAMIYchM3pXxgqwAAcZBlzvei4hGpJJ-AALdAgACLmxFUmkJZbh140xRAQAHbQADIwQ\",\r\n\t\t\t\t\"file_unique_id\": \"AQAD3QIAAi5sRVJy\",\r\n\t\t\t\t\"file_size\": 21415,\r\n\t\t\t\t\"width\": 226,\r\n\t\t\t\t\"height\": 320\r\n\t\t\t},\r\n\t\t\t\"file_id\": \"BQACAgQAAx0EaQHIegADCGHITN6V8YKsAAHGQZc73ouIRqSSfgAC3QIAAi5sRVJpCWW4deNMUSME\",\r\n\t\t\t\"file_unique_id\": \"AgAD3QIAAi5sRVI\",\r\n\t\t\t\"file_size\": 77123\r\n\t\t}\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "community",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 28.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "https://www.soundczech.cz/temp/lorem-ipsum.pdf",
+      "Description": "URL of the document to send to given chat",
+      "Name": "Document URL",
+      "Value": "https://www.soundczech.cz/temp/lorem-ipsum.pdf",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "ID of the chat to send the document to",
+      "Name": "Chat ID",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

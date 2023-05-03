@@ -1,0 +1,25 @@
+[
+    {
+        "ChangeDescription": "NEW! Bitdefender GravityZone integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Bitdefender GravityZone",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1617200801
+    },{
+        "ChangeDescription": "Updated Integration SVG.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Bitdefender GravityZone",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635783493
+    }
+]

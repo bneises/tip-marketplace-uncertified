@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Uses the /check endpoint to verify that the Auth API integration and secret keys are valid, and that the signature is being generated properly.",
+  "Script": "'''\nUses DUO's Python SDK: https://github.com/duosecurity/duo_client_python\n\nUses the /check endpoint to verify that the Auth API integration and secret \nkeys are valid, and that the signature is being generated properly.\n\nCreated by: jtdepalm@sentara.com\n'''\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n\nINTEGRATION_NAME = \"DUO\"\nSCRIPT_NAME = \"DUO API Ping\"\n\n@output_handler\ndef main():\n    import duo_client\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    result = True\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    try:\n        duoApi = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"API Hostname\")\n        authSec = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Auth Secret Key\")\n        authIntKey = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Auth Integration Key\")\n        # initiate connection to DUO with Auth Keys\n        auth_api = duo_client.Auth(ikey=authIntKey, skey=authSec, host=duoApi)\n        # Check if Auth Keys are correct\n        check = auth_api.check()\n        \n        # If no exception occur - then connection is successful\n        output_message = \"Verified Credentials: {}\".format(check)\n        \n    except Exception as e:\n        result = False\n        status=EXECUTION_STATE_FAILED\n        output_message = \"Failed to test DUO Auth API Credentials Error is: {}\".format(e)\n        \n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"Output Message: {}\".format(output_message))\n    siemplify.LOGGER.info(\"Result: {}\".format(result))\n    \n    siemplify.end(output_message, result, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DUO",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "John",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 37.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635867539520,
+  "ModificationTimeUnixTimeInMs": 1635867539520
+}

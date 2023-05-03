@@ -1,0 +1,60 @@
+[
+    {
+        "ChangeDescription": "NEW! Webhook integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Webhook",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1631177455
+    },
+    {
+        "ChangeDescription": "Fixed Get Webhook Response action.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Webhook",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1640179164
+    },
+    {
+        "ChangeDescription": "Changed Get Webhook Response action's name.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Webhook",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1641139235
+    }, {
+        "ChangeDescription": "Fixed Get Webhook Response action.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 4.0,
+        "ItemName": "Webhook",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1647935111
+    }, {
+        "ChangeDescription": "JSON sample fixed.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 5.0,
+        "ItemName": "Webhook",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1667398431
+    }
+]

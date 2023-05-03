@@ -1,0 +1,72 @@
+{
+  "Name": "Push Mappings",
+  "Integration": "GitSync",
+  "Script": "from GitSyncManager import GitSyncManager\nfrom SiemplifyJob import SiemplifyJob\nfrom SiemplifyUtils import output_handler\nfrom definitions import Mapping\n\nSCRIPT_NAME = \"Push Mappings\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyJob()\n    siemplify.script_name = SCRIPT_NAME\n\n    commit_msg = siemplify.extract_job_param(\"Commit\")\n    source = siemplify.extract_job_param(\"Source\")\n\n    try:\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\n        records = [x for x in gitsync.api.get_ontology_records() if x.get(\"source\").lower() == source.lower()]\n        rules = []\n        for record in records:\n            record[\"exampleEventFields\"] = []  # remove event assets\n            rule = gitsync.api.get_mapping_rules(record[\"source\"], record[\"product\"], record[\"eventName\"])\n            for r in rule['familyFields'] + rule['systemFields']:\n                # remove bad rules with no source\n                if r['mappingRule']['source'] and r['mappingRule']['source'].lower() == source.lower():\n                    rules.append(rule)\n                    break\n\n        gitsync.push_mapping(Mapping(source, records, rules))\n        gitsync.commit_and_push(commit_msg)\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "Creator": "Admin",
+  "RunIntervalInSeconds": 900,
+  "Description": "Exports mappings  to the repo.",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Version": 1,
+  "IsSystem": false,
+  "Parameters": [
+    {
+      "JobDefinitionId": 51,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Commit",
+      "Description": "Commit message",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145677,
+      "ModificationTimeUnixTimeInMs": 1624368145677
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Repo URL",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145677,
+      "ModificationTimeUnixTimeInMs": 1624368145677
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Branch",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145677,
+      "ModificationTimeUnixTimeInMs": 1624368145677
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Source",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145677,
+      "ModificationTimeUnixTimeInMs": 1624368145677
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625653885423,
+      "ModificationTimeUnixTimeInMs": 1625653885423,
+      "DefaultValue": "",
+      "Description": "Appends markdown to the end of the readme file of all mappings pushed this run",
+      "IsMandatory": false,
+      "Name": "Readme Addon",
+      "Type": 2
+    }
+  ],
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1623348811605,
+  "ModificationTimeUnixTimeInMs": 1624368145671
+}

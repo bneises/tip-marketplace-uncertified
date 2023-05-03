@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Testing the connectivity with Hibob ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom HibobManager import HibobManager\n\nINTEGRATION_NAME = u\"Hibob\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    api_root = 'https://api.hibob.com'\n    api_token = conf.get(\"API Token\")\n\n    #Creating an instance of hibobmanager object\n    hibob_manager = HibobManager(api_root, api_token)\n    \n    #Calling the function test_connectivity() from the HibobManager\n    # This function test_connectivity() returns boolean value\n    response = hibob_manager.test_connectivity()\n\n    if not response:\n        return_value = False\n        output_message = 'The Connection failed'\n    \n    else:\n        return_value = True\n        output_message = 'Connected successfully'\n        \n    # Test connectivity\n    siemplify.end(output_message, return_value)\n\n    \n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Hibob",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 110.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1599146701094,
+  "ModificationTimeUnixTimeInMs": 1599146701095
+}

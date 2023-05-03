@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Invite a user to a specific team in a given organization in Docker Hub",
+  "Script": "from DockerHubManager import *\nimport traceback\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\n\nfrom requests import HTTPError \n\nINTEGRATION_NAME = 'Docker Hub'\nSCRIPT_NAME = 'Invite User'\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    output_message = ''\n    result_value = False\n    status = EXECUTION_STATE_FAILED\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n\n    siemplify.LOGGER.info(u\"----------------- Main - Param Init -----------------\")\n    username = conf['Username']\n    password = conf[\"Password\"]\n\n    try:\n        docker_client = DockerHub(username=username, password=password, delete_creds=True)\n        docker_client.test_connectivity()\n    except HTTPError as e:\n        if \"404 Client Error\" in str(e):\n            pass\n        else:\n            raise\n\n    siemplify.end(\"success\", True)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "IntegrationIdentifier": "Docker Hub",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Yoav",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 25.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1595401650033,
+  "ModificationTimeUnixTimeInMs": 1595401650036
+}

@@ -1,0 +1,95 @@
+{
+    "Identifier": "Zoom",
+    "PackageName": "Zoom",
+    "DisplayName": "Zoom",
+    "Description": "Zoom Video Communications provides video and online chat services through a cloud-based peer-to-peer software platform and is used for teleconferencing, telecommuting, distance education, and social relations. The integration allows you to connect your zoom application via JWT token or OAuth",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Zoom",
+            "PropertyName": "JWT Token",
+            "PropertyDescription": " JWT - JSON Web Token",
+            "PropertyDisplayName": "JWT Token",
+            "PropertyType": 3,
+            "IsMandatory": false,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1660304747826,
+            "ModificationTimeUnixTimeInMs": 1660304747826
+        },
+        {
+            "IntegrationIdentifier": "Zoom",
+            "PropertyName": "Account ID",
+            "PropertyDescription": "Account ID - used for OAuth login",
+            "PropertyDisplayName": "Account ID",
+            "PropertyType": 2,
+            "IsMandatory": false,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1660304747826,
+            "ModificationTimeUnixTimeInMs": 1660304747826
+        },
+        {
+            "IntegrationIdentifier": "Zoom",
+            "PropertyName": "Client ID",
+            "PropertyDescription": "Client ID - used for OAuth login",
+            "PropertyDisplayName": "Client ID",
+            "PropertyType": 2,
+            "IsMandatory": false,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1660304747826,
+            "ModificationTimeUnixTimeInMs": 1660304747826
+        },
+        {
+            "IntegrationIdentifier": "Zoom",
+            "PropertyName": "Client Secret",
+            "PropertyDescription": "Client Secret - used for OAuth login",
+            "PropertyDisplayName": "Client Secret",
+            "PropertyType": 3,
+            "IsMandatory": false,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1660304747826,
+            "ModificationTimeUnixTimeInMs": 1660304747826
+        }
+    ],
+    "Actions": [
+        "Ping",
+        "Delete User",
+        "Get Meeting Recording",
+        "Enrich Entities",
+        "Create User",
+        "Create Meeting"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "ZoomManager",
+        "constants",
+        "parameters"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 10.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Zoom integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602076201000
+        },
+        {
+            "Items": [
+                "Zoom OAuth added! Update your authentication method"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1662389282000
+        }
+    ]
+}

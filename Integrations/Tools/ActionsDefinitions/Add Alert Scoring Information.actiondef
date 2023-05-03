@@ -1,0 +1,103 @@
+{
+    "Name": "Add Alert Scoring Information",
+    "Description": "This action will add an entry to the alert scoring database.  Alert score is based off the ratio: 5 Low = 1 Medium.  3 Medium = 1 High.  2 High = 1 Critical.  Optional tag added to case.",
+    "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\n\nALERT_SCORE_INFO = 'ALERT_SCORE_INFO'\nALERT_SCORE = 'ALERT_SCORE'\nALERT_MAX_SCORE = 'ALERT_MAX_SCORE'\nALERT_SEVERITY = 'ALERT_SEVERITY'\n\nSEVERITIES = {\n    \"Informational\": 0,\n    \"Low\": 1,\n    \"Medium\": 2,\n    \"High\": 3,\n    \"Critical\": 4\n}\nSEV_LIST =['Informational', 'Low', 'Medium', 'High', 'Critical']\n\nSCORING_THRESHOLDS = {\n    \"Low\": 5,\n    \"Medium\": 3,\n    \"High\": 2\n}\n\ndef category_exists(category, current_scores):\n    for score_category in current_scores:\n        if score_category['category'].lower() == category.lower():\n            return True\n    return False\n    \ndef create_category_object(category, score=None, score_data=[]):\n    if score:\n        score_data.append(score)\n    \n    return {\"category\": category, \"score_data\": score_data}#, \"score\": score_num, \"max_score\": max_score}\n    \n\n\ndef compute_score(input_scores):\n    comp_score = 0\n    low_comp = 0\n    med_comp = 0\n    high_comp = 0\n    if input_scores['Low'] > 0:\n        comp_score = 1\n    if input_scores['Low'] > SCORING_THRESHOLDS['Low']:\n        low_comp = int(input_scores['Low'] / SCORING_THRESHOLDS['Low'])    \n        comp_score = 2\n    if input_scores['Medium'] > 0:\n        comp_score  = 2\n    if (input_scores['Medium'] + low_comp) > SCORING_THRESHOLDS['Medium']:\n        med_comp = int((input_scores['Medium'] + low_comp) / SCORING_THRESHOLDS['Medium'])\n        comp_score = 3\n    if input_scores['High'] > 0:\n        comp_score = 3\n    if (input_scores['High'] + med_comp) > SCORING_THRESHOLDS['High']:\n        high_comp = int((input_scores['High'] + med_comp) / SCORING_THRESHOLDS['High'])\n        comp_score = 4\n    if input_scores['Critical'] + high_comp > 0:\n        comp_score = 4\n    return comp_score\n    \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = \"Add Alert Scoring Infomation\"\n    status = EXECUTION_STATE_COMPLETED\n    \n    score_name = siemplify.extract_action_param(\"Name\")\n    desc = siemplify.extract_action_param(\"Description\")\n    category = siemplify.extract_action_param(\"Category\")\n    severity = siemplify.extract_action_param(\"Severity\")\n    \n    source = siemplify.extract_action_param(\"Source\", \"\")\n    case_tag = siemplify.parameters.get(\"Case Tag\", None)\n    current_score = 0\n    result_value = \"Informational\"\n    output_message = \"\"\n    \n    try:\n        current_scoring = siemplify.get_alert_context_property(ALERT_SCORE_INFO).strip('\"')\n        current_scoring = json.loads(current_scoring)\n    except:\n        current_scoring = []\n        \n    try:\n        found = 0\n        new_score = {}\n        new_score['score_name'] = score_name\n        new_score['description'] = desc\n        new_score['severity'] = severity\n        new_score['score'] = SEVERITIES[severity]\n        new_score['source'] = source\n        total_scores = {}\n        total_scores['Informational'] = 0\n        total_scores['Low'] = 0\n        total_scores['Medium'] = 0\n        total_scores['High'] = 0\n        total_scores['Critical'] = 0\n        updated_scores = []\n        for _category in current_scoring:\n            if _category['category'].lower() == category.lower():\n                cat_obj = create_category_object(category, score=new_score, score_data=_category['score_data'])\n                updated_scores.append(cat_obj)\n                found = 1\n                continue\n            cat_obj = create_category_object(_category['category'], score_data=_category['score_data'])\n            updated_scores.append(cat_obj)\n        if len(current_scoring) == 0 or found == 0:\n            cat_obj = create_category_object(category, score=new_score)\n            updated_scores.append(cat_obj)\n    \n        for updated_category in updated_scores:\n            updated_category['score_data'] = sorted(updated_category['score_data'], key = lambda i: SEVERITIES[i['severity']],reverse=True)\n            category_scores = {}\n            category_scores['Informational'] = 0\n            category_scores['Low'] = 0\n            category_scores['Medium'] = 0\n            category_scores['High'] = 0\n            category_scores['Critical'] = 0\n            for score in updated_category['score_data']:\n                if score['severity'] == 'Informational':\n                    total_scores['Informational'] += 1\n                    category_scores['Informational'] += 1\n                if score['severity'] == 'Low':\n                    total_scores['Low'] += 1\n                    category_scores['Low'] += 1\n                if score['severity'] == 'Medium':\n                    total_scores['Medium'] += 1\n                    category_scores['Medium'] += 1\n                if score['severity'] == 'High':\n                    total_scores['High'] += 1\n                    category_scores['High'] += 1\n                if score['severity'] == 'Critical':\n                    total_scores['Critical'] += 1\n                    category_scores['Critical'] += 1\n            updated_category['category_score'] = compute_score(category_scores)\n\n\n        updated_scores = sorted(updated_scores, key = lambda i: i['category_score'] ,reverse=True)                    \n        current_score_str = json.dumps(updated_scores)\n        \n        alert_score = compute_score(total_scores)\n        \n        updated_score = siemplify.set_alert_context_property(ALERT_SCORE_INFO,current_score_str)\n        current_score_val = siemplify.set_alert_context_property(ALERT_SCORE,str(alert_score))\n        alert_sev = siemplify.set_alert_context_property(ALERT_SEVERITY,SEV_LIST[alert_score])\n        result_value = SEV_LIST[alert_score]\n\n        \n    except Exception as exception:\n        siemplify.LOGGER.error(\"Unable to set alert score!\")\n        status = EXECUTION_STATE_FAILED\n        output_message = \"Unable to set alert score.\\n\"\n        output_message += f\"Exception: {type(exception).__name__}.\\n\"\n        output_message += f\"Exception message: {exception}.\\n\"\n        raise\n    \n    siemplify.result.add_result_json(json.dumps(updated_scores))\n    \n    output_message = f\"Alert Score with Name: {score_name}, Description: {desc}, category: {category}, score: {severity} has been added to the alert. The alert score is now: {SEV_LIST[alert_score]}.\"\n    \n    \n    print(json.dumps(updated_scores, sort_keys=True))\n    siemplify.end(output_message, SEV_LIST[alert_score], status)\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "Tools",
+    "ScriptResultName": "alert_score",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[\r\n    {\r\n        \"category\": \"Users\",\r\n        \"category_score\": 1,\r\n        \"score_data\": [\r\n            {\r\n                \"description\": \"A description.\",\r\n                \"score\": 1,\r\n                \"score_name\": \"RecentHire\",\r\n                \"severity\": \"Low\",\r\n                \"source\": \"UserA\"\r\n            },\r\n            {\r\n                \"description\": \"Another description\",\r\n                \"score\": 1,\r\n                \"score_name\": \"Remote\",\r\n                \"severity\": \"Low\",\r\n                \"source\": \"UserA\"\r\n            }\r\n        ]\r\n    },\r\n    {\r\n        \"category\": \"Files\",\r\n        \"category_score\": 2,\r\n        \"score_data\": [\r\n            {\r\n                \"description\": \"This file contains VBA macros. No suspicious keyword was found. Use olevba and mraptor for more info.\",\r\n                \"score_name\": \"VBA Macros\",\r\n                \"severity\": \"Medium\",\r\n                \"score\": 2,\r\n                \"source\": \"DECODED-20220203175129.XLS\"\r\n            }\r\n        ]\r\n    }\r\n]",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "Rob",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 30.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 30,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 655,
+            "IsMandatory": true,
+            "DefaultValue": "",
+            "Description": "The name of the check being performed on the alert.",
+            "Name": "Name",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 655,
+            "IsMandatory": true,
+            "DefaultValue": "",
+            "Description": "The description of the check being performed on the alert.",
+            "Name": "Description",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 655,
+            "IsMandatory": true,
+            "DefaultValue": "Informational",
+            "Description": "The severity.",
+            "Name": "Severity",
+            "Value": "Informational",
+            "Type": 15,
+            "OptionalValues": [
+                "Informational",
+                "Low",
+                "Medium",
+                "High",
+                "Critical"
+            ],
+            "OptionalValuesJson": "[\"Informational\",\"Low\",\"Medium\",\"High\",\"Critical\"]"
+        },
+        {
+            "CustomActionId": 655,
+            "IsMandatory": true,
+            "DefaultValue": "",
+            "Description": "The category of the check that was performed.",
+            "Name": "Category",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 655,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "Optional. The part of the alert that the score was derived from.  Examples are Files, Email, User... ",
+            "Name": "Source",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 655,
+            "IsMandatory": false,
+            "DefaultValue": null,
+            "Description": "Optional. Adds the supplied tag to the case.",
+            "Name": "Case Tag",
+            "Value": null,
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

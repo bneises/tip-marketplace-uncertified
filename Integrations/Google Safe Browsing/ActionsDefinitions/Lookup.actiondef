@@ -1,0 +1,45 @@
+{
+  "Name": "Lookup",
+  "Description": "Check if a specific URL is safe for browsing",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom pysafebrowsing import SafeBrowsing\n\nIDENTIFIER = u'Google Safe Browsing'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"Api Key\")\n    url = siemplify.extract_action_param(param_name=u'Url', is_mandatory=True)\n\n    safe_browsing_manager = SafeBrowsing(api_key)\n    res = safe_browsing_manager = safe_browsing_manager.lookup_urls([url])\n    is_malicious_str = res[url]['malicious']\n    siemplify.result.add_result_json(res)\n\n    is_malicious_bool = bool(is_malicious_str)\n    \n    if is_malicious_bool:\n        siemplify.end('The URL was found malicious', is_malicious_bool)\n    else:\n        siemplify.end('The URL was not found malicious', is_malicious_bool)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Safe Browsing",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"http://malware.testing.google.test/testing/malware/\": {\n    \"malicious\": true,\n    \"platforms\": [\n      \"ANY_PLATFORM\"\n    ],\n    \"threats\": [\n      \"MALWARE\"\n    ],\n    \"cache\": \"300s\"\n  }\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 15.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "http://malware.testing.google.test/testing/malware/",
+      "Description": "The URL you would like to check in Google Safe Browsing.",
+      "Name": "Url",
+      "Value": "http://malware.testing.google.test/testing/malware/",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602148882863,
+      "ModificationTimeUnixTimeInMs": 1602148882863
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602148882857,
+  "ModificationTimeUnixTimeInMs": 1602148882859
+}

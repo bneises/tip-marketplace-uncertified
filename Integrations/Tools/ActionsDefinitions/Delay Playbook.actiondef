@@ -1,0 +1,84 @@
+{
+  "Name": "Delay Playbook",
+  "Description": "This action will temporarily stop a playbook from completing for a period of time.  ",
+  "Script": "from SiemplifyAction import SiemplifyAction\r\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_INPROGRESS\r\nimport arrow\r\nimport sys\r\n\r\n\r\nSCRIPT_NAME =\"Siemplify - Delay Playbook\"\r\n\r\ndef main():\r\n\tsiemplify = SiemplifyAction()\r\n\tsiemplify.script_name = SCRIPT_NAME\r\n\tseconds = int(siemplify.parameters.get('Seconds', 0))\r\n\tminutes = int(siemplify.parameters.get('Minutes', 0))\r\n\thours = int(siemplify.parameters.get('Hours', 0))\r\n\tdays = int(siemplify.parameters.get('Days', 0))\r\n\r\n\ttarget_date = arrow.utcnow().shift(seconds=seconds, minutes=minutes,\r\n\t\t\t\t\t\t\t\t\thours=hours, days=days)\r\n\r\n\tsiemplify.LOGGER.info(\r\n\t\tu\"Waiting until {}\".format(str(target_date.isoformat())))\r\n\r\n\tif target_date <= arrow.utcnow():\r\n\t\t# Reached target date\r\n\t\tsiemplify.LOGGER.info(\r\n\t\t\tu\"Reached target date {}\".format(target_date.isoformat()))\r\n\t\tsiemplify.end(u\"Reached target date {}\".format(target_date.isoformat()),\r\n\t\t\t\t\t  'true', EXECUTION_STATE_COMPLETED)\r\n\r\n\telse:\r\n\t\tsiemplify.LOGGER.info(\r\n\t\t\tu\"Hasn't reached the desired date {}. Current date: {}\".format(\r\n\t\t\t\ttarget_date.isoformat(), arrow.utcnow().isoformat()))\r\n\t\tsiemplify.end(\r\n\t\t\tu\"Hasn't reached the desired date {}\".format(target_date.isoformat()),\r\n\t\t\ttarget_date.isoformat(), EXECUTION_STATE_INPROGRESS)\r\n\r\ndef wait():\r\n\tsiemplify = SiemplifyAction()\r\n\tsiemplify.script_name = SCRIPT_NAME\r\n\ttarget_date = arrow.get(siemplify.parameters[\"additional_data\"])\r\n\r\n\tif target_date <= arrow.utcnow():\r\n\t\t# Reached target date\r\n\t\tsiemplify.LOGGER.info(\r\n\t\t\tu\"Reached target date {}\".format(target_date.isoformat()))\r\n\t\tsiemplify.end(u\"Reached target date {}\".format(target_date.isoformat()),\r\n\t\t\t\t\t  'true', EXECUTION_STATE_COMPLETED)\r\n\r\n\telse:\r\n\t\tsiemplify.LOGGER.info(\r\n\t\t\tu\"Hasn't reached the desired date {}. Current date: {}\".format(\r\n\t\t\t\ttarget_date.isoformat(), arrow.utcnow().isoformat()))\r\n\t\tsiemplify.end(\r\n\t\t\tu\"Hasn't reached the desired date {}\".format(target_date.isoformat()),\r\n\t\t\ttarget_date.isoformat(), EXECUTION_STATE_INPROGRESS)\r\n\r\n\r\nif __name__ == \"__main__\":\r\n\tif len(sys.argv) < 3 or sys.argv[2] == 'True':\r\n\t\tmain()\r\n\telse:\r\n\t\twait()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "IsAsync": true,
+  "Version": 2.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0",
+      "Description": "The amount of seconds to delay the playbook for.",
+      "Name": "Seconds",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620440,
+      "ModificationTimeUnixTimeInMs": 1614012620440
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "The amount of minutes to delay the playbook for.",
+      "Name": "Minutes",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620440,
+      "ModificationTimeUnixTimeInMs": 1614012620440
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0",
+      "Description": "The amount of hours to delay the playbook for.",
+      "Name": "Hours",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620440,
+      "ModificationTimeUnixTimeInMs": 1614012620440
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0",
+      "Description": "The amount of days to delay the playbook for.",
+      "Name": "Days",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620440,
+      "ModificationTimeUnixTimeInMs": 1614012620440
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620438,
+  "ModificationTimeUnixTimeInMs": 1614012620438
+}

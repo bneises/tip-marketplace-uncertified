@@ -1,0 +1,73 @@
+{
+  "Name": "Get Row",
+  "Description": "Retrieves the values of a single row in a sheet",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport gspread\nimport json\nIDENTIFIER = u'Google Sheet'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    sheet_id = siemplify.extract_action_param(param_name=u'Sheet Id', is_mandatory=True)\n    worksheet_name = siemplify.extract_action_param(param_name=u'Worksheet Name')\n    row_number = siemplify.extract_action_param(param_name=u'Row Number')\n\n    f = open(\"credentials.json\", \"w+\")\n    f.write(credentials_json)\n    f.close()\n\n\n    gc = gspread.service_account(filename='./credentials.json')\n    sh = gc.open_by_key(sheet_id)\n    \n    if(worksheet_name):\n        worksheet = sh.worksheet(worksheet_name)\n    else:\n        worksheet = sh.sheet1\n\n    row_values = worksheet.row_values(row_number)\n\n    siemplify.result.add_result_json(row_values)\n\n    siemplify.end(\"Row values extracted successfully\", True, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Sheets",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 41.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Sheet-Id>",
+      "Description": "The shhet id can be found in the sheet url.",
+      "Name": "Sheet Id",
+      "Value": "<Sheet-Id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602515020788,
+      "ModificationTimeUnixTimeInMs": 1602515020788
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Worksheet Name",
+      "Name": "Worksheet Name",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602515020788,
+      "ModificationTimeUnixTimeInMs": 1602515020788
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "3",
+      "Description": "Row number (one-based).",
+      "Name": "Row Number",
+      "Value": "3",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602515020788,
+      "ModificationTimeUnixTimeInMs": 1602515020788
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602515020781,
+  "ModificationTimeUnixTimeInMs": 1602515020783
+}

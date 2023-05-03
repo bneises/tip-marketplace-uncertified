@@ -1,0 +1,30 @@
+{
+  "Name": "Enrich FileName Entity with Path",
+  "Description": "This action will parse out path, file name, and extension from an entity and enrich it with file_path, file_name, and file_extension.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport os\nimport ntpath\nimport re\n\ndef get_filename_from_path(path):\n    is_win = re.match(\"^[A-Za-z]:\\\\\\\\\", path.strip())\n    if is_win:\n        (file_path, full_file_name) = ntpath.split(path)\n    else:\n        file_path, full_file_name = os.path.split(path)\n    filename, file_extension = os.path.splitext(full_file_name)\n    file_details = {}\n    file_details['file_name'] = full_file_name\n    file_details['file_path'] = file_path\n    file_details['file_extension'] = file_extension\n    return file_details\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    json_results = {}\n    entities_to_update = []\n    for entity in siemplify.target_entities:\n        try:\n            file_details = get_filename_from_path(entity.identifier)\n            json_results[entity.identifier] = file_details\n            entity.additional_properties.update(file_details)\n            entities_to_update.append(entity)\n        except Exception as e:\n            output_message += \"Entity {} was not able to be parsed.\\n\".format(entity.identifier)\n    if entities_to_update:\n        siemplify.LOGGER.info(\"Updating entities\")\n        siemplify.update_entities( entities_to_update )\n        siemplify.result.add_result_json( convert_dict_to_json_result_dict(json_results) )\n        \n        output_message += 'The following entities were enriched: {0}'.format(\n            ','.join([entity.identifier for entity in siemplify.target_entities])\n        )\n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Enrichment",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"Entity\":\"/var/log/messages\",\"EntityResult\":{\"file_name\":\"messages\",\"file_path\":\"/var/log\",\"file_extension\":\"\"}},{\"Entity\":\"file.exe\",\"EntityResult\":{\"file_name\":\"file.exe\",\"file_path\":\"\",\"file_extension\":\".exe\"}},{\"Entity\":\"c:\\\\windows\\\\cmd.com\",\"EntityResult\":{\"file_name\":\"cmd.com\",\"file_path\":\"c:\\\\windows\",\"file_extension\":\".com\"}},{\"Entity\":\"C:\\\\windows\\\\test\\\\test.exe\",\"EntityResult\":{\"file_name\":\"test.exe\",\"file_path\":\"C:\\\\windows\\\\test\",\"file_extension\":\".exe\"}}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 10.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1628182533932,
+  "ModificationTimeUnixTimeInMs": 1628182978929
+}

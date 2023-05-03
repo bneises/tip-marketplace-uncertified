@@ -1,0 +1,55 @@
+{
+  "Name": "Create Tags",
+  "Description": "Creates tags for a specific instance (or other resources).\nFor more information:\nhttps://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.create_tags",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom EC2Manager import EC2Manager\nimport json\n\nIDENTIFIER = \"AWS - EC2\"\nSCRIPT_NAME = \"AWS EC2 - Start Instance\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    output_message = \"\"\n    result_value = False\n    tags_to_create_list = []\n    #Extracting the integration parameters\n    access_key_id = siemplify.extract_configuration_param(IDENTIFIER,\"Access Key ID\")\n    secret_access_key = siemplify.extract_configuration_param(IDENTIFIER, \"Secret Access Key\")\n    default_region = siemplify.extract_configuration_param(IDENTIFIER, \"Default Region\")\n    \n    #Extracting the action parameters\n    resources_id = siemplify.extract_action_param(\"Resources ID\")\n    tags_to_create = siemplify.extract_action_param(\"Tags\")\n    \n    #Creating an instance of EC2Manager object\n    ec2_manager = EC2Manager(access_key_id, secret_access_key, default_region)\n    \n    #Converting the tags_to_create string into a list\n    tags_to_create= json.loads(tags_to_create)\n    tags_to_create_list = tags_to_create.get(\"tags\")\n\n    resources_id_list = resources_id.split(\",\")\n    \n    #Creating an instance of EC2Manager object\n    ec2_manager = EC2Manager(access_key_id, secret_access_key, default_region)\n    \n    tagged_resources_details = []\n    tagged_resources_ids = []\n    not_tagged_resources_ids =[]\n    \n    for resource in resources_id_list:\n        resource = resource.strip()\n        try:\n            tagged_resource = ec2_manager.create_tags(resource, tags_to_create_list)\n            siemplify.LOGGER.info(f\"The tags were assigned to the resource:{resource} successfully.\" )\n            tagged_resources_ids.append(resource)\n            tagged_resources_details.append(tagged_resource)\n            siemplify.result.add_entity_json(f\"The tags were assigned to the resource {resource}:\", tagged_resources_details)\n                \n        except Exception as e:\n            not_tagged_resources_ids.append(resource)\n            siemplify.LOGGER.error(f\"Error occured when tagging the resource {resource}.\\nError: {e}\")\n            \n    siemplify.result.add_result_json(tagged_resources_details)\n\n\n    if len(tagged_resources_ids) > 0:\n        output_message = f\"The tags were assigned to the resources:{tagged_resources_ids} successfully.\\n\" \n        result_value = True \n        \n    if len(not_tagged_resources_ids) > 0 and len(tagged_resources_ids) > 0:\n         output_message += f\"The tags were not assigned to the resources: {not_tagged_resources_ids}.\"\n\n\n    siemplify.end(output_message, result_value)\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "AWS - EC2",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ResponseMetadata\": {\r\n\t\t\"RequestId\": \"123456789\",\r\n\t\t\"HTTPStatusCode\": 200,\r\n\t\t\"HTTPHeaders\": {\r\n\t\t\t\"x-amzn-requestid\": \"123456789\",\r\n\t\t\t\"content-type\": \"text/xml;charset=UTF-8\",\r\n\t\t\t\"content-length\": \"221\",\r\n\t\t\t\"date\": \"Wed, 02 Dec 2020 13:51:31 GMT\",\r\n\t\t\t\"server\": \"AmazonEC2\"\r\n\t\t},\r\n\t\t\"RetryAttempts\": 0\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 89.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "ResourceID1, ResourceID2",
+      "Description": "The resources IDs which you want to tag.\n(comma separated)",
+      "Name": "Resources ID",
+      "Value": "ResourceID1, ResourceID2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172159999,
+      "ModificationTimeUnixTimeInMs": 1609172159999
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\"tags\": [{\"Key\": \"key1\",\"Value\": \"value1\"}, \r\n{\"Key\": \"key2\",\t\"Value\": \"value2\"}]}",
+      "Description": "The tags you want to create for given resource IDs.\nFor example:{\"Key\":\"k\",\"Value\":\"v\"};{\"key2\":\"\",\"value2\":\"\"} seperated by \";\"\nNote:Case sensitive",
+      "Name": "Tags",
+      "Value": "{\"tags\": [{\"Key\": \"key1\",\"Value\": \"value1\"}, \r\n{\"Key\": \"key2\",\t\"Value\": \"value2\"}]}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172159999,
+      "ModificationTimeUnixTimeInMs": 1609172159999
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1609172159995,
+  "ModificationTimeUnixTimeInMs": 1609172159995
+}

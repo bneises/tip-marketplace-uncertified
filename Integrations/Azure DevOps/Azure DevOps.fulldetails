@@ -1,0 +1,109 @@
+{
+    "Identifier": "Azure DevOps",
+    "PackageName": "Azure DevOps",
+    "DisplayName": "Azure DevOps",
+    "Description": "Azure DevOps Server is a Microsoft product that provides version control, reporting, requirements management, project management, automated builds, testing and release management capabilities. It covers the entire application lifecycle, and enables DevOps capabilities.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Azure DevOps",
+            "PropertyName": "Project",
+            "PropertyDescription": "The project name",
+            "PropertyDisplayName": "Project",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "project_name",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1661507791945,
+            "ModificationTimeUnixTimeInMs": 1661507791945
+        },
+        {
+            "IntegrationIdentifier": "Azure DevOps",
+            "PropertyName": "Organization",
+            "PropertyDescription": "The organization name",
+            "PropertyDisplayName": "Organization",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "organization_name",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1661507791945,
+            "ModificationTimeUnixTimeInMs": 1661507791945
+        },
+        {
+            "IntegrationIdentifier": "Azure DevOps",
+            "PropertyName": "Personal Access Token",
+            "PropertyDescription": null,
+            "PropertyDisplayName": "Personal Access Token",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1661507791945,
+            "ModificationTimeUnixTimeInMs": 1661507791945
+        },
+        {
+            "IntegrationIdentifier": "Azure DevOps",
+            "PropertyName": "Base URL",
+            "PropertyDescription": "For exmaple: \nhttps://dev.azure",
+            "PropertyDisplayName": "Base URL",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "https://dev.azure",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1661507791945,
+            "ModificationTimeUnixTimeInMs": 1661507791945
+        }
+    ],
+    "Actions": [
+        "Ping",
+        "Trigger Azure Build",
+        "Wait Until Web Resource Is Up"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 5.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Azure DevOps Integration"
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1628012160000
+        },
+        {
+            "Items": [
+                "Fixed Azure DevOps Integration Actions Definitions"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1628415528000
+        },
+        {
+            "Items": [
+                "Fixed Azure DevOps Integration Actions Definitions - IsAsync"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1659434995000
+        },
+        {
+            "Items": [
+                "Security enhancements: Added request timeouts so the script wouldn't stuck in case of server-side problems, code refactoring"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1670851424000
+        },
+        {
+            "Items": [
+                "Updated the publisher name"
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1673257086000
+        }
+    ]
+}

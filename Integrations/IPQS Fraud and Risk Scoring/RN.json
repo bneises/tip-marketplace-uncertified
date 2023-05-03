@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "NEW! IPQS Fraud and Risk Scoring",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "IPQS Fraud and Risk Scoring",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1656595747
+    }
+]

@@ -1,0 +1,4002 @@
+[
+  {
+    "Product": "Windows",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1572518965681,
+    "ModificationTimeUnixTimeInMs": 1596711962680
+  },
+  {
+    "Product": "Windows:OutOfWorkingHours",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1572518965681,
+    "ModificationTimeUnixTimeInMs": 1596711962680
+  },
+  {
+    "Product": "Endpoint Protection",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ipfix",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Linux OS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft DHCP Server",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Windows - WMI",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1572518965681,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "WinEventLog:Security",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:OutOfWorkingHours",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1572518965681,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ForeScout CounterACT",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Nagios",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCCM",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:NewAdminAdded",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RACF",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "RACF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Allot",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Barracuda",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Barracuda Web Filter",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IIS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Reblaze",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "iis_ex2k10",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ForeScout",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense (ESG)",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CA",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Windows",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Site Minder",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:AccessDisabledAccounts",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "EMAIL",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CounterAct",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "eMPS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Ex2k10_MessageTracking",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IronPort",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IronPortSuspiciousEmails",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "PhishMe",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Phishing email detector",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1530181985775,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Proofpoint TAP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SEFT",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ESG",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Imperva",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Imperva WAF",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft IIS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DLP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "WebOrWAF_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DAM_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FAM_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FW_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DNS_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DNS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NAC_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "AV_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "MailRelayOrTAP_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Login_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ActiveDirectory_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Proxy_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Proxy",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RACF_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "RACF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DoSOrDDoS_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Fraud_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Fraud",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "InsiderThreat_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPS_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1532851113869,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "EDR_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Generic_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Product",
+    "EventName": "EventName",
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1520938775141,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "EDR",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "AV",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "WebOrWAF",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DAM",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FAM",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FW",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DNS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DNS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NAC",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "MailRelayOrTAP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Login",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ActiveDirectory",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Proxy",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Proxy",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DoSOrDDoS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Fraud",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Fraud",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "InsiderThreat",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPSOrNetwork",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "OS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "zflow",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "srx_traffic",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SourceFire",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RSA NetWitness 59",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Sinkhole",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DNS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DefensePro",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Radware",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Radware DefensePro",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Bit9",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CarbonBlack",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Ziften",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DLP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ASA",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CheckPont FW",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco ACS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco Adaptive Security Appliance (ASA)",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco Firewall Services Module (FWSM)",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco IOS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "cisco:asa",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "cisco:pix",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CheckPoint",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "HIVE",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "symantec:ep:risk:file",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec Endpoint Protection",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "epo",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1546187010542,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ePolicy Orchestrator",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1546187010542,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP_DMZ",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP_LAN",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB_Actions",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB_LAN",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB_Market",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB-Actions",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB-LAN",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB-Market",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DMZ",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-LAN",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SecureSphere",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SEP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec - SEP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FireEye",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPSOrNetwork_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Firewall",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Fortigate",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Varonis",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense - vmwsproxy1",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense - vmwsproxy2",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense (Security)",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense V Series Appliances Message",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense-Security",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Trusteer",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Aruba",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "LSN",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Windows Security Event Log",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mobility Controller",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Netflow",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NetWitness",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RSA NetWitness",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Aruba Mobility Controller",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SureViewInsiderThreat",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "LightCyber",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Universal DSM",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FWSM",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Juniper",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Juniper Junos OS Platform",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Juniper SSL VPN",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "juniper:sslvpn",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Junos",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Palo Alto Networks",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Palo Alto Networks Firewall",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Palo Alto PA Series",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "pan:traffic",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "PIX",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1 & FireWall-1",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1 Edge",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1-&-FireWall-1",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Bankatim",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Detica Analytics",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FireWall-1",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "OS_Product",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1540823215660,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1-&-FireWall-1",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1 Edge",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "srx_traffic",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Trusteer",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VPN-1 & FireWall-1",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "pan:traffic",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Palo Alto Networks Firewall",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Palo Alto Networks",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP_Product",
+    "EventName": "FIM - DLP",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP Files",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Imperva WAF",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "OS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DMZ",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense - vmwsproxy2",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense - vmwsproxy1",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Juniper SSL VPN",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Casbi",
+    "EventName": "Activity from infrequent country",
+    "ComparisonType": 0,
+    "VisualFamily": "Proxy",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CB Cloud",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Default",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Netskope",
+    "EventName": "DLP Cloud Storage Upload",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CISCO AMP for Endpoints",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SentinelOne",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mail",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SIEM",
+    "EventName": "Port Scanning",
+    "ComparisonType": 0,
+    "VisualFamily": "Telefonica Firewall",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPSOrNetwork",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SIEM",
+    "EventName": "Brute force exploitation attempt",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense V Series Appliances Message",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco Firepower",
+    "EventName": "IRC",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft IIS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mail",
+    "EventName": "Monitored Mailbox <freetrial@siemplify.co>",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:OutOfWorkingHours",
+    "EventName": "Windows",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ForcePoint - FPR",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DLP Files",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ForcePoint - FPR",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "ForcePoint DLP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:FailedLogin",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "symantec:ep:risk:file",
+    "EventName": "Virus Found",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP Product",
+    "EventName": "DLP",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP Files",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP Product",
+    "EventName": "DLP Fingerprint",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP Files",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "symantec:ep:risk:file",
+    "EventName": "Endpoint",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense (ESG)",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ForeScout",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Fraud",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Fraud",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ForeScout CounterACT",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "EDR",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "WebOrWAF",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DAM",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FAM",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Crowdstrike",
+    "EventName": "process",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco ASA",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "TDR Watchlist",
+    "EventName": "process",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Proofpoint TAP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SEFT",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "WebOrWAF_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DAM_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Ex2k10_MessageTracking",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:OutOfWorkingHours",
+    "EventName": "Windows Login",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Proxy",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Proxy",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ActiveDirectory",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Login",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "MailRelayOrTAP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NAC",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DNS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DNS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FW",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "AV",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SecureSphere",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IronPortSuspiciousEmails",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DoSOrDDoS_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Azure Sentinel",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "wineventlog",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": "NETWORK",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR Network Event",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Azure Security Center",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": "OTHER_BEHAVIOR",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "symantec:ep:threat:file",
+    "EventName": "Virus Found",
+    "ComparisonType": 0,
+    "VisualFamily": "Default",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": "SYSTEM_API_CALL",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ASA",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Ziften",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DoSOrDDoS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FAM_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "InsiderThreat",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Palo Alto PA Series",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Aruba",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft:OfficeManagement:ThreatIntelligence",
+    "EventName": "TIMailData:AdvancedPhishFilter",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "PIX",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Exchange",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "apt",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IOC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mail",
+    "EventName": "yair@siemplify.co",
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "AntiVirus",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Carbon Black Response",
+    "EventName": "Newly Executed Applications",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mail",
+    "EventName": "Monitored Mailbox <siemplifytest@gmail.com>",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Forcepoint DLP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "OS_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPSOrNetwork_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec",
+    "EventName": "DLP",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP Files",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "InsiderThreat_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NIDS",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Internal",
+    "EventName": "Test",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Blue Coat ProxySG",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "BlueCoat Proxy",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "McAfee",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "",
+    "EventName": "phishing",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": "CREATE_PROCESS",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": " Proofpoint TAP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Bugcrowd",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Bugcrowd",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mail",
+    "EventName": "Monitored Mailbox <siemplifycloud@siemplify.co>",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Site Minder",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "AV_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Slack",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Slack",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft:ASC",
+    "EventName": "RAREEXECUTION",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "VMware Carbon Black Cloud",
+    "EventName": "FILE_CREATE",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "malware",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "IOC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "cisco:asa pan:traffic",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Webserver",
+    "EventName": "Brute force exploitation attempt",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Webserver",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Phishing Detector",
+    "EventName": "Phishing",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IronPort",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense (Security)",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB-LAN",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec Endpoint Protection",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec - SEP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FireEye",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "cisco:pix",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "cisco:asa",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco IOS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-LAN",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "symantec:ep:risk:file",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SEP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Symantec",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Firewall",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mail",
+    "EventName": "Monitored Mailbox <community@siemplify.co>",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB_Actions",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP_LAN",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "LSN",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Windows Security Event Log",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Mobility Controller",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Netflow",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Malware",
+    "EventName": "Malware",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Checkpoint Firewall",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "Telefonica Firewall",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ddog",
+    "EventName": "container is down",
+    "ComparisonType": 0,
+    "VisualFamily": "DevOps",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco Adaptive Security Appliance (ASA)",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Imperva",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "iis_ex2k10",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IIS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ArcSight",
+    "EventName": "Brute Force Logon Attack Start",
+    "ComparisonType": 0,
+    "VisualFamily": "Default",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Datadog",
+    "EventName": "Memory Usage High by Pod",
+    "ComparisonType": 0,
+    "VisualFamily": "Datadog - Pod",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Phishing email detector",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Fraud_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Fraud",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RACF_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "RACF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ManualCase Product",
+    "EventName": "ManualCase EventType",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Proxy_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Proxy",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ActiveDirectory_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Login_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPS_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "MailRelayOrTAP_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NetWitness",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "NAC_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FW_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Radware",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Radware DefensePro",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Bit9",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:Security Group Management",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ipfix",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Linux OS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "EDR_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft DHCP Server",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "WinEventLog:Security",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Nagios",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CheckPont FW",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco ACS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DefensePro",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DoSOrDDoS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DNS_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DNS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RSA NetWitness",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RSA NetWitness 59",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SourceFire",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Sinkhole",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DNS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Juniper Junos OS Platform",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Cisco Firewall Services Module (FWSM)",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Juniper",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FWSM",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Fortigate",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FireWall-1",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Varonis",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Aruba Mobility Controller",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SureViewInsiderThreat",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "EMAIL",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:OutOfWorkingHours",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:AccessDisabledAccounts",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "HIVE",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Windows",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CA",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Junos",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "IPS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Detica Analytics",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:OutOfWorkingHours",
+    "EventName": "Out of working hours",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Reblaze",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCCM",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:NewAdminAdded",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "RACF",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "RACF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Allot",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Barracuda",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Barracuda Web Filter",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "WebOrWAF",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Windows - WMI",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Generic_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CounterAct",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "NAC",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Endpoint Protection",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "epo",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "eMPS",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ESG",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "zflow",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "IPS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "juniper:sslvpn",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "LightCyber",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Universal DSM",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Bankatim",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "Generic",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Websense-Security",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "InsiderThreat",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Forcepoint DLP",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "DLP Files",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Phishing email detector",
+    "EventName": "Suspected Phishing Email",
+    "ComparisonType": 0,
+    "VisualFamily": "Copy of MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "FIM Exfiltration",
+    "EventName": "FIM",
+    "ComparisonType": 0,
+    "VisualFamily": "FAM",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Registry Integrity Monitoring",
+    "EventName": "RIM",
+    "ComparisonType": 0,
+    "VisualFamily": "OS",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:Security Group Management",
+    "EventName": "Windows",
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory user creation",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CarbonBlack",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "EDR",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB-Market",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP_Product",
+    "EventName": "DLP",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "symantec:ep:ransomware:file",
+    "EventName": "Ransomware",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP_Product",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Exchange",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "PhishMe",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "MailRelayOrTAP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Windows:FailedLogin",
+    "EventName": "Windows",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CheckPoint",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "FW",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Microsoft Active Directory",
+    "EventName": null,
+    "ComparisonType": 0,
+    "VisualFamily": "ActiveDirectory",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB_LAN",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB_Market",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "DLP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "DLP",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP-DB-Actions",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP_DMZ",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "SCSP",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "ePolicy Orchestrator",
+    "EventName": "",
+    "ComparisonType": 0,
+    "VisualFamily": "AV",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "CSV",
+    "EventName": "CSV",
+    "ComparisonType": 0,
+    "VisualFamily": "Default",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  },
+  {
+    "Product": "Azure Security Center",
+    "EventName": "Failed SSH brute force attack",
+    "ComparisonType": 0,
+    "VisualFamily": "Login",
+    "ForMigration": false,
+    "Id": 0,
+    "CreationTimeUnixTimeInMs": 1596711845331,
+    "ModificationTimeUnixTimeInMs": 1596711845331
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "Name": "Spelling Check",
+  "Description": "Determining if a word is misspelled and what the likely correct spelling would be based on word frequency",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom SiemplifyDataModel import EntityTypes\n\nfrom SpellCheckerManager import SpellCheckerManager\n\nimport json\nfrom functools import reduce\nimport re\n\n# Consts:\nINTEGRATION_NAME = \"Spell Checker\"\nSCRIPT_NAME = \"Spelling Check\"\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    try:\n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"output message :\"\n        result_value = 0\n        failed_entities = []\n        successfull_entities = []\n        \n        result_json = {}\n        spm = SpellCheckerManager()\n        input_text = siemplify.parameters.get(\"Input\")\n        input_text = re.sub(r'[\\(\\)\\r\\n,]+', ' ',\n                                    re.sub(r'[^A-Za-z\\s\\(\\)@]+', '', input_text))\n        # raise Exception(json.dumps([x.strip() for x in input_text.split(\" \") if x.strip()], indent=4))\n        res = spm.spell.unknown([x.strip() for x in input_text.split(\" \") if x.strip() and '@' not in x and not 'http' in x])\n        \n        for item in res:\n            result_json[item] = list(spm.spell.candidates(item))\n        if result_json:\n            siemplify.result.add_result_json(convert_dict_to_json_result_dict(result_json))\n            result_value = len(result_json)\n            \n            # Build table result:\n            csv_table = [\"Original text ,Recommended corrections\"]\n            for bad_word, correction_list in result_json.items():\n                csv_table.append(\"{},{}\".format(bad_word, u\"\\u2E41 \".join(correction_list)))\n            siemplify.result.add_data_table(\"Found spelling mistakes\", csv_table)\n            \n        # print(result_json)\n        output_message = u\"Found {} mistakes/errors in the text\".format(result_value)\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = -1\n        output_message += \"\\n unknown failure\"\n        raise\n\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Spell Checker",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\n  {\n    \"Entity\": \"sentinelone\",\n    \"EntityResult\": [\n      \"sentinelone\"\n    ]\n  },\n  {\n    \"Entity\": \"iscustom\",\n    \"EntityResult\": [\n      \"accustom\",\n      \"custom\"\n    ]\n  },\n  {\n    \"Entity\": \"allenvironments\",\n    \"EntityResult\": [\n      \"allenvironments\"\n    ]\n  },\n  {\n    \"Entity\": \"iscertify\",\n    \"EntityResult\": [\n      \"certify\"\n    ]\n  }\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Hagai Cohen",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 29.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": " The text that will be checked by the Spell Checker",
+      "Name": "Input",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594714818708,
+      "ModificationTimeUnixTimeInMs": 1594714818708
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1594714818702,
+  "ModificationTimeUnixTimeInMs": 1594714818704
+}

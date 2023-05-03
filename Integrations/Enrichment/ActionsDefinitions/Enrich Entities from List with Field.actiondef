@@ -1,0 +1,101 @@
+{
+  "Name": "Enrich Entities from List with Field",
+  "Description": "This action enriches entities supplied by a list with a field and a value.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, add_prefix_to_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n\n\ndef get_alert_entities(siemplify):\n    return [entity for alert in siemplify.case.alerts for entity in alert.entities]\n    \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    \n    entity_type = siemplify.parameters.get(\"Entity Type\")\n    delimiter = siemplify.parameters.get(\"Entity Delimiter\")\n    enrichment_field = siemplify.parameters.get(\"Enrichment Field\")\n    enrichment_value = siemplify.parameters.get(\"Enrichment Value\")\n    \n    target_entities = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"List of Entities\", \"\").split(delimiter)]))\n    \n    entities = []\n    alert_entities = get_alert_entities(siemplify)\n    for target_entity in target_entities:\n        for entity in alert_entities:\n            if entity.identifier == target_entity.upper() and entity.entity_type == entity_type:\n                entities.append(entity)\n                break\n                    \n    \n    updated_entities = []        \n    for entity in entities:\n        entity.additional_properties[enrichment_field] = enrichment_value\n        updated_entities.append(entity)\n        \n    count_updated_entities = len(updated_entities)\n    \n    if count_updated_entities > 0:\n        siemplify.update_entities(updated_entities)\n\n    siemplify.end('{0} entities were successfully enriched'.format(count_updated_entities), count_updated_entities, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Enrichment",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 19.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "A list of entities of the same type, delimited by a field.",
+      "Name": "List of Entities",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635270475217,
+      "ModificationTimeUnixTimeInMs": 1635270475217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The type of entity.",
+      "Name": "Entity Type",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635270475217,
+      "ModificationTimeUnixTimeInMs": 1635270475217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": ",",
+      "Description": "The value of the field that is delimiting the list of entities.",
+      "Name": "Entity Delimiter",
+      "Value": ",",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635270475217,
+      "ModificationTimeUnixTimeInMs": 1635270475217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The name of the field that will be added to the entity.",
+      "Name": "Enrichment Field",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635270475217,
+      "ModificationTimeUnixTimeInMs": 1635270475217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "The value of the field that will be enriched to the entity.",
+      "Name": "Enrichment Value",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635270475217,
+      "ModificationTimeUnixTimeInMs": 1635270475217
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635270475211,
+  "ModificationTimeUnixTimeInMs": 1635270475212
+}

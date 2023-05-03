@@ -1,0 +1,75 @@
+{
+    "Name": "Search Text",
+    "Description": "Search for the 'Search For' parameter in the input text or loop through the 'Search For Regex' list and find matches in the input text.  If there is a match, the action will return true.",
+    "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport re\n\nSCRIPT_NAME=\"Search Text\"\n\nINTEGRATION=\"Tools\"\n\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"No match was found in the input string.\"  # human readable message, showed in UI as the action result\n    result_value = \"false\"  # Set a simple result value, used for playbook if\\else and placeholders.\n    json_result = {}\n    text = siemplify.extract_action_param(\"Text\",\"\")\n    search_for = siemplify.extract_action_param(\"Search For\")\n    search_for_regex = list(filter(None, [x.strip() for x in siemplify.extract_action_param(\"Search For Regex\", \"\").split(',')]))\n    \n    if not search_for and not search_for_regex:\n        status = EXECUTION_STATE_FAILED\n        output_message = \"Search For or Search For Regex must contain a value.\"\n        result_value = \"false\"\n    \n    if search_for:\n        if search_for in text:\n            result_value = \"true\"\n            \n            output_message = f\"A match was found in the input string for {search_for}.\"\n            json_result['search'] = search_for\n            json_result['input'] = text\n            json_result['match'] = True\n    \n    if search_for_regex:\n        for regex in search_for_regex:\n            regex = regex.strip('\"')\n            found = re.search(regex, text)\n            if found:\n                result_value = \"true\"\n                output_message = f\"A match was found in the input string using regex: {regex}.\"\n                json_result['search'] = regex\n                json_result['input'] = text\n                json_result['match'] = True\n                break\n    siemplify.result.add_result_json(json_result)\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "Tools",
+    "ScriptResultName": "match_found",
+    "DynamicResultsMetadata": [
+              {
+            "ResultName": "JsonResult",
+            "ResultExample": "{\r\n    \"matches\": [\r\n        {\r\n            \"search\": \"input\",\r\n            \"input\": \"This is the input test. I want to find a few things.\",\r\n            \"match\": true\r\n        },\r\n        {\r\n            \"search\": \"few\",\r\n            \"input\": \"This is the input test. I want to find a few things.\",\r\n            \"match\": true\r\n        }\r\n    ]\r\n}",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "Rob",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 9.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 30,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 0,
+            "IsMandatory": true,
+            "DefaultValue": "",
+            "Description": "Enter the text that will be searched.",
+            "Name": "Text",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": null,
+            "Description": "Optional: Enter the string that the Text will be searched for.",
+            "Name": "Search For",
+            "Value": null,
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": null,
+            "Description": "Optional.  List of regexes that will be used to search the string.  Regex should be wrapped in double quotes.  Supports comma delimited list.",
+            "Name": "Search For Regex",
+            "Value": null,
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "false",
+            "Description": "Should the search be case sensitive?",
+            "Name": "Case Sensitive",
+            "Value": "false",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

@@ -1,0 +1,26 @@
+[
+    {
+        "ChangeDescription": "NEW! Zoom integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Zoom",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1602076201
+    },
+    {
+        "ChangeDescription": "Zoom OAuth added! Update your authentication method",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Zoom",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1662389282
+    }
+]

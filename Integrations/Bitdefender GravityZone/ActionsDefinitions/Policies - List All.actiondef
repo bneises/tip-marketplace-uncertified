@@ -1,0 +1,30 @@
+{
+  "Name": "Policies - List All",
+  "Description": "This method retrieves the list of available policies.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n    \n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n        \n        policies_data = mtm.policy_list(access_url)\n        \n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"success\"\n        result_value = \"success\"\n        siemplify.result.add_result_json(policies_data)\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n        siemplify.end(output_message, result_value, status)\n    except Exception as e:\n        siemplify.LOGGER.error(\"An error occurred: {0}\".format(e))\n        siemplify.LOGGER.exception(e)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n    \"items\": [\r\n        {\r\n            \"id\" : \"21a295eeb1a43d8b497b23b7\",\r\n            \"name\" : \"Policy 1\",\r\n            \"companyId\" : \"55896b87b7894d0f367b23c6\",\r\n            \"companyName\" : \"Company Test\"\r\n        },\r\n        {\r\n            \"id\" : \"23a295d8b1a43d7c4a7b23c9\",\r\n            \"name\" : \"Policy 2\",\r\n            \"companyId\" : \"55896b87b7894d0f367b23c6\",\r\n            \"companyName\" : \"Company Test\"\r\n\r\n        }\r\n    ]\r\n\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 60.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071211625,
+  "ModificationTimeUnixTimeInMs": 1616071211631
+}

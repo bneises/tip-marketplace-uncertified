@@ -1,0 +1,59 @@
+{
+  "Name": "Custom Query",
+  "Description": "Custom query\nSee the documentation: \"https://docs.fp.tools/\"",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom FlashpointManager import FlashpointManager\nimport json\n\nIDENTIFIER = u\"Flash Point\"\nSCRIPT_NAME = \"Flashpoint - Custom Query\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n\n    query_content = siemplify.extract_action_param(\"Query Content\")\n    new_query_url = siemplify.extract_action_param(\"New Query URL\")\n\n    #Creating an instance of FlashPoint object\n    flashpoint_manager = FlashpointManager(api_key)\n\n    try:\n        #Sending the query by the function custom_query().\n        query_results = flashpoint_manager.custom_query(query_content, new_query_url)\n        return_value = True\n        output_message = 'The query was sent successfully'\n        siemplify.result.add_result_json(query_results)\n            \n\n    except Exception as e:\n        output_message = \"Error fetching results from Flashpoint\"\n        return_value = False\n        siemplify.LOGGER.error(f\"Error fetching results from Flashpoint, Error: {e}.\")\n        siemplify.LOGGER.exception(e)\n        \n    \n    siemplify.end(output_message, return_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Flashpoint",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\r\n  {\r\n    \"Attribute\": [\r\n      {\r\n        \"category\": \"string\",\r\n        \"comment\": \"string\",\r\n        \"fpid\": {},\r\n        \"href\": {},\r\n        \"timestamp\": 0,\r\n        \"type\": \"string\",\r\n        \"uuid\": \"string\",\r\n        \"value\": {}\r\n      }\r\n    ],\r\n    \"RelatedEvent\": {},\r\n    \"Tag\": [\r\n      {\r\n        \"name\": \"string\"\r\n      }\r\n    ],\r\n    \"attribute_count\": 0,\r\n    \"date\": \"string\",\r\n    \"event_creator_email\": \"string\",\r\n    \"href\": \"string\",\r\n    \"uuid\": \"string\"\r\n  }\r\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 114.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\n  \"query\": \"malcious\",\n  \"limit\": \"100\",\n  \"start_date\": \"2020-02-26T14:49:07Z\",\n  \"end_date\": \"2020-11-26T14:49:07Z\",\n  \"search_tags\": \"malware\",\n  \"sort_timestamp\": \"des\"\n}",
+      "Description": "The content of the query to search.",
+      "Name": "Query Content",
+      "Value": "{\n  \"query\": \"malcious\",\n  \"limit\": \"100\",\n  \"start_date\": \"2020-02-26T14:49:07Z\",\n  \"end_date\": \"2020-11-26T14:49:07Z\",\n  \"search_tags\": \"malware\",\n  \"sort_timestamp\": \"des\"\n}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560992,
+      "ModificationTimeUnixTimeInMs": 1616671560992
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "/all/search",
+      "Description": "The new query URL path.\n/all/search",
+      "Name": "New Query URL",
+      "Value": "/all/search",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560992,
+      "ModificationTimeUnixTimeInMs": 1616671560992
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616671560988,
+  "ModificationTimeUnixTimeInMs": 1617199845697
+}

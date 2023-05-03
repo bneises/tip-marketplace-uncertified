@@ -1,0 +1,51 @@
+{
+  "RunIntervalInSeconds": 900,
+  "Parameters": [
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145626,
+      "ModificationTimeUnixTimeInMs": 1624368145626,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Repo URL",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145626,
+      "ModificationTimeUnixTimeInMs": 1624368145626,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Branch",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145634,
+      "ModificationTimeUnixTimeInMs": 1624368145634,
+      "DefaultValue": "",
+      "Description": "List of playbook names, separeted by a comma, to pull from the repo",
+      "IsMandatory": true,
+      "Name": "Playbook Whitelist",
+      "Type": 2
+    }
+  ],
+  "Integration": "GitSync",
+  "Name": "Pull Playbook",
+  "Description": "Pulls and Installs a playbook or block from the repo. NOTE: Please verify your'e not overwriting existing playbooks",
+  "CreationTimeUnixTimeInMs": 1622818932446,
+  "ModificationTimeUnixTimeInMs": 1624368145629,
+  "Script": "from GitSyncManager import GitSyncManager\r\nfrom SiemplifyJob import SiemplifyJob\r\nfrom SiemplifyUtils import output_handler\r\n\r\nSCRIPT_NAME = \"Pull Playbook\"\r\n\r\n\r\n@output_handler\r\ndef main():\r\n    siemplify = SiemplifyJob()\r\n    siemplify.script_name = SCRIPT_NAME\r\n\r\n    pull_whitelist = siemplify.extract_job_param(\"Playbook Whitelist\").split(',')\r\n\r\n    try:\r\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\r\n\r\n        for playbook in pull_whitelist:\r\n            playbook = gitsync.pull_playbook(playbook)\r\n            gitsync.api.save_playbook(playbook)\r\n\r\n    except Exception as e:\r\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\r\n        siemplify.LOGGER.exception(e)\r\n        raise\r\n\r\n    siemplify.end_script()\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    main()\r\n",
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1,
+  "PythonVersion": "None",
+  "Id": 0
+}

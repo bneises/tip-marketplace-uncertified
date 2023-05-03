@@ -1,0 +1,87 @@
+{
+  "Name": "Add IP to Denied Lists",
+  "Description": "Add IP to IPv4 Allowed List in Bandura",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyUtils import flat_dict_to_csv, construct_csv, dict_to_flat, convert_dict_to_json_result_dict\nfrom SiemplifyUtils import output_handler\nfrom BanduraCyberManager import BanduraCyberManager\nfrom TIPCommon import extract_configuration_param, extract_action_param\n\n# CONTS\nINTEGRATION_NAME = \"BanduraCyber\"\nSCRIPT_NAME = \"Add IP to Denied Lists\"\nADDRESS = EntityTypes.ADDRESS\n\n@output_handler\ndef main():\n    json_results = {}\n    entities_with_results = []\n    result_value = False\n    \n    # Configuration.\n    siemplify = SiemplifyAction()\n    siemplify.script_name = u\"{} - {}\".format(INTEGRATION_NAME, SCRIPT_NAME)\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    # INIT INTEGRATION CONFIGURATION:\n    api_root = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"API Root\",\n                                           is_mandatory=True, input_type=unicode)\n    username = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Username\",\n                                           is_mandatory=True, input_type=unicode)\n    password = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Password\",\n                                           is_mandatory=True, input_type=unicode)\n    verify_ssl = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Verify SSL\",\n                                             default_value=False, input_type=bool)\n                                             \n    list_name = extract_action_param(siemplify, param_name=u\"List Name\", is_mandatory=True, input_type=unicode,\n                                       print_value=True)\n    description = extract_action_param(siemplify, param_name=u\"Description\", is_mandatory=False, input_type=unicode,\n                                       print_value=True)\n    maskbit = extract_action_param(siemplify, param_name=u\"Maskbit\", is_mandatory=False, input_type=int,\n                                       print_value=True, default_value=32)\n    expiration_date = extract_action_param(siemplify, param_name=u\"Expiration Date\", is_mandatory=False, input_type=unicode,\n                                       print_value=True, default_value=\"\")\n    \n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    bandura_cyber_manager = BanduraCyberManager(username, password, verify_ssl=verify_ssl)\n    \n    # Get scope entities.\n    scope_entities = [entity for entity in siemplify.target_entities if entity.entity_type == ADDRESS]\n    \n    for entity in scope_entities:\n        siemplify.LOGGER.info(u\"Processing entity {}\".format(entity.identifier))\n        siemplify.LOGGER.info(u\"Adding {} to {} Denied List\".format(entity.identifier, list_name))\n        results = bandura_cyber_manager.add_denied_ip_entity(list_name, entity.identifier,\n                                                             maskbit, description, expiration_date)\n\n        if results:\n            json_results[entity.identifier] = results[0]\n            entities_with_results.append(entity.identifier)\n            result_value = True\n\n    if result_value:\n        output_message = u'Added the following Entities to {0}: {1}'.format(list_name, ', '.join(entities_with_results))\n    else:\n        output_message = u'No entities were added'\n\n    siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_results))\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Bandura Cyber",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"EntityResult\":{\"description\":\"\",\"insertedDatetime\":\"2021-07-06T16:47:01+00:00\",\"address\":\"10.195.9.34\",\"maskbits\":32,\"expiresDatetime\":null,\"id\":\"10.195.9.34/32\"},\"Entity\":\"10.195.9.34\"},{\"EntityResult\":{\"description\":\"\",\"insertedDatetime\":\"2021-07-06T16:47:01+00:00\",\"address\":\"142.182.19.19\",\"maskbits\":32,\"expiresDatetime\":null,\"id\":\"142.182.19.19/32\"},\"Entity\":\"142.182.19.19\"}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 39.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "List Name",
+      "Description": "Name of Denied List to add the entity. (The List Name is Case Sensitive)",
+      "Name": "List Name",
+      "Value": "List Name",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625590095482,
+      "ModificationTimeUnixTimeInMs": 1625590095482
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Denied List Entity Description",
+      "Name": "Description",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625590095482,
+      "ModificationTimeUnixTimeInMs": 1625590095482
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "32",
+      "Description": "Defined the range of ip addresses that you would like to add to the list.",
+      "Name": "Maskbit",
+      "Value": "32",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625590095482,
+      "ModificationTimeUnixTimeInMs": 1625590095482
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Date you would like this entity to be removed from the list. Example Format: 2020-01-01T12:00:00.000+00:00",
+      "Name": "Expiration Date",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625590095482,
+      "ModificationTimeUnixTimeInMs": 1625590095482
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1625588455487,
+  "ModificationTimeUnixTimeInMs": 1625590095469
+}

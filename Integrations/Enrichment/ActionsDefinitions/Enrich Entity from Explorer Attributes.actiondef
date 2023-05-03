@@ -1,0 +1,53 @@
+{
+    "Name": "Enrich Entity from Explorer Attributes",
+    "Description": "Enriches entities with historic enrichment data using the entity explorer.  Requires API key to be configured for the integration.",
+    "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nimport requests\nimport json\nimport copy\n\nGET_ENTITY_URL = '{}/external/v1/entities/GetEntityData?format=camel'\n\nHEADERS = {\"Content-Type\": \"application/json\", \"Accept\": \"*/*\"}\nSCRIPT_NAME = \"Enrich Entity from Explorer\"\nSYSTEM_FIELDS = [\"Type\",\"Environment\",\"OriginalIdentifier\",\"IsInternalAsset\",\"IsSuspicious\",\"IsEnriched\",\"IsVulnerable\",\"IsArtifact\",\"IsTestCase\",\"Network_Priority\",\"IsAttacker\",\"Alert_Id\",\"IsManuallyCreated\",\"IsFromLdapString\"]        \n                \n@output_handler\ndef main():\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message : \"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    json_results = {}\n    \n    #Set our headers var\n    headers = copy.deepcopy(HEADERS)\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    \n    try:\n        #Get our bearer token\n        entities_to_update = []\n        conf = siemplify.get_configuration(\"Enrichment\")\n        api_key = conf.get('API Key')\n        whitelist = siemplify.extract_action_param(\"Use Field Name as Whitelist\",  print_value=True, default_value=\"true\").lower() == \"true\"\n        field_name = siemplify.parameters.get(\"Field Name\")\n        if field_name:\n            entity_fields = list(filter(None, [x.strip() for x in field_name.split(',')]))\n        else:\n            entity_fields = []\n        \n        \n        headers['AppKey'] = api_key\n        #Loop through all targeted entities\n        for entity in siemplify.target_entities:\n            json_payload = {\n                \"entityIdentifier\":         entity.identifier,\n                \"entityEnvironment\":        siemplify._environment,\n                \"lastCaseType\":             0,\n                \"caseDistributationType\":   0\n            }\n            res = requests.post( \n                GET_ENTITY_URL.format(siemplify.API_ROOT), \n                json    = json_payload, \n                headers = headers, \n                verify  = False\n            )\n            res.raise_for_status()\n        \n            entity_data = res.json()[\"entity\"]\n            entity_data_items = enumerate( entity_data[\"fields\"][0][\"items\"] )\n            property_value = None\n            updated_fields = {}\n            \n            for indice, field in entity_data_items:\n                entity_field = None\n                \n                #Does the entity have the field we're looking for?\n                if whitelist: # if whitelist is enabled, check if entity has field\n                    if entity_fields:\n                        if field[\"originalName\"] in entity_fields:\n                            entity_field    = field[\"originalName\"]\n                            property_value  = field['value']\n                    else:\n                        entity_field    = field[\"originalName\"]\n                        property_value  = field['value']\n                else: # if blacklist, skip the field if it's in the field names list, otherwise add it.\n                    if entity_fields:\n                        if field[\"originalName\"] in entity_fields:\n                            continue\n                    else:\n                        entity_field    = field[\"originalName\"]\n                        property_value  = field['value']\n                    #Does the existing entity already have the field? Update or add.\n                if entity_field and entity_field not in SYSTEM_FIELDS: # Check to see if field is in SYSTEM_FIELDS, skip if it is.\n                    if hasattr(entity, entity_field):\n                        setattr(entity, entity_field, property_value)\n                    else:\n                        entity.additional_properties[entity_field] = property_value\n                    \n                    updated_fields[entity_field] = property_value\n                    \n            if updated_fields:\n                output_message += f\"The properties: {', '.join(list(updated_fields.keys()))} was changed for entity: {entity.identifier}.\\n\"\n                entities_to_update.append(entity)\n                \n        #Prepare the json results for Siemplify\n            json_results[entity.identifier] = updated_fields\n\n        #Update the entities we need to update\n        if entities_to_update:\n            siemplify.LOGGER.info(\"Updating entities\")\n            # siemplify.update_entities( entities_to_update )\n            siemplify.result.add_result_json( convert_dict_to_json_result_dict(json_results) )\n            siemplify.result.add_json( \n                \"EnrichEntityExplorer\", \n                convert_dict_to_json_result_dict(json_results)\n            )\n            \n            \n            \n        \n    except requests.exceptions.RequestException as e:  # This is the correct syntax\n        print(e)\n        \n    siemplify.end(output_message, json.dumps(json_results), status)\n\n\nif __name__ == \"__main__\":\n    main()",
+    "IntegrationIdentifier": "Enrichment",
+    "ScriptResultName": "ScriptResult",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[{\"Entity\": \"F.ATTACKER4@GMAIL.COM\", \"EntityResult\": {}}, {\"Entity\": \"VICKIE.B@SIEMPLIFY.CO\", \"EntityResult\": {}}, {\"Entity\": \"HTTP://MARKOSSOLOMON.COM/F1Q7QX.PHP\", \"EntityResult\": {\"VT3_id\": \"057e8630c8880da8778b4f99e048933efb7cee9abdcf57fad89a7e7a2c7eae04\", \"VT3_title\": \"Registrant WHOIS contact information verification | Namecheap.com\", \"VT3_last_http_response_code\": \"200\", \"VT3_last_http_response_content_length\": \"183116\", \"VT3_threat_names\": \"C2/Generic-A\", \"VT3_harmless_count\": \"74\", \"VT3_malicious_count\": \"5\", \"VT3_undetected_count\": \"8\", \"VT3_reputation\": \"-7\", \"VT3_malicious_vote_count\": \"1\", \"VT3_report_link\": \"https://www.virustotal.com/gui/url/aHR0cDovL21hcmtvc3NvbG9tb24uY29tL0YxcTdRWC5waHA/detection\", \"VT3_widget_link\": \"https://www.virustotal.com/ui/widget/html/MDU3ZTg2MzBjODg4MGRhODc3OGI0Zjk5ZTA0ODkzM2VmYjdjZWU5YWJkY2Y1N2ZhZDg5YTdlN2EyYzdlYWUwNHx8dXJsfHx7ImJkMSI6ICIjNGQ2Mzg1IiwgImJnMSI6ICIjMzEzZDVhIiwgImJnMiI6ICIjMjIyYzQyIiwgImZnMSI6ICIjZmZmZmZmIiwgInR5cGUiOiAiZGVmYX...\", \"VT3_Forcepoint ThreatSeeker\": \"bot networks\", \"VT3_Sophos\": \"command and control\", \"VT3_Comodo Valkyrie Verdict\": \"unknown\", \"VT3_Webroot\": \"Dead Sites\"}}, {\"Entity\": \"YOUR NEW SALARY NOTIFICATION\", \"EntityResult\": {}}]\n\n",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "Rob",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 25.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 3600,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 728,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "The field(s) from the Entity Explorer that will be used to enrich the entity. When null all fields will be enriched. Supports comma delimited string.",
+            "Name": "Field Name",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 728,
+            "IsMandatory": false,
+            "DefaultValue": "true",
+            "Description": "When true, entities will be enriched with fields from 'Field Name' param.  When False, the list will be used as a blacklist and all other fields added",
+            "Name": "Use Field Name as Whitelist",
+            "Value": "true",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

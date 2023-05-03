@@ -1,0 +1,55 @@
+{
+  "Name": "Is String In Custom List",
+  "Description": "The action checks if a specific string exists in a custom list",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import  output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyDataModel import CustomList\nimport json\n\ndef get_custom_list_items_from_identifier_list(siemplify, category_name, identifiers):\n    \"\"\"\n    Get a list of custom list items from category and entities list.\n    :param category_name: the custom list category\n    :param identifiers: a list of strings\n    :return: a list of custom list item objects\n    \"\"\"\n\n    custom_list_items = []\n    for identifier in identifiers:\n        custom_list_items.append(\n            CustomList(identifier=identifier, category=category_name, environment=siemplify.environment))\n    return custom_list_items\n\ndef is_identifier_in_custom_list(siemplify, identifier, category):\n    # Returns True if identifier in category (for current environment)\n    custom_list_items = get_custom_list_items_from_identifier_list(siemplify, category, [identifier])\n    return siemplify.any_entity_in_custom_list(custom_list_items)\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    try:\n        status = EXECUTION_STATE_COMPLETED  \n        output_message = \"output message :\" \n        result_value = 0 \n\n        category = siemplify.parameters.get(\"Category\")\n        try:\n            identifier_list = json.loads(siemplify.parameters.get(\"IdentifierList\"))\n        except:\n            identifier_list = siemplify.parameters.get(\"IdentifierList\").split(\",\")\n        identifier_list = [x.strip() for x in identifier_list]\n        \n        json_result = {}\n        for identifier in identifier_list:\n            if is_identifier_in_custom_list(siemplify, identifier, category):\n                json_result[identifier] = True\n                result_value += 1\n            else:\n                json_result[identifier] = False\n        \n        if json_result:\n            siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_result))\n        \n        output_message = \"Found {} items in category {}\".format(result_value, category)\n\n    except Exception as e:\n        raise\n        status = EXECUTION_STATE_FAILED\n        result_value = \"Failed\"\n        output_message += \"\\n unknown failure\"\n\n\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Lists",
+  "ScriptResultName": "NumOfFoundResults",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\n    {\n        \"Entity\": \"1.2.3.4\",\n        \"EntityResult\": false\n    },\n    {\n        \"Entity\": \"google.com\",\n        \"EntityResult\": true\n    },\n    {\n        \"Entity\": \"yahoo.co.uk\",\n        \"EntityResult\": false\n    }\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 20.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1.2.3.4,google.com,yahoo.co.uk",
+      "Description": "A list of \"strings\" to compare against the custom list (for the current environment) in a specific category ",
+      "Name": "IdentifierList",
+      "Value": "1.2.3.4,google.com,yahoo.co.uk",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599658884182,
+      "ModificationTimeUnixTimeInMs": 1599658884182
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "WhiteList",
+      "Description": "Custom list Category",
+      "Name": "Category",
+      "Value": "WhiteList",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599658884182,
+      "ModificationTimeUnixTimeInMs": 1599658884182
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1599658884180,
+  "ModificationTimeUnixTimeInMs": 1623255029000
+}

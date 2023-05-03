@@ -1,0 +1,83 @@
+{
+  "Name": "Create Entity Insight From JSON",
+  "Description": "The action creates an entity insight from a json file",
+  "Script": "from SiemplifyUtils import output_handler\nimport json\nfrom SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\n\nfrom ToolsCommon import parse_raw_message\n\n# CONSTS\nOPEN_PH_PARENTHASIS = \"{\"\nCLOSE_PH_PARENTHASIS = \"}\"\nPIPE = \"|\"\n\nDEBUG = True\n\ndef print_debug(to_print, function=\"\"):\n    if DEBUG:\n        print(\"{} DEBUG: {}\".format(function, to_print))\n\ndef find_key_path_in_json(key_path, json_data):\n    \"\"\"\n    Finds the relevant key_path in a json object. \n    If list encountered, this function will return a list of values, one for each \n    match in each of the list's elements (using the rest of the keys)\n    \"\"\"\n    return find_key_path_recursive(key_path, json_data)\n    \ndef find_key_path_recursive(key_list, current_json, iteration=0):\n    if key_list:\n        if isinstance(current_json, list):\n            if key_list:\n                ret_list = []\n                for element in current_json:\n                    ret_list.extend(find_key_path_recursive(key_list, element, iteration=iteration+1))\n                return ret_list\n\n            return current_json\n        if isinstance(current_json, dict):\n            if key_list[0] in current_json:\n                return find_key_path_recursive(key_list[1:], current_json[key_list[0]], iteration=iteration+1)\n            return []\n    else:\n        if isinstance(current_json, dict):\n            return [current_json]\n        if isinstance(current_json, list):\n            return current_json\n        return [u\"{}\".format(current_json)] # Found val, return it. Format to make everything into string\n\ndef GetEntityByString(identifier, entities):\n    for ent in entities:\n        if identifier.lower() == ent.identifier.lower():\n            return ent\n    return None\n\ndef evaluate_function(val, func_name, func_values):\n    if func_name == \"default\":\n        if not val:\n            return func_values[0]\n        else:\n            return val\n    elif func_name == \"str\":\n        return str(val)\n    elif func_name == \"join\":\n        delimeter = \",\".join(func_values)\n        return(delimeter.join(val))\n    # elif func_name == \"ph\":\n    #     pass\n    else:\n        raise Exception(\"Unknown pipe function: {}\".format(func_name))\n\n\ndef parse_placeholder(curr_json, placeholder, pipe):\n    pipes = [x.strip() for x in placeholder.split(pipe)]\n    \n    val = None\n    for i, function_str in enumerate(pipes):\n        # print_debug(\"function_str: {}, curr_json: {}\".format(function_str, curr_json), \"iteration {}\".format(i))\n        first_split = function_str.strip().split(\"(\")\n        if len(first_split) > 2:\n            raise Exception(\"Bad format for pipe function: {}\".format(function_str))\n        elif len(first_split) == 1:\n            # Assuming key_path here\n            if isinstance(curr_json, list) or isinstance(curr_json, dict):\n                curr_json = find_key_path_in_json([function_str], curr_json)\n            else:\n                return None # cant find \"keys\" in a string\n        else: # len is 2\n            func_name = first_split[0]\n            func_values_string = first_split[1].split(\")\")[0]\n            func_values = [x for x in func_values_string.split(\",\")]\n            curr_json = evaluate_function(curr_json, func_name, func_values)\n    \n    return curr_json\n\n\ndef parse_raw_message_old(curr_json, raw_message, pipe=PIPE, open_ph=OPEN_PH_PARENTHASIS, close_ph=CLOSE_PH_PARENTHASIS):\n    new_message = \"\"\n    first_break = raw_message.split(open_ph)\n    new_message += first_break[0]\n    i = 1\n    while i < len(first_break):\n        second_break = first_break[i].split(close_ph)\n        if len(second_break) < 2:\n            raise Exception(\"Missing close PH: '{}'\".format(close_ph))\n        message_shard = parse_placeholder(curr_json, second_break[0], pipe)\n        new_message += str(message_shard) + close_ph.join(second_break[1:])\n        i += 1\n    \n    return new_message\n\n\ndef get_relevant_json(entity, identifier_key_path, json_input):\n    for curr_json in json_input:\n        json_identifier = find_key_path_in_json(identifier_key_path, curr_json)[0]\n        if json_identifier.lower() == entity.identifier.lower():\n            return curr_json\n    return {}\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    output_message = \"No insight created\"\n    result_value = False\n    \n    try:\n        json_input = json.loads(siemplify.parameters.get(\"JSON\"))\n    except:\n        siemplify.end(\"Failed to load JSON\", \"Failed\", EXECUTION_STATE_FAILED)\n    identifier_key_path_raw = siemplify.parameters.get(\"Identifier KeyPath\")\n    identifier_key_path = [x.strip() for x in identifier_key_path_raw.split(\".\")]\n    \n    raw_message = siemplify.parameters.get(\"Message\")\n    \n    try:\n        successful_entities = []\n        for entity in siemplify.target_entities:\n            relevant_json = get_relevant_json(entity, identifier_key_path, json_input)\n            \n            if relevant_json:\n                message = parse_raw_message(relevant_json, raw_message)\n                print_debug(message, \"final message\")\n                if message:\n                    output_message = message\n                    # siemplify.add_entity_insight(entity, message, triggered_by=siemplify.parameters.get(\"Triggered By\", \"Siemplify\"))\n                    successful_entities.append(entity)\n        \n        if successful_entities:\n            result_value = True\n            output_message = \"Insights added for:\\n{}\".format(\"\\n\".join([x.identifier for x in successful_entities]))\n        \n        siemplify.end(output_message, result_value, EXECUTION_STATE_COMPLETED)\n        \n    except Exception as e:\n        raise\n        siemplify.end(\"Errors found: {}\".format(e), 'Failed', EXECUTION_STATE_FAILED)\n\n\nif __name__ == '__main__':\n    main()\n    ",
+  "IntegrationIdentifier": "Insights",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 87.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{}",
+      "Description": "The JSON string that will be used to produce the Entity Insight.",
+      "Name": "JSON",
+      "Value": "{}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599658696972,
+      "ModificationTimeUnixTimeInMs": 1599658696972
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Entity",
+      "Description": "Key path for where to find the entity identifier to match the insight with the associated entity",
+      "Name": "Identifier KeyPath",
+      "Value": "Entity",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599658696972,
+      "ModificationTimeUnixTimeInMs": 1599658696972
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Formatted string that incorporates entity enrichment. For example:\nHi {AD_name}, please review.",
+      "Name": "Message",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599658696972,
+      "ModificationTimeUnixTimeInMs": 1599658696972
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "Siemplify",
+      "Description": "What integration should be associated with the insight",
+      "Name": "Triggered By",
+      "Value": "Siemplify",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599658696972,
+      "ModificationTimeUnixTimeInMs": 1599658696972
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1599658696967,
+  "ModificationTimeUnixTimeInMs": 1599658696967
+}

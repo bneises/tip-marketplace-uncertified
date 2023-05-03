@@ -1,0 +1,85 @@
+{
+	"IsEnabled": true,
+	"IsCustom": false,
+	"Integration": "Lacework",
+	"DocumentationLink": null,
+	"Name": "Lacework Connector",
+	"Description": "The connector pulls events from the Events API. Note: by default, the connector pulls events with severity 3 or above (3, 2, 1).",
+	"Creator": "0d989d8c-9b9b-4fd3-bb09-bfd590d26d60",
+	"Script": "from SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyUtils import output_handler, unix_now, dict_to_flat, convert_datetime_to_unix_time, convert_string_to_unix_time\nfrom LaceworkManager import LaceworkManager\nfrom random import randrange\n\nimport uuid\nimport json\nimport sys\nfrom pprint import pprint\n\n\nCONNECTOR_NAME = \"Lacework\"\nVENDOR = \"Lacework\"\nPRODUCT = \"Lacework\"\nDAY_IN_SECONDS = 86400\n\n@output_handler\ndef main(is_test_run):\n    alerts = [] # The main output of each connector run\n    siemplify = SiemplifyConnectorExecution() # Siemplify main SDK wrapper\n    siemplify.script_name = CONNECTOR_NAME\n\n    if (is_test_run):\n        siemplify.LOGGER.info(\"***** This is an \\\"IDE Play Button\\\"\\\\\\\"Run Connector once\\\" test run ******\")\n\n    # Initialize parameters\n\n    KEY_ID = siemplify.extract_connector_param(param_name=\"keyId\")\n    SECRET = siemplify.extract_connector_param(param_name=\"secret\")\n    ACCOUNT_NAME = siemplify.extract_connector_param(param_name=\"accountName\")\n    SEVERITY_THRESHOLD = siemplify.extract_connector_param(param_name=\"severity_threshold\")\n\n\n    manager = LaceworkManager(key_id = KEY_ID, secret = SECRET, account_name = ACCOUNT_NAME)\n    token = manager.get_temp_token()\n    events_list = manager.get_events_for_date_range(token)\n    \n    if events_list is None:\n        siemplify.LOGGER.info(\"No events were retrieved from Lacework\")\n    else:\n        siemplify.LOGGER.info(\"Retrieved {} events from Lacework\".format(len(events_list)))\n\n    for event in events_list:\n        try:\n            alert_id = event[\"EVENT_ID\"]\n            \n            lacework_severity = event[\"SEVERITY\"]\n\n            # Determine if event should be processed based on severity threshold set in the configuration\n            if int(lacework_severity) > int(SEVERITY_THRESHOLD):\n                siemplify.LOGGER.info(\"Event Severity: {}. Threshold: less than {}. Skipping Event {}\".format(lacework_severity, SEVERITY_THRESHOLD, alert_id))\n                continue\n            detailed_alert = manager.get_event_details(alert_id, token)\n\n            # Map the severity in Lacework to the severity levels in Siemplify\n            severity = get_siemplify_mapped_severity(lacework_severity)\n            siemplify_alert = build_alert_info(siemplify, detailed_alert, severity)\n\n            if siemplify_alert:\n                alerts.append(siemplify_alert)\n                siemplify.LOGGER.info(\"Added alert {} to package results\".format(alert_id))\n\n        except Exception as e:\n            siemplify.LOGGER.error(\"Failed to process alert {}\".format(alert_id))\n            siemplify.LOGGER.exception(e)\n\n    siemplify.return_package(alerts)\n\ndef get_siemplify_mapped_severity(severity):\n    severity_map = {\n        \"1\": \"100\",\n        \"2\": \"80\",\n        \"3\": \"60\",\n        \"4\": \"40\",\n        \"5\": \"-1\"\n    }\n    return severity_map.get(severity)\n\ndef build_alert_info(siemplify, alert, severity):\n    \"\"\"Returns an alert, which is an aggregation of basic events.\"\"\"\n\n    alert_info = AlertInfo()\n\n    # Each alert_info has a unique key composed of alert_info.name+alert_info.display_id. This key is used to validate data is digested only once by the Siemplify System - to avoid duplicates.\n    # If an alert_info has a uniqe_key that has already been digested, it will be ignored.\n    # The uniqueness must be persistent, even after server restart\\ refetching of the same alert, multiple runs of the same API queries, etc.\n    alert_info.display_id = alert[\"EVENT_ID\"]\n    alert_info.ticket_id = str(uuid.uuid4())  # In default, ticket_id = display_id. But, if for some reason the external alert id, is different then the composite's key display_id, you can save the original external alert id in this \"ticket_id\" field.\n    alert_info.name = \"Lacework Event: \" + alert[\"EVENT_TYPE\"]\n    alert_info.rule_generator = alert[\"EVENT_MODEL\"]  # Describes the name of the siem's rule, that caused the aggregation of the alert.\n    alert_info.start_time = convert_string_to_unix_time(alert[\"START_TIME\"])  # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n    alert_info.end_time = convert_string_to_unix_time(alert[\"END_TIME\"]) # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n    alert_info.priority = severity  # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n    alert_info.device_vendor = VENDOR  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source vendor of the data. (ie: Microsoft, Mcafee)\n    alert_info.device_product = PRODUCT  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source product of the data. (ie: ActiveDirectory, AntiVirus)\n    alert_info.environment = siemplify.context.connector_info.environment # This field, gets the Environment of the specific connector execution.\n    alert_info.events.append(dict_to_flat(alert))\n    # ----------------------------- Alert Fields initilization END -----------------------------\n\n    return alert_info\n\ndef get_rule_name(rules_list):\n    rules_set = set()\n    for rule in rules_list:\n        rules_set.add(rule[\"RULE_TITLE\"])\n    if len(rules_set) == 1:\n        return(list(rules_set)[0])\n    else:\n        return(\"Lacework: Multiple rules triggered\")\n\nif __name__ == \"__main__\":\n    # Connectors are run in iterations. The interval is configurable from the ConnectorsScreen UI.\n    is_test_run = not (len(sys.argv) < 2 or sys.argv[1] == 'True')\n    main(is_test_run)",
+	"Version": 228,
+	"MappingRules": [],
+	"ProductToVisualFamilyRecords": [],
+	"SimulationUseCases": {
+		"CasesForUseCase": [],
+		"UseCaseName": null
+	},
+	"Parameters": [{
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "null",
+		"Name": "accountName",
+		"Type": 2,
+		"Mode": 2,
+		"Description": "https://docs.lacework.com/generate-api-access-keys-and-tokens"
+	}, {
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "device_product",
+		"Name": "DeviceProductField",
+		"Type": 2,
+		"Mode": 0,
+		"Description": "The field name used to determine the device product"
+	}, {
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "event_name",
+		"Name": "EventClassId",
+		"Type": 2,
+		"Mode": 0,
+		"Description": "The field name used to determine the event name (sub-type)"
+	}, {
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "null",
+		"Name": "keyId",
+		"Type": 2,
+		"Mode": 2,
+		"Description": "https://docs.lacework.com/generate-api-access-keys-and-tokens"
+	}, {
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "30",
+		"Name": "PythonProcessTimeout",
+		"Type": 2,
+		"Mode": 0,
+		"Description": "The timeout limit (in seconds) for the python process running current script"
+	}, {
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "null",
+		"Name": "secret",
+		"Type": 3,
+		"Mode": 2,
+		"Description": "https://docs.lacework.com/generate-api-access-keys-and-tokens"
+	}, {
+		"ConnectorDefinitionId": 1,
+		"IsMandatory": true,
+		"IsAdvanced": false,
+		"DefaultValue": "3",
+		"Name": "severity_threshold",
+		"Type": 2,
+		"Mode": 2,
+		"Description": "Lacework Event Severity Threshold. Refer to mapping below and input appropriate threshold:\n1 - Critical\n2 - High\n3 - Medium\n4 - Low\n5 - Info"
+	}],
+	"Rules": [],
+	"IsConnectorRulesSupported": true,
+	"IsSystem": false,
+	"PythonVersion": "None"
+}

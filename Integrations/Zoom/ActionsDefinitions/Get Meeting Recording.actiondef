@@ -1,0 +1,42 @@
+{
+  "Name": "Get Meeting Recording",
+  "Description": "Fetch a specific recording stored in cloud\n",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ZoomManager import ZoomManager\n\n\nINTEGRATION_NAME = u\"Zoom\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    jwt_token = conf.get(\"JWT Token\")\n    account_id = conf.get(\"Account ID\")\n    client_id = conf.get(\"Client ID\")\n    client_secret = conf.get(\"Client Secret\")\n\n    #Extracting the action params\n    meeting_id = siemplify.extract_action_param(\"Meeting ID\")\n\n    #Creating a ZoomManager object instance\n    zoom_manager = ZoomManager(jwt_token, account_id, client_id, client_secret)\n\n    json_result = {}\n\n    meeting_recording_details = zoom_manager.get_meeting_recording(meeting_id)\n\n    \n    meeting_recording_url = meeting_recording_details.get('share_url')\n\n    \n    json_result['meetingRecordingDetails'] = meeting_recording_details\n    output_message = \"The meeting recording was fetched\"\n    result_value = meeting_recording_url\n\n    #Adding the image URL link\n    title = 'Recording meeting URL'\n    link = meeting_recording_url\n    siemplify.result.add_link(title, link)\n\n    #Adding json result to the action\n    siemplify.result.add_result_json(json_result)\n\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Zoom",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"uuid\": \"gkABCDEbbbbbbbkPuA==\",\r\n\t\"id\": 68000000031879,\r\n\t\"account_id\": \"EABkdslfBBBdk\",\r\n\t\"host_id\": \"z8yBXksaAAjdhfsfdfkjgg\",\r\n\t\"topic\": \"MyTestPollMeeting\",\r\n\t\"type\": 2,\r\n\t\"start_time\": \"2019-08-29T21:54:49Z\",\r\n\t\"timezone\": \"America/Los_Angeles\",\r\n\t\"duration\": 1,\r\n\t\"total_size\": 47383,\r\n\t\"recording_count\": 3,\r\n\t\"share_url\": \"https://api.zoom.us/recording/share/abcdkhfdbbfdjbg\",\r\n\t\"recording_files\": [{\r\n\t\t\t\"id\": \"96119skjlfhdshkjf-djkfndjf0-f791\",\r\n\t\t\t\"meeting_id\": \"gkABCDEbbbbbbbkPuA==\",\r\n\t\t\t\"recording_start\": \"2019-08-29T21:54:55Z\",\r\n\t\t\t\"recording_end\": \"2019-08-29T21:55:24Z\",\r\n\t\t\t\"file_type\": \"MP4\",\r\n\t\t\t\"file_size\": 37285,\r\n\t\t\t\"play_url\": \"https://api.zoom.us/recording/play/Qg75t7xZBtEbAkjdlgbfdngBBBB\",\r\n\t\t\t\"download_url\": \"https://api.zoom.us/recording/download/Qg75t7xZBtEbAkjdlgbfdngBBBB\",\r\n\t\t\t\"status\": \"completed\",\r\n\t\t\t\"recording_type\": \"shared_screen_with_speaker_view\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"id\": \"5890sfjkdsf-aaaakdf-fbbb618718e\",\r\n\t\t\t\"meeting_id\": \"gkABCDEbbbbbbbkPuA==\",\r\n\t\t\t\"recording_start\": \"2019-08-29T21:54:55Z\",\r\n\t\t\t\"recording_end\": \"2019-08-29T21:55:24Z\",\r\n\t\t\t\"file_type\": \"M4A\",\r\n\t\t\t\"file_size\": 10098,\r\n\t\t\t\"play_url\": \"https://api.zoom.us/recording/play/ABdkEEEfhlgldfjkglfghlkfdklhsg\",\r\n\t\t\t\"download_url\": \"https://api.zoom.us/recording/download/ABdkEEEfhlgldfjkglfghlkfdklhsg\",\r\n\t\t\t\"status\": \"completed\",\r\n\t\t\t\"recording_type\": \"audio_only\"\r\n\t\t},\r\n\t\t{\r\n\t\t\t\"meeting_id\": \"gkABCDEbbbbbbbkPuA==\",\r\n\t\t\t\"recording_start\": \"2019-08-29T21:54:55Z\",\r\n\t\t\t\"recording_end\": \"2019-08-29T21:55:24Z\",\r\n\t\t\t\"file_type\": \"TIMELINE\",\r\n\t\t\t\"download_url\": \"https://api.zoom.us/recording/download/e2ed-dlkjgdfkgh-kslsdbsjf1a\"\r\n\t\t}\r\n\t]\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 47,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "123456",
+      "Description": "The ID of the desired meeting recording",
+      "Name": "Meeting ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

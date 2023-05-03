@@ -1,0 +1,73 @@
+{
+    "Identifier": "PhilipsHUE",
+    "PackageName": "PhilipsHUE",
+    "DisplayName": "PhilipsHUE",
+    "Description": "Philips Hue is a line of color changing LED lamps and which can be controlled wirelessly.\n\nOn how to configure your Philips HUE bulb:\nhttps://developers.meethue.com/develop/get-started-2/",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "PhilipsHUE",
+            "PropertyName": "Bridge IP",
+            "PropertyDescription": "The IP address of the bridge for the Philips HUE product.",
+            "PropertyDisplayName": "Bridge IP",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "0.0.0.0",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1672832067851,
+            "ModificationTimeUnixTimeInMs": 1672832067851
+        },
+        {
+            "IntegrationIdentifier": "PhilipsHUE",
+            "PropertyName": "Authorized Username",
+            "PropertyDescription": "An authorized username for the bridge to access the product's attributes.",
+            "PropertyDisplayName": "Authorized Username",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "111",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1672832067851,
+            "ModificationTimeUnixTimeInMs": 1672832067851
+        }
+    ],
+    "Actions": [
+        "Ping",
+        "Turn On Light and Color",
+        "Turn Off Light"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "PhilipsManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! PhilipsHUE Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1634145924000
+        },
+        {
+            "Items": [
+                "Added alert effect functionality in Turn On Light and Color Action"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1635340692000
+        },
+        {
+            "Items": [
+                "Changed requests protocol to https and set timeouts for more security"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1673435559000
+        }
+    ]
+}

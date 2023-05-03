@@ -1,0 +1,114 @@
+{
+    "Identifier": "AirTable",
+    "PackageName": "AirTable",
+    "DisplayName": "AirTable",
+    "Description": "Airtable can store information in a spreadsheet that's visually appealing and easy-to-use, but it's also powerful enough to act as a database that businesses can use for customer-relationship management (CRM), task management, project planning, and tracking inventory.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1603730199453,
+            "Id": 0,
+            "IntegrationIdentifier": "AirTable",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1603730199453,
+            "PropertyDescription": "The API key is used to create the connection with airtable",
+            "PropertyDisplayName": "Api key",
+            "PropertyName": "Api key",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1603730199453,
+            "Id": 0,
+            "IntegrationIdentifier": "AirTable",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1603730199453,
+            "PropertyDescription": ".",
+            "PropertyDisplayName": "Base id",
+            "PropertyName": "Base id",
+            "PropertyType": 2,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1603730199453,
+            "Id": 0,
+            "IntegrationIdentifier": "AirTable",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1603730199453,
+            "PropertyDescription": ".",
+            "PropertyDisplayName": "Table name",
+            "PropertyName": "Table name",
+            "PropertyType": 2,
+            "Value": null
+        }
+    ],
+    "Actions": [
+        "AddOrUpdate",
+        "Create",
+        "Delete All Records",
+        "Delete",
+        "Enrich Entities From Table",
+        "Get All Records",
+        "Ping",
+        "Search",
+        "Update"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "AirTable Connector"
+    ],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 14.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Airtable Connector added to the integration.",
+                "NEW! Delete All Records added to the Airtable integration.",
+                "NEW! Get All Records added to the Airtable integration."
+            ],
+            "Version": 9.0,
+            "PublishTimeUnixTime": 1603736324000
+        },
+        {
+            "Items": [
+                "Fixed bug in Airtable Connector"
+            ],
+            "Version": 10.0,
+            "PublishTimeUnixTime": 1603895324000
+        },
+        {
+            "Items": [
+                "Added new Action: 'AddOrUpdate'."
+            ],
+            "Version": 11.0,
+            "PublishTimeUnixTime": 1625747968000
+        },
+        {
+            "Items": [
+                "Updated Airtable connector - added airtable record fields to event"
+            ],
+            "Version": 12.0,
+            "PublishTimeUnixTime": 1626614050000
+        },
+        {
+            "Items": [
+                "Updated the SVG Image"
+            ],
+            "Version": 13.0,
+            "PublishTimeUnixTime": 1626714756000
+        },
+        {
+            "Items": [
+                "Fixed Bug in AddOrUpdate Action"
+            ],
+            "Version": 14.0,
+            "PublishTimeUnixTime": 1628522710000
+        }
+    ]
+}

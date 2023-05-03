@@ -1,0 +1,30 @@
+{
+  "Name": "Enrich Source and Destinations",
+  "Description": "This action will add the source and destination links to IPs and hostnames in the alert.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\nimport time\nfrom datetime import datetime\nimport re\n\n\nINVESTIGATOR_URL = '{}/external/v1/investigator/GetInvestigatorData/{}?format=camel'\n\n\nACTION_NAME = \"Enrich Source and Destinations\"\n\n    \ndef get_alert_entities(siemplify):\n    return [entity for alert in siemplify.case.alerts for entity in alert.entities if alert.identifier == siemplify.current_alert.identifier ]\n    \ndef get_ip_entities(siemplify):\n    return [entity.identifier for entity in get_alert_entities(siemplify) if entity.entity_type == 'ADDRESS']\n\ndef get_host_entities(siemplify):\n    return [entity.identifier for entity in get_alert_entities(siemplify) if entity.entity_type == 'HOSTNAME']\n    \ndef get_current_alert(alerts, current_alert):\n    for alert in alerts:\n        if alert['identifier'] == current_alert:\n            return alert\n            \n        \ndef get_sources_and_dest(alert):\n    sources = []\n    destinations = []\n    for event_card in alert['securityEventCards']:\n        sources.extend(event_card['sources'])\n        destinations.extend(event_card['destinations'])\n    return (sources, destinations)\n\n    \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ACTION_NAME\n\n    investigator_res = siemplify.session.get(INVESTIGATOR_URL.format(siemplify.API_ROOT, siemplify.case_id))\n    investigator_res.raise_for_status()\n    alert = get_current_alert(investigator_res.json()['alerts'], siemplify.current_alert.identifier)\n    (sources,dests) = get_sources_and_dest(alert)\n    updated_entities = []\n    \n    for source in sources:\n        for entity in get_alert_entities(siemplify):\n            if entity.identifier == source:\n                entity.additional_properties.update({\"isSource\": \"true\"})\n                updated_entities.append(entity)\n                break\n    for dest in dests:\n        for entity in get_alert_entities(siemplify):\n            if entity.identifier == dest:\n                entity.additional_properties.update({\"isDest\": \"true\"})\n                updated_entities.append(entity)\n                break\n    \n                \n    siemplify.update_entities(updated_entities)\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n\n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Enrichment",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 7.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1626280845059,
+  "ModificationTimeUnixTimeInMs": 1637674507752
+}

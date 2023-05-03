@@ -1,0 +1,110 @@
+{
+  "Name": "Create Scan Task by MAC Address",
+  "Description": "Use this method to generate a scan task for managed endpoints identified by their MAC address.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n    target_macaddrs = siemplify.extract_action_param(\"Target IDs\", print_value=True)\n    scan_type = siemplify.extract_action_param(\"Scan Type\", print_value=True)\n    task_name = siemplify.extract_action_param(\"Task Name\", print_value=True)\n    scan_depth = siemplify.extract_action_param(\"Custom Scan - Depth\", print_value=True)\n    scan_paths = siemplify.extract_action_param(\"Custom Scan - Paths\", print_value=True)\n    \n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n        \n        result = mtm.task_create_scan_macaddr(access_url, target_macaddrs, scan_type, task_name, scan_depth, scan_paths)\n        \n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"success\"\n        result_value = \"success\"\n        if not result:\n            result_value = \"failed\"\n            output_message = \"failed\"\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n        siemplify.end(output_message, result_value, status)\n    except Exception as e:\n        siemplify.LOGGER.error(\"An error occurred: {0}\".format(e))\n        siemplify.LOGGER.exception(e)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n    \"items\":[\n        {   \n            \"id\" : \"21a295eeb1a43d8b497b23b7\", \"name\" : \"Endpoint 1\",\n            \"label\" : \"endpoint 1\",\n            \"fqdn\": \"endpoint1.local\",\n            \"groupId\": \"5a5f4d36b1a43d5f097b23bb\", \"isManaged\": true,\n            \"isManaged\": true,\n            \"machineType\": 1,\n            \"operatingSystemVersion\": \"Windows Server 2016\",\n            \"ip\": \"60.40.10.220\",\n            \"macs\": [\n                \"324935237225\"\n            ],\n            \"ssid\": \"\"\n        },\n        {\n            \"id\" : \"23a295d8b1a43d7c4a7b23c9\",\n            \"name\" : \"Endpoint 2\",\n            \"machineType\": 2,\n            \"label\" : \"endpoint 2\",\n            \"fqdn\": \"endpoint2.local\",\n            \"groupId\": \"5a4f4d46b1a53d5f197b23aa\", \"isManaged\": true,\n            \"machineType\": 1, \"operatingSystemVersion\": \"Windows 7\", \"ip\": \"60.40.10.221\",\n            \"macs\": [\n                \"325935237445\"\n            ],\n            \"ssid\": \"\"\n        }    \n    ]\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 53.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "macaddr1,macaddr2",
+      "Description": "The list of mac addresses of the endpoints to be scanned. You can specify at most 100 MAC addresses at once",
+      "Name": "MAC Addresses",
+      "Value": "macaddr1,macaddr2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071158380,
+      "ModificationTimeUnixTimeInMs": 1616071158380
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Quick",
+      "Description": "The type of scan. Available options are: 1 - quick scan; 2 - full scan; 3 - memory scan; 4 - custom scan",
+      "Name": "Scan Type",
+      "Value": "Quick",
+      "Type": 15,
+      "OptionalValues": [
+        "Quick",
+        "Full",
+        "Memory",
+        "Custom"
+      ],
+      "OptionalValuesJson": "[\"Quick\",\"Full\",\"Memory\",\"Custom\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071158380,
+      "ModificationTimeUnixTimeInMs": 1616071158380
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The name of the task. If the parameter is not passed, the name will be automatically generated.",
+      "Name": "Task Name",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071158380,
+      "ModificationTimeUnixTimeInMs": 1616071158380
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "Normal",
+      "Description": "The scan profile. Available options: 1 - aggressive; 2 - normal; 3 - permissive. This parameter is only used when scan type is Custom",
+      "Name": "Custom Scan - Depth",
+      "Value": "Normal",
+      "Type": 15,
+      "OptionalValues": [
+        "Aggressive",
+        "Normal",
+        "Permissive"
+      ],
+      "OptionalValuesJson": "[\"Aggressive\",\"Normal\",\"Permissive\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071158380,
+      "ModificationTimeUnixTimeInMs": 1616071158380
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "LocalDrives",
+      "Description": "Comma-separated list of target paths to be scanned. This parameter is only used when scan type is Custom",
+      "Name": "Custom Scan - Paths",
+      "Value": "LocalDrives",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071158380,
+      "ModificationTimeUnixTimeInMs": 1616071158380
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071158372,
+  "ModificationTimeUnixTimeInMs": 1616071158375
+}

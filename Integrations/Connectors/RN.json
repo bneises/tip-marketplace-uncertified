@@ -1,0 +1,26 @@
+[
+    {
+        "ChangeDescription": "NEW! Connectors integration to power up automation capabilities.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Connectors",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1603723745
+    },
+        {
+        "ChangeDescription": "NEW! \"Cron Scheduled Connector\" is a connector that will create a dummy case based off a cron schedule",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Cron Scheduled Connector",
+        "ItemType": "Connector",
+        "New": true,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "PRS-5353",
+        "PublishTime": 1632136726
+    }
+]

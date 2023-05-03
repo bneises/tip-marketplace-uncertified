@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Testing connectivity with Asana",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\nfrom AsanaManager import AsanaManager\n\nIDENTIFIER = u\"Asana\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    personal_access_token = siemplify.extract_configuration_param(IDENTIFIER, \"Token\")\n    base_url = siemplify.extract_configuration_param(IDENTIFIER, \"Base URL\")\n\n    # Creating an instance of AsanaManager object\n    asana_manager = AsanaManager(personal_access_token, base_url)\n\n    # Calling the function test_connectivity() from the AsanaManager\n    response = asana_manager.test_connectivity()\n\n    if response:\n        return_value = True\n        output_message = 'Connected successfully'\n\n    else:\n        return_value = False\n        output_message = 'The Connection failed'\n\n    # Test connectivity\n    siemplify.end(output_message, return_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Asana",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 22.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1621506215633,
+  "ModificationTimeUnixTimeInMs": 1621506215635
+}

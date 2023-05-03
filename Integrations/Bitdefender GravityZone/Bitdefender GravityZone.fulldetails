@@ -1,0 +1,99 @@
+{
+    "Identifier": "Bitdefender GravityZone",
+    "PackageName": "Bitdefender GravityZone",
+    "DisplayName": "Bitdefender GravityZone",
+    "Description": "Bitdefender Control Center API's allow developers and SOC's to automate business workflows. Docs: https://github.com/snags141/SiemplifyIntegration_BitdefenderGravityZone",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Bitdefender GravityZone",
+            "PropertyName": "API Key",
+            "PropertyDescription": "API Key generated under \"My Account\"",
+            "PropertyDisplayName": "API Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1616071406902,
+            "ModificationTimeUnixTimeInMs": 1616071406902
+        },
+        {
+            "IntegrationIdentifier": "Bitdefender GravityZone",
+            "PropertyName": "Access URL",
+            "PropertyDescription": "Access URL for Control Center API",
+            "PropertyDisplayName": "Access URL",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "https://cloud.gravityzone.bitdefender.com/api",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1616071406902,
+            "ModificationTimeUnixTimeInMs": 1616071406902
+        },
+        {
+            "IntegrationIdentifier": "Bitdefender GravityZone",
+            "PropertyName": "Verify SSL",
+            "PropertyDescription": "Verify SSL when making requests",
+            "PropertyDisplayName": "Verify SSL",
+            "PropertyType": 0,
+            "IsMandatory": false,
+            "Value": "false",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1616071406902,
+            "ModificationTimeUnixTimeInMs": 1616071406902
+        }
+    ],
+    "Actions": [
+        "Blocklist - Add Hashes",
+        "Blocklist - List Items",
+        "Blocklist - Remove Item",
+        "Create Scan Task by MAC Address",
+        "Create Scan Task",
+        "Get Custom Groups List",
+        "Get Endpoints List",
+        "Get Hourly Usage for EC2 Instances",
+        "Get Managed Endpoint Details",
+        "Get Network Inventory Items",
+        "Get Scan Tasks List",
+        "Isolate Endpoint",
+        "Ping",
+        "Policies - Get Details",
+        "Policies - List All",
+        "Quarantine - Add File",
+        "Quarantine - Get Items List",
+        "Quarantine - Remove Items",
+        "Quarantine - Restore Exchange Items",
+        "Quarantine - Restore Items",
+        "Reports - Get Download Links",
+        "Reports - List All",
+        "Restore Isolated Endpoint",
+        "Set Endpoint Label"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "BitdefenderGravityZoneManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Bitdefender GravityZone integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1617200801000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1635783493000
+        }
+    ]
+}

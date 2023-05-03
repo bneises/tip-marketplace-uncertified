@@ -1,0 +1,129 @@
+{
+  "Name": "Add or Update Rows",
+  "Description": "Add or update rows by a given column name.\n(If the value isn't found in the sheet it will be added as a new row)",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport gspread\nimport json\nIDENTIFIER = u'Google Sheet'\n\n\n\ndef add_or_update_row(siemplify, worksheet,field_name, column_number_int, values_dict,start_column, end_column, count):\n    ret_val = {\n        \"row_number\": -1,\n        \"output_message\":\"\"\n    }\n    row_index = -1\n    value_to_search = values_dict\n    row_values_list = list(values_dict.values())\n\n    try:\n        cell = worksheet.find(str(value_to_search))\n        if cell.col == column_number_int:\n            siemplify.result.add_result_json(values_dict)\n            row_index = cell.row\n            output_msg = \"Found row: {0}, with value {1} in column {2}.\".format(row_index,field_name,column_number_int)\n    except gspread.exceptions.CellNotFound:\n        output_msg = 'The cell was not found'\n\n\n    updated_range = ''\n    if row_index != -1:\n        updated_range = '{0}{1}:{2}{1}'.format(start_column,row_index + count,end_column)\n        worksheet.update(updated_range, [row_values_list])\n        output_msg = \"Updated range {0} with values {1}.\".format(updated_range,row_values_list)\n\n    else:\n        res = worksheet.append_row(row_values_list)\n        updated_range = res['updates']['updatedRange']\n\n        output_msg = \"Added new row in {0} with values {1}.\".format(updated_range,row_values_list)\n\n    print(updated_range)\n    ret_val[\"updated_range\"] = updated_range\n    ret_val[\"output_message\"] = output_msg\n    return ret_val\n        \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n    column_number_str= siemplify.extract_action_param(param_name=u'Column Number', is_mandatory=True)\n    column_header = siemplify.extract_action_param(param_name=u'Field Name', is_mandatory=True)\n    sheet_id = siemplify.extract_action_param(param_name=u'Sheet Id', is_mandatory=True)\n    worksheet_name = siemplify.extract_action_param(param_name=u'Worksheet Name')\n    start_column = siemplify.extract_action_param(param_name=u'Start Column')\n    end_column = siemplify.extract_action_param(param_name=u'End Column')\n\n    \n    column_number_int = int(column_number_str)\n    json_fields_str = siemplify.extract_action_param(param_name=u'Json')\n\n    json_fields_str = json_fields_str.replace(\"'\",'\"')\n    rows = json.loads(json_fields_str)\n\n    \n    f = open(\"credentials.json\", \"w+\")\n    f.write(credentials_json)\n    f.close()\n\n    \n    gc = gspread.service_account(filename='./credentials.json')\n    sh = gc.open_by_key(sheet_id)\n    \n    if(worksheet_name):\n        worksheet = sh.worksheet(worksheet_name)\n    else:\n        worksheet = sh.sheet1\n    \n    updated_rows = []\n    count = 0\n    for row in rows:\n        ret_val = add_or_update_row(siemplify, worksheet,column_header,column_number_int, row,start_column, end_column, count)\n        count = count + 1\n        updated_rows.append(ret_val['updated_range'])\n    \n    updated_rows_count = len(updated_rows)\n    siemplify.end(\"{0} rows were updated or added.\".format(updated_rows_count), updated_rows_count)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Google Sheets",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 66.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "The column number by which we will look for the value of the given Field Name in the Json",
+      "Name": "Column Number",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "From which column number we will update or add the values ​​to the given rows",
+      "Name": "Start Column",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "2",
+      "Description": "Untill which column number we will update or add the values ​​to the given rows",
+      "Name": "End Column",
+      "Value": "2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Field_Key_1",
+      "Description": "This is the field name in the given Json by which we will search for its value in a row by its column number.\n",
+      "Name": "Field Name",
+      "Value": "Field_Key_1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "[\n  {\n    \"Field_Key_1\": \"Field_Value_1\",\n    \"Field_Key_2\": \"Field_Value_2\",\n    \"Field_Key_3\": \"Field_Value_3\"\n  }\n]",
+      "Description": "The JSON values to add or update for the chosen column number and field name. Each item will be one row.\nNote: each value needs to be unique.",
+      "Name": "Json",
+      "Value": "[\n  {\n    \"Field_Key_1\": \"Field_Value_1\",\n    \"Field_Key_2\": \"Field_Value_2\",\n    \"Field_Key_3\": \"Field_Value_3\"\n  }\n]",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Sheet-Id>",
+      "Description": "The sheet Id can be found in the sheet url.\nhttps://docs.google.com/spreadsheets/d/{YourSpreadSheetId}/edit#gid=0",
+      "Name": "Sheet Id",
+      "Value": "<Sheet-Id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "<Sheet-Name>",
+      "Description": "The worksheet name is the Sheet tab name. The default Sheet name is \"Sheet1\". Note: it is case sensitive. ",
+      "Name": "Worksheet Name",
+      "Value": "<Sheet-Name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625075316217,
+      "ModificationTimeUnixTimeInMs": 1625075316217
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1625075316200,
+  "ModificationTimeUnixTimeInMs": 1625075316203
+}

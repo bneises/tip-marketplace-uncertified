@@ -1,0 +1,103 @@
+{
+    "Identifier": "Bandura Cyber",
+    "PackageName": "Bandura Cyber",
+    "DisplayName": "Bandura Cyber",
+    "Description": "Bandura delivers the threat intelligence automation and control needed for companies of all sizes to block known threats at massive scale, operationalize threat intelligence, and get more out of your existing security resources.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Bandura Cyber",
+            "PropertyName": "API Root",
+            "PropertyDescription": "API Root",
+            "PropertyDisplayName": "API Root",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "https://gmc.banduracyber.com/api/v1",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1619559994354,
+            "ModificationTimeUnixTimeInMs": 1619559994354
+        },
+        {
+            "IntegrationIdentifier": "Bandura Cyber",
+            "PropertyName": "Username",
+            "PropertyDescription": "Username",
+            "PropertyDisplayName": "Username",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "danield@siemplify.co",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1619559994354,
+            "ModificationTimeUnixTimeInMs": 1619559994354
+        },
+        {
+            "IntegrationIdentifier": "Bandura Cyber",
+            "PropertyName": "Password",
+            "PropertyDescription": "Password",
+            "PropertyDisplayName": "Password",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1619559994354,
+            "ModificationTimeUnixTimeInMs": 1619559994354
+        },
+        {
+            "IntegrationIdentifier": "Bandura Cyber",
+            "PropertyName": "Verify SSL",
+            "PropertyDescription": "verify SSL",
+            "PropertyDisplayName": "Verify SSL",
+            "PropertyType": 0,
+            "IsMandatory": false,
+            "Value": "true",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1619559994354,
+            "ModificationTimeUnixTimeInMs": 1619559994354
+        }
+    ],
+    "Actions": [
+        "Add Domain to Allowed Lists",
+        "Add Domain to Denied Lists",
+        "Add IP to Allowed Lists",
+        "Add IP to Denied Lists",
+        "Get Allowed Domain Lists",
+        "Get Allowed IP Lists",
+        "Get Denied Domain Lists",
+        "Get Denied IP Lists",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "BanduraCyberManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Bandura Cyber Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1626107376000
+        },
+        {
+            "Items": [
+                "Update SVG Bandura Cyber Integration."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1626774317000
+        },
+        {
+            "Items": [
+                "Update SVG Bandura Cyber Integration."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1635782738000
+        }
+    ]
+}

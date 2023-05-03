@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "The Ping action is used by Siemplify to test connectivity to slack once you have configured a connector.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom PerimeterXManager import PerimeterXManager,PerimeterXManagerException\n\nINTEGRATION_NAME = \"PerimeterX\"\n\nSCRIPT_NAME = \"Ping\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(u\"----------------- Main - Param Init -----------------\")\n\n    param_slack_api_key = siemplify.extract_configuration_param(INTEGRATION_NAME,\"Slack API Key\")\n    param_slack_channel = siemplify.extract_configuration_param(INTEGRATION_NAME,\"Slack Channel\")\n\n    siemplify.LOGGER.info(u\"----------------- Main - Started -----------------\")\n\n    try:\n        pX = PerimeterXManager(slack_channel=param_slack_channel, slack_api_key=param_slack_api_key, connector_type='slack')\n        pX.auth()\n        output_message = u'Connection to Slack established successfully.'\n        result = 'true'\n        status = EXECUTION_STATE_COMPLETED\n        siemplify.LOGGER.info(u'Script Name: {} | {}'.format(SCRIPT_NAME, output_message))\n    except PerimeterXManagerException as e:\n        output_message = u'An error occurred when trying to connect to the API: {}'.format(e)\n        result = 'false'\n        status = EXECUTION_STATE_FAILED\n        siemplify.LOGGER.error(u'Script Name: {} | {}'.format(SCRIPT_NAME, output_message))\n        siemplify.LOGGER.exception(e)\n\n    siemplify.LOGGER.info(u\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(u'Status: {}'.format(status))\n    siemplify.LOGGER.info(u'Result: {}'.format(result))\n    siemplify.LOGGER.info(u'Output Message: {}'.format(output_message))\n\n    siemplify.end(output_message, result, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "PerimeterX",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 8.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1609856324680,
+  "ModificationTimeUnixTimeInMs": 1609856324699
+}

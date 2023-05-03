@@ -1,0 +1,75 @@
+{
+  "Name": "Math Arithmetic",
+  "Description": "A set of built in math operators:\nPlus - returns a result for the sum of 2 arguments\nSub - returns a result for 1 argument minus the other\nMulti - returns a result for 1 argument multiplied by the other\nDiv - returns a result for 1 argument divided by the other\nMod - returns the result of the percentage between 2 arguments",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nimport json\n\n\ndef try_parse_float_or_int(s, val=None):\n    try:\n        number = float(s)\n        return number\n    except ValueError:\n        number = int(s, 10)\n        return val\n        \n    \ndef main():\n    siemplify = SiemplifyAction()\n    \n    function = siemplify.parameters.get(\"Function\")\n\n    arg_1_str = siemplify.parameters.get(\"Arg 1\")\n    arg_2_str = siemplify.parameters.get(\"Arg 2\")\n\n    arg_1 = try_parse_float_or_int(arg_1_str)\n    arg_2 = try_parse_float_or_int(arg_2_str)\n\n    result_value = False\n    output_message = 'No function {0} found.'.format(function)\n    if function == 'Plus':\n        result_value = arg_1 + arg_2; \n        output_message  = '{0} + {1} = {2}'.format(arg_1,arg_2, result_value)\n\n    elif function == 'Sub':\n        result_value = arg_1 - arg_2; \n        output_message  = '{0} - {1} = {2}'.format(arg_1,arg_2, result_value)\n\n    elif function == 'Multi':\n        result_value = arg_1 * arg_2; \n        output_message  = '{0} * {1} = {2}'.format(arg_1,arg_2, result_value)\n\n    elif function == 'Div':\n        result_value = arg_1 / arg_2; \n        output_message  = '{0} / {1} = {2}'.format(arg_1,arg_2, result_value)\n\n    elif function == 'Mod':\n        result_value = arg_1 % arg_2; \n        output_message  = '{0} % {1} = {2}'.format(arg_1,arg_2, result_value)\n\n    siemplify.end(output_message, result_value,EXECUTION_STATE_COMPLETED)\n\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 9.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Plus",
+      "Description": "The function you would like to run on 2 given arguments ",
+      "Name": "Function",
+      "Value": "Plus",
+      "Type": 15,
+      "OptionalValues": [
+        "Plus",
+        "Sub",
+        "Multi",
+        "Div",
+        "Mod"
+      ],
+      "OptionalValuesJson": "[\"Plus\",\"Sub\",\"Multi\",\"Div\",\"Mod\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102522,
+      "ModificationTimeUnixTimeInMs": 1610733102522
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{}",
+      "Description": "The second argument ",
+      "Name": "Arg 2",
+      "Value": "{}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102522,
+      "ModificationTimeUnixTimeInMs": 1610733102522
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{}",
+      "Description": "The first argument",
+      "Name": "Arg 1",
+      "Value": "{}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102522,
+      "ModificationTimeUnixTimeInMs": 1610733102522
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610733102519,
+  "ModificationTimeUnixTimeInMs": 1624469780000
+}

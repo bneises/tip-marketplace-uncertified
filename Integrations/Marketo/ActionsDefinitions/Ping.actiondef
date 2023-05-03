@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Test the connectivity with Marketo ",
+  "Script": "import json\n\nfrom marketorestpython.client import MarketoClient\n\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nINTEGRATION_NAME = \"Marketo\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    output_message = \"\" \n    \n    # INIT INTEGRATION PARAMETERS:\n    client_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Id\")\n    client_secret = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Secret\")\n    munchkin_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Munchkin Id\")\n\n    try:\n        mc = MarketoClient(munchkin_id, client_id, client_secret, None, None)\n        lead = mc.execute(method='get_lead_by_id', id=1, fields=['firstName', 'middleName', 'lastName', 'department'])\n        status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n        output_message = f\"\"\n    except Exception as e:\n        raise  \n    \n    siemplify.end(\"Success\", True)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Marketo",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Yoav",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 22.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1628166434697,
+  "ModificationTimeUnixTimeInMs": 1628166434703
+}

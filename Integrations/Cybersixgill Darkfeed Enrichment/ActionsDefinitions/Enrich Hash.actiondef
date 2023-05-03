@@ -1,0 +1,26 @@
+{
+  "Name": "Enrich Hash",
+  "Description": "Enrich a Hash using Sixgill information (Proactively analyze and investigate hashes of malware as they emerge on the dark web, including malware undetected by AV vendors)",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom SiemplifyDataModel import EntityTypes\n\nfrom SixgillManager import SixgillEnrichManager,PROVIDER\nfrom SixgillResultProcessor import SixgillActionResultProcessor\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    client_id = siemplify.extract_configuration_param(PROVIDER,\"Client Id\")\n    client_secret = siemplify.extract_configuration_param(PROVIDER,\"Client Secret\")\n\n    sixgill_manager = SixgillEnrichManager(client_id,client_secret)\n    sixgill_process = SixgillActionResultProcessor(siemplify,sixgill_manager)\n    sixgill_process.entity_data([EntityTypes.FILEHASH])\n    sixgill_process.enrich([EntityTypes.FILEHASH])\n\nif __name__ == \"__main__\":\n    main()\n\n\n",
+  "IntegrationIdentifier": "Cybersixgill Darkfeed Enrichment",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\r\n  {\r\n    \"entityIdentifier\": \"6A416565A80DF7955C2729CC36C3760C\",\r\n    \"entityResult\": [\r\n      {\r\n        \"created\": \"2020-07-31T04:47:01.788Z\",\r\n        \"description\": \"Virustotal link that appeared on a dark web site, generally to show malware that is undedetected\",\r\n        \"external_reference\": [\r\n          {\r\n            \"positive_rate\": \"medium\",\r\n            \"source_name\": \"VirusTotal\",\r\n            \"url\": \"https://virustotal.com/#/file/31dbff2e35c1ff0c76ac3f2d8c68256d6a6736218be26d8eb8b78b2dd687978c\"\r\n          },\r\n          {\r\n            \"description\": \"Mitre attack tactics and technique reference\",\r\n            \"mitre_attack_tactic\": \"Test capabilities\",\r\n            \"mitre_attack_tactic_id\": \"TA0025\",\r\n            \"mitre_attack_tactic_url\": \"https://attack.mitre.org/tactics/TA0025/\",\r\n            \"mitre_attack_technique\": \"Test signature detection for file upload/email filters\",\r\n            \"mitre_attack_technique_id\": \"T1361\",\r\n            \"mitre_attack_technique_url\": \"https://attack.mitre.org/techniques/T1361/\",\r\n            \"source_name\": \"mitre-attack\"\r\n          }\r\n        ],\r\n        \"id\": \"indicator--006e5e90-b86a-4e51-9d44-bf129b2cf358\",\r\n        \"labels\": [\r\n          \"malicious-activity\",\r\n          \"malware\",\r\n          \"malicious\",\r\n          \"Test capabilities\",\r\n          \"Test signature detection for file upload/email filters\"\r\n        ],\r\n        \"lang\": \"en\",\r\n        \"modified\": \"2020-07-31T04:47:01.788Z\",\r\n        \"pattern\": \"[file:hashes.MD5 = '6a416565a80df7955c2729cc36c3760c' OR file:hashes.'SHA-1' = '809f9db2ad097f3292714610aa4c1c73ad39cfe6' OR file:hashes.'SHA-256' = '31dbff2e35c1ff0c76ac3f2d8c68256d6a6736218be26d8eb8b78b2dd687978c']\",\r\n        \"sixgill_actor\": \"skywalkingz\",\r\n        \"sixgill_confidence\": 80,\r\n        \"sixgill_feedid\": \"darkfeed_002\",\r\n        \"sixgill_feedname\": \"darkweb_vt_links\",\r\n        \"sixgill_post_virustotallink\": \"https://virustotal.com/#/file/31dbff2e35c1ff0c76ac3f2d8c68256d6a6736218be26d8eb8b78b2dd687978c\",\r\n        \"sixgill_postid\": \"34b727bcb64e80769044b6f9cf241de05963d396\",\r\n        \"sixgill_posttitle\": \"[CRACKED] Paysafecard Codes Generator | Cracked By Me From Nulled.to\",\r\n        \"sixgill_source\": \"forum_cracked\",\r\n        \"spec_version\": \"2.0\",\r\n        \"type\": \"indicator\",\r\n        \"valid_from\": \"2020-07-26T20:05:00Z\"\r\n      }\r\n    ]\r\n  }\r\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "System",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 62.0,
+  "TimeoutSeconds": 120,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1634543717428,
+  "ModificationTimeUnixTimeInMs": 1634543717430
+}

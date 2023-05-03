@@ -1,0 +1,99 @@
+{
+  "Name": "String Functions",
+  "Description": "This action includes basic Pythonic string functions as mentioned below - \nLower - converts a string into lower case.\nUpper - converts a string into upper case.\nCount - returns the number of times a specified value occurs in a string.\nFind - searches the string for a specified value and returns the position of where it was found.\nIsAlpha - returns \"True\" if all characters in the string are in the alphabet.\nIsDigit - returns \"True\" if all characters in the string are digits.\nReplace - returns a string where a specified value is replaced with a specified value.\nStrip - returns a trimmed version of the string.\nTitle - converts the first character of each word to uppercase.\nSplit - Splits the input string into a list using Param 1 as the separator.  Defaults to comma.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json, re\nimport base64\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n\n\n    input = siemplify.parameters.get(\"Input\")\n    function = siemplify.parameters.get(\"Function\")\n    param_1 = siemplify.parameters.get(\"Param 1\")\n    param_2 = siemplify.parameters.get(\"Param 2\")\n\n    output_message = ''\n    result = input\n    \n    if function == 'Lower':\n        result = input.lower()\n        output_message = '{0} successfully converted to {1} with lower function'.format(input,result)\n    \n    elif function == 'Upper':\n        result = input.upper()\n        output_message  = '{0} successfully converted to {1} with upper function'.format(input,result)\n    \n    elif function == 'Strip':\n        result = input.strip()\n        output_message  = '{0} successfully converted to {1} with strip function'.format(input,result)\n    \n    elif function == 'Title':\n        result = input.title()\n        output_message  = '{0} successfully converted to {1} with title function'.format(input,result)\n       \n    elif function == 'Count':\n        result = input.count(param_1)\n        output_message = \"'{0}' was found {1} times in '{2}'\".format(param_1,result, input)\n\n    elif function == 'Replace':\n        result = input.replace(param_1, param_2)\n        output_message  = '{0} successfully converted to {1} with replace function'.format(input,result)\n        \n    elif function == 'Find':\n        result = input.find(param_1)\n        output_message = \"'{0}' was found at index {1} in '{2}'\".format(param_1,result, input)\n    \n    elif function == 'Upper':\n        result = input.upper()\n        output_message  = '{0} successfully converted to {1} with upper function'.format(input,result)\n    \n    elif function == 'IsAlpha':\n        result = input.isalpha()\n        print(result)\n        if(result):\n            output_message = \"All characters in {0} are alphanumeric\".format(input)\n        else:\n            output_message = \"Not all characters in {0} are alphanumeric\".format(input)\n    \n    elif function == 'IsDigit':\n        result = input.isdigit()\n        print(result)\n        if(result):\n            output_message = \"All characters in {0} are digits\".format(input)\n        else:\n            output_message = \"Not all characters in {0} are digits\".format(input)  \n    \n    elif function == 'Regex Replace':\n        result = re.sub(param_1, param_2, input)\n        output_message  = '{0} successfully converted to {1} with regex replace function'.format(input,result)\n    \n    elif function == 'JSON Serialize':\n        result = json.dumps(input)\n        output_message = \"{} successfully serialized to JSON format\".format(input)\n    \n    elif function == 'Regex':\n        if not param_2:\n            param_2 = \", \"\n        result = param_2.join(re.findall(param_1, input))\n        output_message = \"Found following values:\\n{}\".format(result)\n    \n    elif function == 'DecodeBase64':\n        result = (base64.b64decode(input)).decode('utf-8')\n        output_message = \"Decoded base64 string to: {}\".format(result)\n    \n    elif function == 'EncodeBase64':\n        result = (base64.b64encode(input.encode('utf-8'))).decode('utf-8')\n        output_message = \"Successfully base64 encoded {}.\".format(input)\n        \n    elif function == 'RemoveNewLines':\n        result = \" \".join(input.splitlines())\n        output_message = \"{0} successfully removed new lines: {1}\".format(input, result)\n    \n    siemplify.end(output_message, result, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 28.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": " ",
+      "Description": "The second parameter (this is an optional parameter as some functions require only 1 param)",
+      "Name": "Param 2",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102464,
+      "ModificationTimeUnixTimeInMs": 1610733102464
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The first parameter (this is an optional parameter as some functions require only 1 param)",
+      "Name": "Param 1",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102464,
+      "ModificationTimeUnixTimeInMs": 1610733102464
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Example",
+      "Description": "The input for the current fuction",
+      "Name": "Input",
+      "Value": "Example",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102464,
+      "ModificationTimeUnixTimeInMs": 1610733102464
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Lower",
+      "Description": "Select the function you would like to run from the list",
+      "Name": "Function",
+      "Value": "Lower",
+      "Type": 15,
+      "OptionalValues": [
+        "Lower",
+        "Upper",
+        "Count",
+        "Find",
+        "IsAlpha",
+        "IsDigit",
+        "Replace",
+        "Strip",
+        "Title",
+        "Regex Replace",
+        "JSON Serialize",
+        "Regex",
+        "Split",
+        "DecodeBase64",
+        "EncodeBase64"
+      ],
+      "OptionalValuesJson": "[\"Lower\",\"Upper\",\"Count\",\"Find\",\"IsAlpha\",\"IsDigit\",\"Replace\",\"Strip\",\"Title\",\"Regex Replace\",\"JSON Serialize\",\"Regex\",\"Split\",\"DecodeBase64\",\"EncodeBase64\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102464,
+      "ModificationTimeUnixTimeInMs": 1610733102464
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610733102459,
+  "ModificationTimeUnixTimeInMs": 1610733102459
+}

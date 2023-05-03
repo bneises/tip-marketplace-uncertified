@@ -1,0 +1,41 @@
+{
+  "Name": "Get Files as Base64",
+  "Description": "Converts local files to base64 strings.",
+  "Script": "# ============================================================================#\n# title           :Get Files as Base64\n# description     :This action will get the base64 value of local files.\n#                 : Supports comma delmited list of files.\n# author          :robb@siemplify.co\n# date            :2020-12-16\n# python_version  :3.7\n# libraries       :\n# requirements    :\n# product_version :1.0\n# ============================================================================#\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport errno\nimport json\nimport base64\nimport os\nimport re\n\n\nINTEGRATION_NAME = u\"FileUtilities\"\nSCRIPT_NAME = u\"Get Files as Base64\"\nLOCAL_FOLDER = u\"downloads\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    \n    filenames = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"File Paths\").split(',')]))\n\n    status          = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message  = \"Output Message: \"  # human readable message, showed in UI as the action result\n    result_value    = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    json_result = {}\n    json_result['filenames'] = filenames\n    json_result['data'] = []\n    file_paths = []\n    for file_location in filenames:\n        try:\n            head_tail = os.path.split(file_location)\n            filename, file_extension = os.path.splitext(file_location)\n            file_data = {}\n            file_data['path'] = head_tail[0]\n            file_data['filename'] = head_tail[1]\n            file_data['extension'] = file_extension\n            with open(file_location, \"rb\") as f:\n                file_data['base64']    = base64.b64encode(f.read()).decode('utf-8')\n            json_result['data'].append(file_data)\n            file_paths.append(head_tail[1])\n                \n                \n        except Exception as e:\n            siemplify.LOGGER.error(\"General error performing action:\\r\")\n            siemplify.LOGGER.exception(e)\n            status          = EXECUTION_STATE_FAILED\n            result_value    = \"Failed\"\n            output_message += \"\\n unknown failure\"\n            raise\n    \n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.result.add_result_json(json.dumps(json_result))\n    siemplify.LOGGER.info(output_message)\n    output_message = 'Converted Files to Base64: ' + \",\".join(file_paths)\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"filenames\": [\n    \"/opt/siemplify/siemplify_server/Scripting/Phishing_.eml\",\n    \"/opt/siemplify/siemplify_server/Scripting/Logo.png\"\n  ],\n  \"data\": [\n    {\n      \"path\": \"/opt/siemplify/siemplify_server/Scripting\",\n      \"filename\": \"Phishing_.eml\",\n      \"extension\": \".eml\",\n      \"base64\": \"XXXX\"\n    },\n    {\n      \"path\": \"/opt/siemplify/siemplify_server/Scripting\",\n      \"filename\": \"Logo.png\",\n      \"extension\": \".png\",\n      \"base64\": \"iVBORw0KGgoAAAANSUhEUgAAAY8AAABdCAYAAABdG+\"\n    }\n  ]\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 14.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "/path/file.exe",
+      "Description": "A comma delimited list of files, including their path.",
+      "Name": "File Paths",
+      "Value": "/path/file.exe",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236932,
+      "ModificationTimeUnixTimeInMs": 1610399236932
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236929,
+  "ModificationTimeUnixTimeInMs": 1610399236929
+}

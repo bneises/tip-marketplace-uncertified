@@ -1,0 +1,44 @@
+{
+    "IntegrationProperties": [
+        {
+            "PropertyName": "API Key", 
+            "PropertyDescription": "API Key", 
+            "PropertyDisplayName": "API Key", 
+            "IsMandatory": false, 
+            "ModificationTimeUnixTimeInMs": 1595862745296, 
+            "IntegrationIdentifier": "Full Contact", 
+            "PropertyType": 3, 
+            "Value": null, 
+            "CreationTimeUnixTimeInMs": 1595862745296, 
+            "Id": 0
+        }
+    ], 
+    "DisplayName": "Full Contact", 
+    "Description": "FullContact is a privacy-safe Identity Resolution company designed for individuals and teams. It has the capability to collect contact data and information of companies, enterprises, and professionals; and organizes them into a centralized location. ", 
+    "CustomFamilies": [], 
+    "Managers": [], 
+    "PackageName": "Full Contact", 
+    "IsCustom": false, 
+    "Actions": [
+        "Ping", 
+        "Enrich Entities"
+    ], 
+    "Jobs": [], 
+    "ExampleUseCases": [], 
+    "Connectors": [], 
+    "Version": 6.0, 
+    "MappingRules": [], 
+    "MinimumSystemVersion": 0, 
+    "UploaderProfileLink": null, 
+    "Identifier": "Full Contact", 
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 1627569696000, 
+            "Items": [
+                "SVG updated in Full Contact integration."
+            ], 
+            "Version": 6.0
+        }
+    ], 
+    "DocumentationLink": null
+}

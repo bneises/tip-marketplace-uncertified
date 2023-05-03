@@ -1,0 +1,90 @@
+{
+  "Name": "Quarantine - Restore Items",
+  "Description": "This method creates a new task to restore items from the quarantine.\n",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n    quarantine_item_ids = siemplify.extract_action_param(\"Quarantine Item IDs\", print_value=True)\n    service = siemplify.extract_action_param(\"Service\", print_value=True)\n    add_exclusion = siemplify.extract_action_param(\"Add Exclusion in Policy\", print_value=True,\n                                                    default_value=False, input_type=bool)\n    restore_location = siemplify.extract_action_param(\"Location to Restore\", print_value=True)\n    \n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n        \n        action_result = mtm.quarantine_item_restore(access_url, quarantine_item_ids, service, add_exclusion, restore_location)\n        \n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"success\"\n        result_value = \"success\"\n        if not action_result:\n            result_value = \"failed\"\n            output_message = \"failed\"\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n        siemplify.end(output_message, result_value, status)\n    except Exception as e:\n        siemplify.LOGGER.error(\"An error occurred: {0}\".format(e))\n        siemplify.LOGGER.exception(e)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n    \"items\":[\n        {   \n            \"id\" : \"21a295eeb1a43d8b497b23b7\", \"name\" : \"Endpoint 1\",\n            \"label\" : \"endpoint 1\",\n            \"fqdn\": \"endpoint1.local\",\n            \"groupId\": \"5a5f4d36b1a43d5f097b23bb\", \"isManaged\": true,\n            \"isManaged\": true,\n            \"machineType\": 1,\n            \"operatingSystemVersion\": \"Windows Server 2016\",\n            \"ip\": \"60.40.10.220\",\n            \"macs\": [\n                \"324935237225\"\n            ],\n            \"ssid\": \"\"\n        },\n        {\n            \"id\" : \"23a295d8b1a43d7c4a7b23c9\",\n            \"name\" : \"Endpoint 2\",\n            \"machineType\": 2,\n            \"label\" : \"endpoint 2\",\n            \"fqdn\": \"endpoint2.local\",\n            \"groupId\": \"5a4f4d46b1a53d5f197b23aa\", \"isManaged\": true,\n            \"machineType\": 1, \"operatingSystemVersion\": \"Windows 7\", \"ip\": \"60.40.10.221\",\n            \"macs\": [\n                \"325935237445\"\n            ],\n            \"ssid\": \"\"\n        }    \n    ]\n}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 67.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The absolute path to the folder where the items will be restored. If the parameter is not set, the original location will be used.",
+      "Name": "Location to Restore",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071232010,
+      "ModificationTimeUnixTimeInMs": 1616071232010
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "itemId1,itemId2",
+      "Description": "Comma-separated list of quarantine items IDs. The maximum number of items that can be removed once is 100.",
+      "Name": "Quarantine Item IDs",
+      "Value": "itemId1,itemId2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071232010,
+      "ModificationTimeUnixTimeInMs": 1616071232010
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Computers",
+      "Description": "Allowed services are: computers, for \"Computers and Virtual Machines\" or exchange, for \"Security for Exchange\"",
+      "Name": "Service",
+      "Value": "Computers",
+      "Type": 15,
+      "OptionalValues": [
+        "Computers",
+        "Exchange"
+      ],
+      "OptionalValuesJson": "[\"Computers\",\"Exchange\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071232010,
+      "ModificationTimeUnixTimeInMs": 1616071232010
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Exclude the files to be restored from future scans. Exclusions do not apply to items with the Default Policy assigned.",
+      "Name": "Add Exclusion in Policy",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071232010,
+      "ModificationTimeUnixTimeInMs": 1616071232010
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071231998,
+  "ModificationTimeUnixTimeInMs": 1616071232005
+}

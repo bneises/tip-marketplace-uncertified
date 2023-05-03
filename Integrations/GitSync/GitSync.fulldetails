@@ -1,0 +1,236 @@
+{
+    "Identifier": "GitSync",
+    "PackageName": "GitSync",
+    "DisplayName": "GitSync",
+    "Description": "Sync Siemplify integrations, playbooks, and settings with a GitHub, BitBucket or GitLab instance",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Repo URL",
+            "PropertyDescription": "Repository URL. The URL must start with 'https' for HTTPS+Token or 'git@' for SSH+Cert.",
+            "PropertyDisplayName": "Repo URL",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Branch",
+            "PropertyDescription": "Branch",
+            "PropertyDisplayName": "Branch",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Siemplify Username",
+            "PropertyDescription": "Siemplify Username",
+            "PropertyDisplayName": "Siemplify Username",
+            "PropertyType": 2,
+            "IsMandatory": false,
+            "Value": "",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Siemplify Password",
+            "PropertyDescription": "Siemplify Password",
+            "PropertyDisplayName": "Siemplify Password",
+            "PropertyType": 3,
+            "IsMandatory": false,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Git Password/Token/SSH Key",
+            "PropertyDescription": "Git Password/Token/SSH Key (Base64). RSA and Ed25519 are supported.",
+            "PropertyDisplayName": "Git Password/Token/SSH Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Git Username",
+            "PropertyDescription": "Git Username",
+            "PropertyDisplayName": "Git Username",
+            "PropertyType": 2,
+            "IsMandatory": false,
+            "Value": "",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Commit Author",
+            "PropertyDescription": "Commit Author",
+            "PropertyDisplayName": "Commit Author",
+            "PropertyType": 2,
+            "IsMandatory": false,
+            "Value": "",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Siemplify Verify SSL",
+            "PropertyDescription": "Siemplify Verify SSL",
+            "PropertyDisplayName": "Siemplify Verify SSL",
+            "PropertyType": 0,
+            "IsMandatory": true,
+            "Value": "false",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        },
+        {
+            "IntegrationIdentifier": "GitSync",
+            "PropertyName": "Git Verify SSL",
+            "PropertyDescription": "Git Verify SSL",
+            "PropertyDisplayName": "Git Verify SSL",
+            "PropertyType": 0,
+            "IsMandatory": true,
+            "Value": "true",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624368145541,
+            "ModificationTimeUnixTimeInMs": 1624368145541
+        }
+    ],
+    "Actions": [
+        "Ping"
+    ],
+    "Jobs": [
+        "Pull Connector",
+        "Pull Content",
+        "Pull Custom Family",
+        "Pull Integration",
+        "Pull Jobs",
+        "Pull Mappings",
+        "Pull Playbook",
+        "Push Connectors",
+        "Push Content",
+        "Push Custom Family",
+        "Push Integration",
+        "Push Job",
+        "Push Mappings",
+        "Push Playbook"
+    ],
+    "Connectors": [],
+    "Managers": [
+        "constants",
+        "definitions",
+        "GitContentManager",
+        "GitManager",
+        "GitSyncManager",
+        "SiemplifyApiClient"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 10.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! GitSync integration to allow the syncing of Siemplify integrations, playbooks, and settings to GitHub or BitBucket."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1633001621000
+        },
+        {
+            "Items": [
+                "Added: README.md file in the root directory of the repo, specifying it's contents.",
+                "Fixed: Issue when pulling a connector and the integration is not installed.",
+                "Fixed: Commit author must be set even when it's not mandatory. Added validation to correct format when set.",
+                "Fixed: Error when pulling an environment and it already exists in the system.",
+                "Fixed: Integration actions readme description was added twice."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1636905888000
+        },
+        {
+            "Items": [
+                "Updated SVG"
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1637759922000
+        },
+        {
+            "Items": [
+                "Added: Git SSL verification parameter",
+                "Added: Support for GitLab",
+                "Added: Support for empty remote repositories (The integration will work even when no file is committed to the remote repository)",
+                "Updated: Code improvements",
+                "Updated: Integration Dependencies"
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1640520703000
+        },
+        {
+            "Items": [
+                "Added: Support for proxy whitelist"
+            ],
+            "Version": 7.0,
+            "PublishTimeUnixTime": 1644340278000
+        },
+        {
+            "Items": [
+                "IMPORTANT NOTICE: Push and Pull Environment name was changed to push and pull content",
+                "Updated: Support for the new BlockList API",
+                "Updated: Better SSH Support",
+                "Updated: Dependencies - (dulwich, urllib3, cryptography, paramiko and jinja)"
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1653479431000
+        },
+        {
+            "Items": [
+                "Fix for pushing and pulling playbooks"
+            ],
+            "Version": 9.0,
+            "PublishTimeUnixTime": 1666795719000
+        },
+        {
+            "Items": [
+                "Fixed: Pushing content will no longer creates unnecessary commits becuase of timestamps changes",
+                "Fixed: Allow adding files to the Integration directory",
+                "Updated: Parameter descriptions",
+                "Updated: Improved branch handling when switching branchs or working outside remote HEAD",
+                "Updated: Dependencies - (dulwich: 0.20.45, paramiko: 2.12.0, jinja2: 3.1.2, packaging: 23.0)",
+                "Updated: Under the hood improvements"
+            ],
+            "Version": 10.0,
+            "PublishTimeUnixTime": 1673783526000
+        },
+        {
+            "Items": [
+                "Fixed: Pulling playbooks with similar name",
+                "Fixed: Pulling playbooks with missing folders",
+                "Added: Support for parallel actions",
+                "Updated: Removed unused APIs"
+            ],
+            "Version": 11.0,
+            "PublishTimeUnixTime": 1678707948000
+        }
+    ]
+}

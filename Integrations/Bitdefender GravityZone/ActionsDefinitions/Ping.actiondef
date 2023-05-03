@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_FAILED, EXECUTION_STATE_COMPLETED\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\nINTEGRATION_NAME = \"BitdefenderGravityZone\"\nSCRIPT_NAME = \"Ping\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = f\"{INTEGRATION_NAME} - {SCRIPT_NAME}\"\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        apikey_details = mtm.apikey_details(access_url)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n\n        output_message = \"Connection Established\"\n        result_value = 'true'\n        status = EXECUTION_STATE_COMPLETED\n        \n        if len(apikey_details) == 0:\n            result_value = 'false'\n            raise ValueError('Please check that your API key is valid.')\n\n    except Exception as e:\n        siemplify.LOGGER.error(f\"Some errors occurred. Error: {e}\")\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = \"false\"\n        output_message = f\"Some errors occurred. Error: {e}\"\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(f\"Status: {status}:\")\n    siemplify.LOGGER.info(f\"Result Value: {result_value}\")\n    siemplify.LOGGER.info(f\"Output Message: {output_message}\")\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "is_connected",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": false
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 28.0,
+  "TimeoutSeconds": 120,
+  "Parameters": [],
+  "DefaultResultValue": null,
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071200187,
+  "ModificationTimeUnixTimeInMs": 1616071200193
+}

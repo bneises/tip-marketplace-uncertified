@@ -1,0 +1,45 @@
+{
+  "Name": "Get Lead By Email Param",
+  "Description": "Get Lead data for a given email address",
+  "Script": "from marketorestpython.client import MarketoClient\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nINTEGRATION_NAME = \"Marketo\"\nSCRIPT_NAME = \"Get Lead By Email Param\"\n\nsiemplify = SiemplifyAction()\n\n\n@output_handler\ndef main():\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    # INIT INTEGRATION PARAMETERS:\n    client_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Id\")\n    client_secret = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Secret\")\n    munchkin_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Munchkin Id\")\n\n\n    # INIT ACTION PARAMETERS:\n    email = siemplify.extract_action_param(param_name=\"Email\")\n    email = email.lower()\n    \n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    output_message = \"\"  # human readable message, showed in UI as the action result\n    result_value = False  # Set a simple result value, used for playbook if\\else and placeholders.\n    lead_details = {}\n\n    try:\n        mc = MarketoClient(munchkin_id, client_id, client_secret, None, None)\n        lead_details = mc.execute(method='get_multiple_leads_by_filter_type', filterType='email', filterValues=str(email))\n        output_message += f\"The user <{email}> exists in Marketo, the lead ID is: <{lead_details[0].get('id')}>\"\n        result_value = True\n\n    except Exception as e:\n        result_value = False\n        output_message += \"\\n failed to find lead for: {}\".format(email)\n        raise Exception(f\"Response:{lead_details}. Error:{e}\")\n\n    siemplify.result.add_result_json(lead_details)\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  result_value: {}\\n  output_message: {}\".format(result_value, output_message))\n    siemplify.end(output_message, result_value)\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Marketo",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\r\n\t\"id\": 11111,\r\n\t\"firstName\": \"firstName\",\r\n\t\"lastName\": \"lastName\",\r\n\t\"email\": \"email@siemplify.co\",\r\n\t\"updatedAt\": \"2021-07-28T15:42:59Z\",\r\n\t\"createdAt\": \"2020-08-10T13:36:59Z\"\r\n}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 46.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The email address of the user you want to get the details for.",
+      "Name": "Email",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628166483843,
+      "ModificationTimeUnixTimeInMs": 1628166483843
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1628166483811,
+  "ModificationTimeUnixTimeInMs": 1628166483816
+}

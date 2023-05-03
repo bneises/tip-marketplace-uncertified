@@ -1,0 +1,26 @@
+{
+  "Name": "Find First Alert",
+  "Description": "The action will return the identifier of the first alert in a given case",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nSCRIPT_NAME = \"FindFirstAlert\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    if siemplify.current_alert.identifier == siemplify.case.alerts[-1].identifier:\n        siemplify.end(\"First\", siemplify.current_alert.identifier)\n    siemplify.end(\"Not First\", \"false\")\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620448,
+  "ModificationTimeUnixTimeInMs": 1614012620448
+}

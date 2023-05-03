@@ -1,0 +1,110 @@
+{
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Integration": "beSECURE",
+  "DocumentationLink": null,
+  "Name": "Pull reports",
+  "Description": "A flexible, accurate, low maintenance Vulnerability Assessment and Management solution that delivers solid security improvements",
+  "Creator": "Admin",
+  "Script": "from SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyUtils import output_handler, unix_now, convert_string_to_datetime, convert_datetime_to_unix_time\nfrom random import randrange\n\nimport uuid\nimport sys\nimport requests\nimport json\nimport re\n\nCONNECTOR_NAME = \"beSECURE Connector\"\nVENDOR = \"Beyond Security\"\nPRODUCT = \"beSECURE\"\nbeSECURE_RULE = \"Pull High/Medium and Low Vulnerabilities\"\n\n@output_handler\ndef main(is_test_run):\n  alerts = [] # The main output of each connector run\n  siemplify = SiemplifyConnectorExecution() # Siemplify main SDK wrapper\n\n  if (is_test_run):\n    siemplify.LOGGER.info(\"***** This is an \\\"IDE Play Button\\\"\\\\\\\"Run Connector once\\\" test run ******\")\n\n  siemplify.LOGGER.info(\"==================== Main - Param Init ====================\")\n\n  api_key = siemplify.extract_connector_param(\"API Key\", default_value='', input_type=str, is_mandatory=False, print_value=False)\n  api_key = re.sub('[^A-Z0-9\\-]', '', api_key) # Clean non-API related characters\n  \n  # URL can be https://... http://... https://hostname:port/ https://hostname/someprefix\n  url = siemplify.extract_connector_param('URL', default_value='', input_type=str, is_mandatory=False, print_value=False)\n  if not url.startswith('https://') and not url.startswith('http://'):\n      url = 'https://' + url\n  \n  rotation_time = siemplify.extract_connector_param(\"Check Every X Minutes\", default_value=15, input_type=int, is_mandatory=False, print_value=False)\n  verify_ssl = siemplify.extract_connector_param(\"Verify SSL Ceritifcate?\", default_value=False, input_type=bool, is_mandatory=False, print_value=False)\n\n  siemplify.LOGGER.info(\"------------------- Main - Started -------------------\")\n\n  \n  siemplify.LOGGER.info(\"Pull scans that have finished in the past {} minutes\".format(rotation_time))\n  # /json.cgi?primary=admin&secondary=networks&action=returnnetworks&search_limit=10&&search_datelastscanned_value=15&search_datelastscanned_type=minute\n  scans = make_action(siemplify, url, verify_ssl, primary='admin', secondary='networks', action='returnnetworks', \n                      apikey=api_key, search_limit=10000, \n                      search_datelastscanned_value=rotation_time, search_datelastscanned_type='year')\n                      \n  # siemplify.LOGGER.info(\"scans: {}\".format(scans))\n  if 'error' in scans:\n      siemplify.LOGGER.info(\"An error has occured: {}\".format(scans['error']))\n      return None\n  \n  if 0 == scans['count']:\n    siemplify.LOGGER.info(\"No scans finished in past {} minutes\".format(rotation_time))\n    return siemplify.return_package(alerts)\n    \n  previous_scans = {}\n  try:\n    with open('previous_scans.json') as json_file:\n      previous_scans = json.load(json_file) \n  except Exception, e:\n     siemplify.LOGGER.info(\"previous_scans.json is missing, this is expected when you run the connector the first time\")\n  \n  ###\n  # If we have results - i.e. scans that finished, pull the information\n  for scan in scans['data']:\n    networkid = scan['ID']\n\n    siemplify.LOGGER.info(\"Pulling JSON results for scan ID: {}\".format(networkid))\n    result = make_action(siemplify, url, verify_ssl, primary='vulnerabilities', secondary='report', action='getreport', format='json', network=networkid, reporttype='regular', apikey=api_key)\n    \n    if (\n        'Scan' not in result or \n        'ScanDetails' not in result['Scan'] or \n        'ScanDate' not in result['Scan']['ScanDetails']\n       ):\n      continue\n\n    # siemplify.LOGGER.info(\"ScanDetails: {}\".format(result['Scan']['ScanDetails']))\n    scannumber = result['Scan']['ScanDetails']['MaxScanNumber']\n    if \"{}-{}\".format(networkid, scannumber) in previous_scans:\n      siemplify.LOGGER.info(\"Already processed results for scan: {} and scan number: {}\".format(networkid, scannumber))\n      continue\n  \n    previous_scans[\"{}-{}\".format(networkid, scannumber)] = 1\n\n    scan_date = result['Scan']['ScanDetails']['ScanDate']\n    siemplify.LOGGER.info(\"scan_date: {}\".format(scan_date))\n    \n    # siemplify.LOGGER.info(\"result: {}\".format(result))\n    vulnerableHosts = []\n    \n    if ('VulnerableHosts' in result) and ('VulnerableHost' in result['VulnerableHosts']):\n      if type(result['VulnerableHosts']['VulnerableHost']) is list:\n        vulnerableHosts = result['VulnerableHosts']['VulnerableHost']\n      if type(result['VulnerableHosts']['VulnerableHost']) is dict:\n        vulnerableHosts.append( result['VulnerableHosts']['VulnerableHost'] )\n    \n    count = 0\n    for vulnerableHost in vulnerableHosts:\n      # siemplify.LOGGER.info(\"vulnerableHost: {}\".format(vulnerableHost))\n      # siemplify.LOGGER.info(\"RiskFactor: {}\".format( vulnerableHost['Vulnerability']['RiskFactor'] ))\n      \n      if (\n          'Vulnerability' not in vulnerableHost or \n          'RiskFactor' not in vulnerableHost['Vulnerability'] or \n          int(vulnerableHost['Vulnerability']['RiskFactor']) < 1\n         ):\n        continue\n      \n      # siemplify.LOGGER.info(\"Processing: {}\".format( vulnerableHost['VulnID'] ))\n      \n      new_alert = create_alert(siemplify, vulnerableHost, scan_date)\n      if new_alert is not None:\n        count += 1\n        alerts.append(new_alert)\n    \n    siemplify.LOGGER.info(\"inserted {} alerts\".format(count))\n  \n  with open('previous_scans.json', 'w') as outfile:\n    json.dump(previous_scans, outfile)\n    \n  siemplify.LOGGER.info(\"------------------- Main - Finished -------------------\")\n  siemplify.return_package(alerts)\n\ndef create_alert(siemplify, vulnerableHost, scan_date):\n  siemplify.LOGGER.info(\"-------------- Started processing vulnerability {}\".format(vulnerableHost['VulnID']))\n  alert_info = AlertInfo()\n  \n  if 'VulnID' not in vulnerableHost:\n    return None\n\n  alert_info.display_id = vulnerableHost['VulnID']\n  alert_info.ticket_id = vulnerableHost['VulnID']  # In default, ticket_id = display_id. But, if for some reason the external alert id, is different then the composite's key display_id, you can save the original external alert id in this \"ticket_id\" field.\n\n  if (\n      'Vulnerability' not in vulnerableHost or \n      'Name' not in vulnerableHost['Vulnerability'] or \n      'Name' not in vulnerableHost or \n      'StrPort' not in vulnerableHost\n     ):\n    return None\n\n  alert_info.name = \"{} on {} via port {}\".format(vulnerableHost['Vulnerability']['Name'], vulnerableHost['Name'], vulnerableHost['StrPort'])\n  alert_info.rule_generator = beSECURE_RULE  # Describes the name of the siem's rule, that caused the aggregation of the alert.\n  alert_info.start_time = convert_datetime_to_unix_time(convert_string_to_datetime(scan_date + ' UTC'))  # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n  alert_info.end_time = convert_datetime_to_unix_time(convert_string_to_datetime(scan_date + ' UTC')) # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n  \n  alert_info.priority = -1 # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n\n  if 'RiskFactor' not in vulnerableHost['Vulnerability']:\n    return None\n\n  if 1 == vulnerableHost['Vulnerability']['RiskFactor']:\n    alert_info.priority = 40\n  if 4 == vulnerableHost['Vulnerability']['RiskFactor']:\n    alert_info.priority = 60\n  if 8 == vulnerableHost['Vulnerability']['RiskFactor']:\n    alert_info.priority = 80\n      \n  alert_info.device_vendor = VENDOR  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source vendor of the data. (ie: Microsoft, Mcafee)\n  alert_info.device_product = PRODUCT\n  \n  new_event = create_event(siemplify, alert_info.display_id, alert_info.display_id, vulnerableHost, scan_date)\n  if new_event is not None:\n    alert_info.events.append(new_event)\n    \n  return alert_info\n\ndef create_event(siemplify, alert_id, event_id, vulnerableHost, scan_date):\n  # siemplify.LOGGER.info(\"--- Started processing Event:  alert_id: {} | event_id: {}\".format(alert_id, event_id))\n  event = {}\n\n  \"\"\"\nHostID: \"81F84FB5\"\nName: \"192.168.15.254\"\nPort: \"445\"\nProto: \"tcp\"\nService: \"microsoft-ds\"\nStrPort: \"microsoft-ds (445/tcp)\"\nVulnID: \"7970\"\nVulnerability: {DynamicOutput: {}, Family: \"Preliminary Analysis\", FamilyID: \"17\", Impact: {}, Name: \"Open Port\", ...}\n  DynamicOutput: {}\n  Family: \"Preliminary Analysis\"\n  FamilyID: \"17\"\n  Impact: {}\n  Name: \"Open Port\"\n  Output: {}\n  RiskFactor: \"0\"\n  Solution: {}\n  Summary: {}\n  SummaryOriginal: {}\n  Test: {Added: \"2000-01-01\", Revision: \"1\", TestID: \"719\", TestType: \"0\"}\n    Added: \"2000-01-01\"\n    Revision: \"1\"\n    TestID: \"719\"\n    TestType: \"0\"\n  Ticket: {CommentLog: {}, ID: {}}\n    CommentLog: {}\n    ID: {}\n  \"\"\"\n\n  if (\n      'Vulnerability' not in vulnerableHost['Vulnerability'] or \n      'Name' not in vulnerableHost['Vulnerability'] or \n      'StrPort' not in vulnerableHost or \n      'Name' not in vulnerableHost or \n      'Service' not in vulnerableHost or\n      'HostID' not in vulnerableHost or\n      'Family' not in vulnerableHost or \n      'Test' not in vulnerableHost['Vulnerability'] or\n      'TestID' not in vulnerableHost['Vulnerability']['Test']\n      ):\n    return None\n\n  event[\"HostID\"] = vulnerableHost['HostID'] # Unique identifier of the remote host\n  event[\"Port\"] = vulnerableHost['Port'] # Affected Port (on tested target)\n  event[\"Category\"] = vulnerableHost['Family'] # Test Category\n  event[\"TestID\"] = vulnerableHost['Vulnerability']['Test']['TestID']  # The Test Identifier\n\n  # ----------- Mandatory Fields ---------------\n  # A valid event must have a \"Start Time\", \"End Time\", \"Name\", and \"Device Product\". Their name is not important (What ever it is, it will be mapped).\n  # ie: \"Start Time\" may be called \"Start Time\", \"StartTime\", \"start_time\", \"johnDoeStartTime\"\n  event[\"StartTime\"] = convert_datetime_to_unix_time(convert_string_to_datetime(scan_date + ' UTC'))\n  event[\"EndTime\"] = convert_datetime_to_unix_time(convert_string_to_datetime(scan_date + ' UTC'))\n  event[\"name\"] = \"{} on {} via port {}\".format(vulnerableHost['Vulnerability']['Name'], vulnerableHost['Name'], vulnerableHost['StrPort'])\n  event[\"device_product\"] = vulnerableHost['Service']\n  \n  # ----------------------------- ---------------\n\n    # usually, the most intresting fields are (again, their precise name, may vary between siems.\n  # You are not expected to fill them yourself, just pass them along from the siem. Since this is a dummy generator, We create them manaualy with made up name (PascalCase\\CcmelCase doesn't matter)\n  # event[\"SourceHostName\"] = vulnerableHost['Name']\n  event[\"DestinationHostName\"] = vulnerableHost['Name']\n  # event[\"SourceAddress\"] = \"10.0.0.\"+str(randrange(254))\n  \n  event[\"DestinationAddress\"] = vulnerableHost['Name']\n\n  # siemplify.LOGGER.info(\"--- Finished processing Event: alert_id: {} | event_id: {}\".format(alert_id, event_id))\n\n  return event\n\ndef make_action(siemplify, url, verify_ssl, **kwargs):\n  params = dict([(k, v) for k, v in kwargs.items()])\n\n  siemplify.LOGGER.info('Sending request to [{url}] with:\\n{params}'.format(url=url,\n                                                                    params=json.dumps(params, indent=2)))\n                                                                    \n  data = requests.get('{}/json.cgi'.format(url), params=params, verify=verify_ssl).json()\n\n  return data\n\nif __name__ == \"__main__\":\n  # Connectors are run in iterations. The interval is configurable from the ConnectorsScreen UI.\n  is_test_run = not (len(sys.argv) < 2 or sys.argv[1] == 'True')\n  main(is_test_run)\n\n",
+  "Version": 18,
+  "MappingRules": [],
+  "ProductToVisualFamilyRecords": [],
+  "SimulationUseCases": {
+    "CasesForUseCase": [],
+    "UseCaseName": null
+  },
+  "Parameters": [
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Name": "Verify SSL Ceritifcate?",
+      "Type": 0,
+      "Mode": 2,
+      "Description": "Verify SSL Ceritifcate?",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    },
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Name": "Check Every X Minutes",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "rotation_time",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    },
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Name": "URL",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "url",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    },
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "API Key",
+      "Type": 3,
+      "Mode": 2,
+      "Description": "API Key",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    },
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": true,
+      "DefaultValue": "beSECURE Pull Reports",
+      "Name": "DeviceProductField",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the device product",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    },
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Name": "EventClassId",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the event name (sub-type)",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    },
+    {
+      "ConnectorDefinitionId": 5,
+      "IsMandatory": true,
+      "DefaultValue": "30",
+      "Name": "PythonProcessTimeout",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The timeout limit (in seconds) for the python process running current script",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594043343464,
+      "ModificationTimeUnixTimeInMs": 1594043343464
+    }
+  ],
+  "Rules": [],
+  "IsConnectorRulesSupported": true,
+  "IsSystem": false,
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1594036873289,
+  "ModificationTimeUnixTimeInMs": 1594043343459
+}

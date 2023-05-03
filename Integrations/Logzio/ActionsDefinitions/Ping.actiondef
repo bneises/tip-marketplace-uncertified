@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Ping Logz.io to test and validate connectivity to both your Logz.io security and operations accounts.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\n\nimport json\nimport requests\n\n\nBASE_URL = \"https://api.logz.io/\"\nWHOAMI_API_SUFFIX = \"v1/account-management/whoami\"\n\n\"\"\"\nThis action validates the tokens and sends a request to Logz.io's API,\nthat should return 200 if the token is valid and the connection to the API is established\n\"\"\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    status = EXECUTION_STATE_FAILED\n    is_success = False\n    security_token = siemplify.extract_configuration_param('Logzio',\"logzio_security_token\", default_value=\"-\", is_mandatory=True)\n    operations_token = siemplify.extract_configuration_param('Logzio',\"logzio_operations_token\", default_value=\"-\", is_mandatory=True)\n    logzio_region = siemplify.extract_configuration_param('Logzio',\"logzio_region\", default_value=\"\")\n    \n    try:\n        validate_token(siemplify, security_token)\n        validate_token(siemplify, operations_token)\n        ping_api(siemplify, logzio_region, operations_token)\n        ping_api(siemplify, logzio_region, security_token)\n        status = EXECUTION_STATE_COMPLETED\n        is_success = True\n    except Exception as e:\n        siemplify.LOGGER.error(\"Error occurred. {}\".format(e))\n        \n    output_message = create_output_msg(status)\n    siemplify.end(output_message, is_success, status)\n    \n    \ndef validate_token(siemplify, token):\n    \"\"\"\n    Minimum validation of the tokens -\n    Checks that they have a value and that they're strings\n    \"\"\"\n    if token is None or token == \"-\" or token == \"\":\n        raise ValueError(\"Must insert Logzio operations & security tokens\")\n    if type(token) is not str:\n        raise TypeError(\"Logzio tokens must be strings\")\n    siemplify.LOGGER.info(\"Valid token: {}\".format(token))\n    return True\n\n\n\ndef ping_api(siemplify, logzio_region, token):\n    \"\"\"\n    Creates a request to Logz.io API.\n    If request is valid, returnes True, otherwise raises a ConnectionError.\n    \"\"\"\n    url = get_logzio_api_endpoint(siemplify, logzio_region)\n    headers = {\n        'Content-Type': 'application/json',\n        'X-API-TOKEN': token\n    }\n    \n    try:\n        siemplify.LOGGER.info(\"Sending request to {}\".format(url))\n        response = requests.get(url, headers=headers, timeout=5)\n        if response is not None:\n            siemplify.LOGGER.info(\"Logz.io returned status code: {}\".format(response.status_code))\n            if response.status_code == 200:\n                accountName = json.loads(response.content)\n                siemplify.LOGGER.info(\"Logz.io response returned account name: {}\".format(accountName[\"accountName\"]))\n                return True\n            else:\n                raise ConnectionError(\"Logz.io returned {}\".format(response.status_code))\n        raise ConnectionError(\"Logz.io response is None\")\n    except Exception as e:\n        raise ConnectionError(\"Error occurred while trying to ping API:\\n{}\".format(e))\n    \n\ndef get_base_api_url(region):\n    \"\"\" Returnes API url, in accordance to user's input \"\"\"\n    if region == \"us\" or region == \"\" or region == \"-\":\n        return BASE_URL\n    else:\n        return BASE_URL.replace(\"api.\", \"api-{}.\".format(region))\n\n\ndef create_output_msg(status):\n    \"\"\" Returns output message in accordance to the status \"\"\"\n    if status == EXECUTION_STATE_COMPLETED:\n        return \"Tokens are valid, ping successful.\"\n    else:\n        return \"Error occurred while trying to validate tokens or ping Logz.io API\"\n        \n\ndef get_logzio_api_endpoint(siemplify, region):\n    \"\"\"\n    Returns the endpoint of Logz.io API.\n    Prioritizing a custom endoint, if entered.\n    If not, falling back to the regaular enspoints, based on the logzio_region (defaults to us).\n    \"\"\"\n    custom_endpoint = siemplify.extract_configuration_param(\"Logzio\", \"logzio_custom_endpoint\", is_mandatory=False, default_value=\"\")\n    if custom_endpoint is not None and custom_endpoint != \"\":\n        siemplify.LOGGER.info(\"Using custom endpoint: {}\".format(custom_endpoint))\n        return custom_endpoint + WHOAMI_API_SUFFIX\n    return get_base_api_url(region) + WHOAMI_API_SUFFIX\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Logzio",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 29.0,
+  "TimeoutSeconds": 20,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614698909809,
+  "ModificationTimeUnixTimeInMs": 1614762904565
+}

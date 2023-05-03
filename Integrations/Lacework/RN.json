@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "NEW! Lacework Integration",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Lacework",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1657196516
+    }
+]

@@ -1,0 +1,55 @@
+{
+  "Name": "Add Comment to Entity Log",
+  "Description": "This action will add a comment to the Entity Log for each entity in scope in the Entity Explorer.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED\n\n# Example Consts:\nINTEGRATION_NAME = \"Tools\"\n\nSCRIPT_NAME = \"Add Comment To Entity Log\"\n\nADD_NOTE = \"{}/external/v1/entities/AddNote?format=camel\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    comment = siemplify.extract_action_param(param_name=\"Comment\", is_mandatory=True, print_value=True)\n    user = siemplify.extract_action_param(param_name=\"User\", is_mandatory=True, print_value=True)\n    result_value = None\n    output_message = \"\"\n    status = EXECUTION_STATE_COMPLETED\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    try:\n\n        for entity in siemplify.target_entities:\n            siemplify.LOGGER.info(\"Adding comment to entity: {}\".format(entity.identifier))\n\n            payload = {\"author\": user, \"content\": comment, \"entityIdentifier\": entity.identifier, \"id\": 0,\n                       \"entityEnvironment\": siemplify._environment}\n            res = siemplify.session.post(ADD_NOTE.format(siemplify.API_ROOT), json=payload)\n            siemplify.validate_siemplify_error(res)\n\n            siemplify.LOGGER.info(\"Finished processing entity {0}\".format(entity.identifier))\n            output_message += \"{} Added comment to entity: {}, Environment: {}. Comment: {}\\n\".format(user,\n                                                                                                      entity.identifier,\n                                                                                                      siemplify._environment,\n                                                                                                      comment)\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.end(output_message, result_value, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "@Administrator",
+      "Description": "The user who created the comment.",
+      "Name": "User",
+      "Value": "@Administrator",
+      "Type": 3,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620434,
+      "ModificationTimeUnixTimeInMs": 1614012620434
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<insert comment>",
+      "Description": "The comment that will be added to the entity log.",
+      "Name": "Comment",
+      "Value": "<insert comment>",
+      "Type": 11,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620434,
+      "ModificationTimeUnixTimeInMs": 1614012620434
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620432,
+  "ModificationTimeUnixTimeInMs": 1614012620432
+}

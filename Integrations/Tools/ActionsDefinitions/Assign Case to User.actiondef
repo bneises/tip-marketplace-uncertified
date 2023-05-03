@@ -1,0 +1,69 @@
+{
+  "Name": "Assign Case to User",
+  "Description": "This action will assign a user to a case.  ",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nimport requests\nimport json\nimport time\nfrom datetime import datetime\n\nTASK_URL = '{}/external/v1/cases/AssignUserToCase'\nACTION_NAME = \"AssignCaseToUser\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ACTION_NAME\n    \n\n    case_id = siemplify.parameters['Case Id']\n    assign_to = siemplify.parameters['Assign To']\n    alert_id = siemplify.parameters['Alert Id']\n\n    \n\n    json_payload = {\"caseId\": case_id, \"alertIdentifier\": alert_id, \"userId\": assign_to}\n    add_task = siemplify.session.post(TASK_URL.format(siemplify.API_ROOT), json=json_payload)\n    add_task.raise_for_status()\n    output_message = add_task.json()\n    siemplify.LOGGER.info(output_message)\n    \n    siemplify.end(output_message, True)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 19.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Case to merge with.",
+      "Name": "Case Id",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620391,
+      "ModificationTimeUnixTimeInMs": 1614012620391
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "@Admin",
+      "Description": "assign",
+      "Name": "Assign To",
+      "Value": "@Admin",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620391,
+      "ModificationTimeUnixTimeInMs": 1614012620391
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "id",
+      "Description": "Alert Id",
+      "Name": "Alert Id",
+      "Value": "id",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620391,
+      "ModificationTimeUnixTimeInMs": 1614012620391
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620389,
+  "ModificationTimeUnixTimeInMs": 1614012620389
+}

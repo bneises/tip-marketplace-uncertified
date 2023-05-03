@@ -1,0 +1,69 @@
+{
+  "Name": "Delete Attachment",
+  "Description": "Delete an attachment from a user's mailbox.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom MicrosoftGraphSecurityManager import MicrosoftGraphSecurityManager\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    client_id = siemplify.extract_configuration_param('Integration',\"Client ID\")\n    secret_id = siemplify.extract_configuration_param('Integration',\"Secret ID\")\n    tenant_id = siemplify.extract_configuration_param('Integration',\"Tenant ID\")\n    certificate_password = siemplify.extract_configuration_param('Integration',\"Certificate Password\")\n    certificate_path = siemplify.extract_configuration_param('Integration',\"Certificate Path\")\n    user_email = siemplify.extract_action_param(\"User ID\", print_value=True)\n    message_id = siemplify.extract_action_param(\"Message ID\", print_value=True)\n    attachment_id = siemplify.extract_action_param(\"Attachment ID\", print_value=True)\n    \n    siemplify.LOGGER.info(\"Connecting to Microsoft Graph Security.\")\n    mtm = MicrosoftGraphSecurityManager(client_id, secret_id, certificate_path, certificate_password, tenant_id)\n    siemplify.LOGGER.info(\"Connected successfully.\")\n    \n    message_attachment_data = mtm.delete_attachment(user_email, message_id,attachment_id)\n    \n    status = EXECUTION_STATE_COMPLETED\n    output_message = message_attachment_data['output_message']\n    result_value = message_attachment_data['result']\n    siemplify.result.add_result_json(message_attachment_data)\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\"status_code\":\"204\",\"result\":\"success\",\"output_message\":\"Deletion request completed successfully\"}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 15.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "john.smith@mail.com",
+      "Description": "User ID/userPrincipalName (email)",
+      "Name": "User ID",
+      "Value": "john.smith@mail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1604584495258,
+      "ModificationTimeUnixTimeInMs": 1604584495258
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "someb64=",
+      "Description": "ID of the message",
+      "Name": "Message ID",
+      "Value": "someb64=",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1604584495258,
+      "ModificationTimeUnixTimeInMs": 1604584495258
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "someb64=",
+      "Description": "ID of the attachment to delete.",
+      "Name": "Attachment ID",
+      "Value": "someb64=",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1604584495258,
+      "ModificationTimeUnixTimeInMs": 1604584495258
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1604584495252,
+  "ModificationTimeUnixTimeInMs": 1604584495254
+}

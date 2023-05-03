@@ -1,0 +1,76 @@
+{
+    "Identifier": "Webhook",
+    "PackageName": "Webhook",
+    "DisplayName": "Webhook",
+    "Description": "Webhook.site lets you easily inspect, test and automate any incoming HTTP request or e-mail.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Webhook",
+            "PropertyName": "URL",
+            "PropertyDescription": "URL for webhook.site",
+            "PropertyDisplayName": "URL",
+            "PropertyType": 2,
+            "IsMandatory": false,
+            "Value": "https://webhook.site",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1631204489161,
+            "ModificationTimeUnixTimeInMs": 1631204489161
+        }
+    ],
+    "Actions": [
+        "Ping",
+        "Delete Token",
+        "Create Token",
+        "Get Webhook Response"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "WebhookManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 5.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Webhook integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1631177455000
+        },
+        {
+            "Items": [
+                "Fixed Get Webhook Response action."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1640179164000
+        },
+        {
+            "Items": [
+                "Changed Get Webhook Response action's name."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1641139235000
+        },
+        {
+            "Items": [
+                "Fixed Get Webhook Response action."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1647935111000
+        },
+        {
+            "Items": [
+                "JSON sample fixed."
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1667398431000
+        }
+    ]
+}

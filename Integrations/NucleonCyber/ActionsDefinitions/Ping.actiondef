@@ -1,0 +1,45 @@
+{
+  "Name": "Ping",
+  "Description": "",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nimport requests\n\nINTEGRATION_NAME = \"NucleonCyber - integration - v1\"\n\nSCRIPT_NAME = \"NucleonCyber API Ping\"\nCLIENT_NAME = 'usrn'\nCLIENT_ID = 'clientID'\nLIMIT = 'limit'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    basic_user = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Username\")\n    basic_pass = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Password\")\n    client_name = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"client name\")\n    client_id = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"client id\")\n    limit = siemplify.extract_action_param(param_name=\"limit\")\n\n\n    url = \"https://api.nucleoncyber.com/feed/activethreats\"\n    \n    response = requests.post(\n        url=url, \n        auth=(basic_user, basic_pass),\n        data={\n            CLIENT_NAME:client_name,\n            CLIENT_ID:client_id, \n            LIMIT: limit\n        }\n    )\n    \n    if response.status_code != 200:\n        raise Exception(\"Error, bad credentials\")\n    \n    siemplify.end(\"Successful Connection\", True)\n\n\nif __name__ == \"__main__\":\n    main() \n",
+  "IntegrationIdentifier": "NucleonCyber",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 14.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "5",
+      "Description": "Limit API results",
+      "Name": "limit",
+      "Value": "5",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1620056645959,
+      "ModificationTimeUnixTimeInMs": 1620056645959
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1617628497383,
+  "ModificationTimeUnixTimeInMs": 1620056645946
+}

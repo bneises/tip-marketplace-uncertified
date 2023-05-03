@@ -1,0 +1,39 @@
+{
+    "Identifier": "PagerDuty",
+    "PackageName": "PagerDuty",
+    "DisplayName": "PagerDuty",
+    "Description": "PagerDuty is a Saas-based incident response platform. This integration comes with a connector that enables pulling incidents into Siemplify for automation.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [
+        "PagerDutyConnector"
+    ],
+    "Managers": [
+        "PagerDutyManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 13.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! PagerDuty."
+            ],
+            "Version": 12.0,
+            "PublishTimeUnixTime": 1668431346000
+        },
+        {
+            "Items": [
+                "Fixed the version alignment"
+            ],
+            "Version": 13.0,
+            "PublishTimeUnixTime": 1668609380000
+        }
+    ]
+}

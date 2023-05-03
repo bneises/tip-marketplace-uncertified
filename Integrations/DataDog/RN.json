@@ -1,0 +1,86 @@
+[
+    {
+        "ChangeDescription": "NEW! DataDog Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "DataDog",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1612172274
+    },
+    {
+        "ChangeDescription": "Default timestamp has been updated in the Connector.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "DataDog Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1612261256
+    },
+    {
+        "ChangeDescription": "Bug fixed in the Connector.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "DataDog Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1612954940
+    },
+    {
+        "ChangeDescription": "Bug fixed in the Connector test run.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 4.0,
+        "ItemName": "DataDog Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1614794917
+    },
+    {
+        "ChangeDescription": "NEW! Get Event Details Action.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 5.0,
+        "ItemName": "Get Event Details",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1614794917
+    },
+    {
+        "ChangeDescription": "Removed Manager.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 6.0,
+        "ItemName": "Utils",
+        "ItemType": "Manager",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1615209767
+    },
+        {
+        "ChangeDescription": "Fixed bug in the connector.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 7.0,
+        "ItemName": "Datadog Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1623937049
+    }
+]

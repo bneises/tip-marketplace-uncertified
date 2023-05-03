@@ -1,0 +1,59 @@
+{
+  "Name": "Download File To Path",
+  "Description": "Downloads a file stored in Google Drive to a specific path ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleDriveManager import GoogleDriveManager\n\nIDENTIFIER = u'Google Drive'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    file_id = siemplify.extract_action_param(param_name=u'File Id', is_mandatory=True)\n    folder_to_save = siemplify.extract_action_param(param_name=u'Folder Path',is_mandatory=True)\n\n\n    \n    google_drive_manager = GoogleDriveManager(credentials_json)\n    res = google_drive_manager.download_file_to_path(file_id,folder_to_save)\n    \n    siemplify.result.add_result_json(res)\n\n    output_message = \"File <{0}:{1}> was successfully downloaded to path {2}.\".format(res['name'],file_id, res['saved_to'])\n    siemplify.end(output_message, True)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Drive",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"name\": \"image.png\",\n  \"type\": \"image/png\",\n  \"size\": \"208349\",\n  \"saved_to\": \"/temp/image.png\"\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 51.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<file_id>",
+      "Description": "The file Id is presented in the file URL. See example - https://drive.google.com/drive/u/0/folders/{file-id}",
+      "Name": "File Id",
+      "Value": "<file_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810770,
+      "ModificationTimeUnixTimeInMs": 1614708810770
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "/temp",
+      "Description": "The folder path chosen to save the file you want to download from Google Drive. ",
+      "Name": "Folder Path",
+      "Value": "/temp",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810770,
+      "ModificationTimeUnixTimeInMs": 1614708810770
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1611736073172,
+  "ModificationTimeUnixTimeInMs": 1614708810766
+}

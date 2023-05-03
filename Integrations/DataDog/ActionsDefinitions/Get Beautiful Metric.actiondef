@@ -1,0 +1,41 @@
+{
+  "Name": "Get Beautiful Metric",
+  "Description": "Get metrics timeseries points of a given query",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\nimport json\n\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = \"\"\n    json_result = {}\n    raw_metric_values = []\n    sum_of_metric_values = 0\n    average_of_metric_values = 0\n    min_of_metric_values = None\n    max_of_metric_values = None\n    \n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    series = siemplify.extract_action_param(\"Series\")\n    series = json.loads(series)\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n    print(series)\n    if series.get(\"pointlist\") is not None:\n        siemplify.LOGGER.info(f\"The series parameter is valid.\")\n        #Analyzing the metric timeseries points\n        timeseries_points = series.get(\"pointlist\")\n        start_time = series.get(\"start\")\n        end_time = series.get(\"end\")\n        \n        try:\n            for value in timeseries_points:\n                raw_metric_values.append(value[1])\n            \n            siemplify.LOGGER.info(f\"The raw metric values are: {raw_metric_values}\")\n\n            #Calculating the sum of all the raw_metric_values\n            sum_of_metric_values = sum(raw_metric_values)\n            siemplify.LOGGER.info(f\"The sum of the metric timeseries points between {start_time} to {end_time} is {sum_of_metric_values}\")\n            \n            #Calculating the average of all the raw_metric_values\n            average_of_metric_values = sum(raw_metric_values)/ len(raw_metric_values)\n            siemplify.LOGGER.info(f\"The average of the metric timeseries points between {start_time} to {end_time} is {average_of_metric_values}\")\n\n            #Calculating the minimum of all the raw_metric_values\n            min_of_metric_values = min(raw_metric_values)\n            siemplify.LOGGER.info(f\"The minimum value of the metric values between {start_time} to {end_time} is {min_of_metric_values}\")\n            \n            #Calculating the maximum of all raw_metric_values\n            max_of_metric_values = max(raw_metric_values)\n            siemplify.LOGGER.info(f\"The maximum value of the metric values between {start_time} to {end_time} is {max_of_metric_values}\")\n            \n            json_result[\"unit\"] = series.get(\"unit\")[0].get(\"family\")\n            json_result[\"aggregation_by\"] = series.get(\"aggr\")\n            json_result[\"start_time\"] = start_time\n            json_result[\"end_time\"] = end_time\n            json_result[\"full_timeseries_points_list\"] = timeseries_points\n            json_result[\"sum_of_the_metric_values\"] = sum_of_metric_values\n            json_result[\"average_of_the_metric_values\"] = average_of_metric_values\n            json_result[\"min_of_the_metric_values\"] = min_of_metric_values\n            json_result[\"max_of_the_metric_values\"] = max_of_metric_values\n            json_result[\"expression\"]=series.get(\"expression\")\n            \n        except Exception as e:\n            siemplify.LOGGER.error(f\"Error occured when analyzing the timeseries points of the series {series}.\\nError: {e}\")\n    \n    else:\n        siemplify.LOGGER.error(f\"The series parameter is not valid, please check your query again.\")\n\n    siemplify.result.add_result_json(json_result)\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"unit\": \"cpu\",\r\n\t\"aggregation_by\": \"avg\",\r\n\t\"start_time\": 1607040000000,\r\n\t\"end_time\": 1610668799000,\r\n\t\"full_timeseries_points_list\": [\r\n\t\t[1607040000000.0, 0.008314899947867048],\r\n\t\t[1607644800000.0, 0.04104587218344665],\r\n\t\t[1608249600000.0, 0.050120122766495044],\r\n\t\t[1608854400000.0, 0.007100906014306722],\r\n\t\t[1609459200000.0, 0.007120135038524259],\r\n\t\t[1610064000000.0, 0.0063300259286052755]\r\n\t],\r\n\t\"sum_of_the_metric_values\": 0.120031961879245,\r\n\t\"average_of_the_metric_values\": 0.02000532697987417,\r\n\t\"min_of_the_metric_values\": 0.0063300259286052755,\r\n\t\"max_of_the_metric_values\": 0.050120122766495044,\r\n\t\"expression\": \"avg:kubernetes.cpu.system.total{kube_namespace:x,pod_name:y}\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 114.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{}",
+      "Description": "The timeseries points you want to analyze",
+      "Name": "Series",
+      "Value": "{}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195531994,
+      "ModificationTimeUnixTimeInMs": 1615195531994
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195531910,
+  "ModificationTimeUnixTimeInMs": 1615195531910
+}

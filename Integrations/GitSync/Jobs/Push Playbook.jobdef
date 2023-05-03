@@ -1,0 +1,82 @@
+{
+  "Name": "Push Playbook",
+  "Integration": "GitSync",
+  "Script": "import json\n\nfrom jinja2 import Template\n\nfrom GitSyncManager import GitSyncManager\nfrom SiemplifyJob import SiemplifyJob\nfrom SiemplifyUtils import output_handler\nfrom constants import PLAYBOOKS_ROOT_README\nfrom definitions import Playbook\n\nSCRIPT_NAME = \"Push Playbook\"\n\n\ndef create_root_readme(gitsync: GitSyncManager):\n    playbooks = []\n    for pb in gitsync.git.getFilesFromPath(\"Playbooks/\", gitsync.updatedTree):\n        if pb.path.endswith(\".json\"):\n            playbooks.append(json.loads(pb.content))\n    readme = Template(PLAYBOOKS_ROOT_README)\n    return readme.render(playbooks=playbooks)\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyJob()\n    siemplify.script_name = SCRIPT_NAME\n    playbooks_whitelist = list(\n        filter(None, [x.strip() for x in siemplify.extract_job_param(\"Playbook Whitelist\", \" \").split(',')]))\n    folders_whitelist = list(\n        filter(None, [x.strip() for x in siemplify.extract_job_param(\"Folders Whitelist\", \" \").split(',')]))\n    commit_msg = siemplify.extract_job_param(\"Commit\")\n\n    try:\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\n\n        for playbook in gitsync.api.get_playbooks():\n            if playbook.get(\"name\") in playbooks_whitelist or playbook.get(\"categoryName\") in folders_whitelist:\n                playbookData = gitsync.api.get_playbook(playbook.get(\"identifier\"))\n                gitsync.push_playbook(Playbook(playbookData))\n\n        gitsync.update_root_readme(create_root_readme(gitsync), \"Playbooks\")\n        gitsync.commit_and_push(commit_msg)\n\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n    siemplify.end_script()\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "Creator": "Admin",
+  "RunIntervalInSeconds": 900,
+  "Description": "Exports playbooks or blocks to the repo",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Version": 1,
+  "IsSystem": false,
+  "Parameters": [
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Branch",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145687,
+      "ModificationTimeUnixTimeInMs": 1624368145687
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Commit",
+      "Description": "Commit message",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145687,
+      "ModificationTimeUnixTimeInMs": 1624368145687
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Repo URL",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145687,
+      "ModificationTimeUnixTimeInMs": 1624368145687
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Name": "Folders Whitelist",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145687,
+      "ModificationTimeUnixTimeInMs": 1624368145687
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Name": "Playbook Whitelist",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145687,
+      "ModificationTimeUnixTimeInMs": 1624368145687
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625653885423,
+      "ModificationTimeUnixTimeInMs": 1625653885423,
+      "DefaultValue": "",
+      "Description": "Appends markdown to the end of the readme file of all playbooks pushed this run",
+      "IsMandatory": false,
+      "Name": "Readme Addon",
+      "Type": 2
+    }
+  ],
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1623078277411,
+  "ModificationTimeUnixTimeInMs": 1624368145681
+}

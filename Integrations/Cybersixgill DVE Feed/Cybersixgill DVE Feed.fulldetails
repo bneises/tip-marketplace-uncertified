@@ -1,0 +1,66 @@
+{
+    "Identifier": "Cybersixgill DVE Feed",
+    "PackageName": "Cybersixgill DVE Feed",
+    "DisplayName": "Cybersixgill DVE Feed",
+    "Description": "The Cybersixgill Dynamic Vulnerability Exploit (DVE) Score is based on the most comprehensive collection of vulnerability-related threat intelligence and is the only solution that provides users total context and predicts the immediate risks of a vulnerability based on threat actors\u00e2\u20ac\u2122 intent. Siemplify users can track threats stemming from CVEs that most others define as irrelevant and have a higher probability of being exploited via Siemplify\u00e2\u20ac\u2122s dashboard.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "PropertyName": "Client Id",
+            "PropertyDescription": "Client Id",
+            "PropertyDisplayName": "Client Id",
+            "IntegrationIdentifier": "Cybersixgill DVE Feed",
+            "ModificationTimeUnixTimeInMs": 1621857392534,
+            "IsMandatory": true,
+            "PropertyType": 2,
+            "Value": "Client_Id",
+            "CreationTimeUnixTimeInMs": 1621857392534,
+            "Id": 0
+        },
+        {
+            "PropertyName": "Client Secret",
+            "PropertyDescription": "Secret Key",
+            "PropertyDisplayName": "Client Secret",
+            "IntegrationIdentifier": "Cybersixgill DVE Feed",
+            "ModificationTimeUnixTimeInMs": 1621857392534,
+            "IsMandatory": true,
+            "PropertyType": 3,
+            "Value": null,
+            "CreationTimeUnixTimeInMs": 1621857392534,
+            "Id": 0
+        }
+    ],
+    "Actions": [
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Cybersixgill - DVE Connector"
+    ],
+    "Managers": [
+        "CybersixgillManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Cybersixgill DVE Feed Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1621942701000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1635782081000
+        }
+    ]
+}

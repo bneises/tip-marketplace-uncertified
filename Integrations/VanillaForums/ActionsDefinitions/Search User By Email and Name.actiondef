@@ -1,0 +1,59 @@
+{
+  "Name": "Search User By Email and Name",
+  "Description": "Checks if a user exists by email and username, and returns indication for the existence of each in the platform.",
+  "Script": "from VanillaManager import VanillaManager\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n# Consts:\nINTEGRATION_NAME = \"VanillaForums\"\nSCRIPT_NAME = \"Search User By Email and Name\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    \n    # Extract integration params:\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    apiToken = conf.get(\"API Token\")\n    baseUrl = conf.get(\"URL\")\n    \n    # Extract action params:\n    user_name = siemplify.extract_action_param(\"User Name\").strip()\n    user_email = siemplify.extract_action_param(\"User Email\").lower().strip()\n    \n    # Init result json:\n    res_json = {}\n    json_res_by_email = {}\n    json_res_by_name = {}\n    # Init result values:\n    status = EXECUTION_STATE_FAILED\n    output_message = f'Could not find a user with both Email address: <{user_email}> and username: <{user_name}>. '\n    result_value = False\n    \n    siemplify.LOGGER.info(\"================= Main - Started ====================\")\n    # Creating manager instance for methods:\n    vanillaManager = VanillaManager(apiToken,baseUrl)\n    \n    try:\n        emailFound = False\n        # search by email:\n        json_res_by_email = vanillaManager.search_user_by_email(user_email)\n        res_json['Email'] = True if len(json_res_by_email) > 0 else False\n        \n        if res_json.get('Email'):\n            output_message = f'Email address <{user_email}> was found in the system. \\n'\n            emailFound = True\n        \n        # search by name:\n        json_res_by_name = vanillaManager.search_user_by_name(user_name)\n        res_json['UserName'] =  True if len(json_res_by_name) > 0 else False\n        if res_json.get('UserName'):\n            output_message += f'User name <{user_name}> was found in the system. '\n        \n        # update result values:\n        result_value = emailFound or res_json.get(\"UserName\")\n        if not result_value:\n            output_message =  f'Email address <{user_email}> and username <{user_name}> were not found.'\n        \n        res_json['UserDetails'] = json_res_by_email if emailFound else {}\n        \n        status = EXECUTION_STATE_COMPLETED\n        \n    except Exception as e:\n        siemplify.LOGGER.error(e)\n        output_message += \" Error: \" + str(e)\n        \n    finally:\n        siemplify.LOGGER.info(\"\\n  result_value: {}\\n  output_message: {}\".format(result_value, output_message))\n        siemplify.result.add_result_json(res_json)\n        siemplify.end(output_message, result_value, status)\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "VanillaForums",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"Email\": true,\r\n\t\"UserName\": true,\r\n\t\"UserDetails\": {\r\n\t\t\"banned\": 0,\r\n\t\t\"bypassSpam\": false,\r\n\t\t\"email\": \"mail@mail.co\",\r\n\t\t\"emailConfirmed\": true,\r\n\t\t\"dateInserted\": \"2021-07-20T10:14:57+00:00\",\r\n\t\t\"dateLastActive\": \"2021-09-05T10:54:58+00:00\",\r\n\t\t\"dateUpdated\": \"2021-08-01T15:48:06+00:00\",\r\n\t\t\"name\": \"Mail Mail\",\r\n\t\t\"photoUrl\": \"https://wb.vanillicon.com/v2/bc5f30c1d3425047c142fd94c7e2a8f3.svg\",\r\n\t\t\"url\": \"https://community.siemplify.co/profile/Mail%20Mail\",\r\n\t\t\"points\": 10,\r\n\t\t\"roles\": [{\r\n\t\t\t\"roleID\": 8,\r\n\t\t\t\"name\": \"Member\"\r\n\t\t}, {\r\n\t\t\t\"roleID\": 16,\r\n\t\t\t\"name\": \"Community Team\"\r\n\t\t}],\r\n\t\t\"showEmail\": false,\r\n\t\t\"userID\": 1,\r\n\t\t\"countDiscussions\": 0,\r\n\t\t\"countComments\": 0,\r\n\t\t\"countPosts\": 0,\r\n\t\t\"label\": \"Community Team\",\r\n\t\t\"private\": false,\r\n\t\t\"rankID\": 110\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "shirsavion",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 104.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "mail@mail.com",
+      "Description": "the email address of the user",
+      "Name": "User Email",
+      "Value": "mail@mail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841645174,
+      "ModificationTimeUnixTimeInMs": 1630841645174
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Co Mmunity",
+      "Description": "the full name of the user",
+      "Name": "User Name",
+      "Value": "Co Mmunity",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841645174,
+      "ModificationTimeUnixTimeInMs": 1630841645174
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1629101810655,
+  "ModificationTimeUnixTimeInMs": 1630841645170
+}

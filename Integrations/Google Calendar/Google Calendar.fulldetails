@@ -1,0 +1,67 @@
+{
+    "Identifier": "Google Calendar",
+    "PackageName": "Google Calendar",
+    "DisplayName": "Google Calendar",
+    "Description": "Google Calendar is a time-management and scheduling calendar service developed by Google. ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1602421524755,
+            "Id": 0,
+            "IntegrationIdentifier": "Google Calendar",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1602421524755,
+            "PropertyDescription": "View the guide on how to create auth json credentials (service account) - provide access for Google Calendar\nhttps://gspread.readthedocs.io/en/latest/oauth2.html#enable-api-access",
+            "PropertyDisplayName": "Credentials Json",
+            "PropertyName": "Credentials Json",
+            "PropertyType": 2,
+            "Value": "{}"
+        }
+    ],
+    "Actions": [
+        "Create Event",
+        "Get Event Details",
+        "Ping",
+        "Update Event"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 4.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Google Calendar Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602436629000
+        },
+        {
+            "Items": [
+                "Updated SVG of Google Calendar Integration."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1626774317000
+        },
+        {
+            "Items": [
+                "Changed Integration Category"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1629722429000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1635783874000
+        }
+    ]
+}

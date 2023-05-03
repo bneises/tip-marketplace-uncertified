@@ -1,0 +1,115 @@
+{
+  "Name": "Create Meeting",
+  "Description": "Create a scheduled or instant meeting in Zoom",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom ZoomManager import ZoomManager\n\nINTEGRATION_NAME = u\"Zoom\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    jwt_token = conf.get(\"JWT Token\")\n    account_id = conf.get(\"Account ID\")\n    client_id = conf.get(\"Client ID\")\n    client_secret = conf.get(\"Client Secret\")\n\n    #Extracting the action params\n    meeting_topic = siemplify.extract_action_param(\"Meeting Topic\")\n    \n    meeting_type = siemplify.extract_action_param(\"Meeting Type\")\n\n    meeting_start_time = siemplify.extract_action_param(\"Meeting Start Time\")\n    \n    meeting_duration = siemplify.extract_action_param(\"Meeting Duration\")\n\n    meeting_time_zone = siemplify.extract_action_param(\"Time Zone\")\n    \n    meeting_recording_type = siemplify.extract_action_param(\"Auto Recording Type\")\n    \n    host_email_address = siemplify.extract_action_param(\"Host Email Address\")\n    \n\n    json_result ={}\n    \n    #Creating a ZoomManager object instance\n    zoom_manager = ZoomManager(jwt_token, account_id, client_id, client_secret)\n    \n    \n    created_meeting_details = zoom_manager.create_meeting(meeting_topic, meeting_type, meeting_start_time,\n                                            meeting_duration,meeting_time_zone, meeting_recording_type, host_email_address)\n\n    if created_meeting_details:\n        output_message = \"The meeting was created successfully\"\n        result_value = True\n\n        #Adding the meeting URL link\n        title = 'Meeting URL link'\n        link = created_meeting_details.get('join_url')\n        siemplify.result.add_link(title, link)\n    \n    else:\n        output_message = \"The meeting wasnt created\"\n        result_value = False\n    \n    \n    #Adding json result to the action\n    siemplify.result.add_result_json(created_meeting_details)\n    \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Zoom",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"created_at\": \"2019-09-05T16:54:14Z\",\r\n\t\"duration\": 60,\r\n\t\"host_id\": \"AbcDefGHi\",\r\n\t\"id\": 1100000,\r\n\t\"join_url\": \"https://zoom.us/j/1100000\",\r\n\t\"settings\": {\r\n\t\t\"alternative_hosts\": \"\",\r\n\t\t\"approval_type\": 2,\r\n\t\t\"audio\": \"both\",\r\n\t\t\"auto_recording\": \"local\",\r\n\t\t\"close_registration\": false,\r\n\t\t\"cn_meeting\": false,\r\n\t\t\"enforce_login\": false,\r\n\t\t\"enforce_login_domains\": \"\",\r\n\t\t\"global_dial_in_countries\": [\r\n\t\t\t\"US\"\r\n\t\t],\r\n\t\t\"global_dial_in_numbers\": [{\r\n\t\t\t\t\"city\": \"New York\",\r\n\t\t\t\t\"country\": \"US\",\r\n\t\t\t\t\"country_name\": \"US\",\r\n\t\t\t\t\"number\": \"+1 1000200200\",\r\n\t\t\t\t\"type\": \"toll\"\r\n\t\t\t},\r\n\t\t\t{\r\n\t\t\t\t\"city\": \"San Jose\",\r\n\t\t\t\t\"country\": \"US\",\r\n\t\t\t\t\"country_name\": \"US\",\r\n\t\t\t\t\"number\": \"+1 6699006833\",\r\n\t\t\t\t\"type\": \"toll\"\r\n\t\t\t},\r\n\t\t\t{\r\n\t\t\t\t\"city\": \"San Jose\",\r\n\t\t\t\t\"country\": \"US\",\r\n\t\t\t\t\"country_name\": \"US\",\r\n\t\t\t\t\"number\": \"+1 408000000\",\r\n\t\t\t\t\"type\": \"toll\"\r\n\t\t\t}\r\n\t\t],\r\n\t\t\"host_video\": false,\r\n\t\t\"in_meeting\": false,\r\n\t\t\"join_before_host\": true,\r\n\t\t\"mute_upon_entry\": false,\r\n\t\t\"participant_video\": false,\r\n\t\t\"registrants_confirmation_email\": true,\r\n\t\t\"use_pmi\": false,\r\n\t\t\"waiting_room\": false,\r\n\t\t\"watermark\": false,\r\n\t\t\"registrants_email_notification\": true\r\n\t},\r\n\t\"start_time\": \"2019-08-30T22:00:00Z\",\r\n\t\"start_url\": \"https://zoom.us/s/1100000?iIifQ.wfY2ldlb82SWo3TsR77lBiJjR53TNeFUiKbLyCvZZjw\",\r\n\t\"status\": \"waiting\",\r\n\t\"timezone\": \"America/New_York\",\r\n\t\"topic\": \"API Test\",\r\n\t\"type\": 2,\r\n\t\"uuid\": \"ng1MzyWNQaObxcf3+Gfm6A==\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 104,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Scheduled",
+      "Description": "The type of the meeting can be 'Instant' or 'Scheduled'\nSetting the meeting to 'Instant' will overlap the configuration of the 'Scheduled' meeting.",
+      "Name": "Meeting Type",
+      "Value": "Scheduled",
+      "Type": 15,
+      "OptionalValues": [
+        "Instant",
+        "Scheduled"
+      ],
+      "OptionalValuesJson": "[\"Instant\",\"Scheduled\"]"
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "2020-09-30 12:00:00",
+      "Description": "Meeting start time (should be used only for scheduled meetings).\nThe time format is GMT yyyy-mm-dd hh:mm:ss ",
+      "Name": "Meeting Start Time",
+      "Value": "2020-09-30 12:00:00",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "MeetingTopicExample",
+      "Description": "The meeting topic",
+      "Name": "Meeting Topic",
+      "Value": "MeetingTopicExample",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "none",
+      "Description": "'local'-Recording automatically on the local server.\n'cloud'-Recording  automatically on cloud.\n'none'- Choose if you do not want to record. \n",
+      "Name": "Auto Recording Type",
+      "Value": "none",
+      "Type": 15,
+      "OptionalValues": [
+        "local",
+        "cloud",
+        "none"
+      ],
+      "OptionalValuesJson": "[\"local\",\"cloud\",\"none\"]"
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Pacific/Midway",
+      "Description": "The time zone in format Continent/Country.\n",
+      "Name": "Time Zone",
+      "Value": "Pacific/Midway",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "45",
+      "Description": "The meeting duration in minutes",
+      "Name": "Meeting Duration",
+      "Value": "45",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email@siemplify.co",
+      "Description": "Email Address of the meeting host",
+      "Name": "Host Email Address",
+      "Value": "email@siemplify.co",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

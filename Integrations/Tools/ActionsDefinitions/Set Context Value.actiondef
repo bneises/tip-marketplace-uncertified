@@ -1,0 +1,72 @@
+{
+  "Name": "Set Context Value",
+  "Description": "The action sets a key and value in a specific context (alert or case)",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    scope = siemplify.extract_action_param(\"Scope\")\n    key = siemplify.extract_action_param(\"Key\")\n    value = siemplify.extract_action_param(\"Value\")\n\n    if scope == 'Alert':\n        siemplify.set_alert_context_property(key,value)\n    elif scope == 'Case':\n        siemplify.set_case_context_property(key,value)\n\n    output_message = \"Successfully Updated field {0} with value '{1}' in scope {2}.\".format(key,value,scope)\n\n    siemplify.end(output_message, True, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 3.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Value",
+      "Description": "Value",
+      "Name": "Value",
+      "Value": "Value",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620423,
+      "ModificationTimeUnixTimeInMs": 1614012620423
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Key",
+      "Description": "Key",
+      "Name": "Key",
+      "Value": "Key",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620423,
+      "ModificationTimeUnixTimeInMs": 1614012620423
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Alert",
+      "Description": "Alert or Case or Global",
+      "Name": "Scope",
+      "Value": "Alert",
+      "Type": 15,
+      "OptionalValues": [
+        "Case",
+        "Alert"
+      ],
+      "OptionalValuesJson": "[\"Case\",\"Alert\",\"Global\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620423,
+      "ModificationTimeUnixTimeInMs": 1639492632000
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620421,
+  "ModificationTimeUnixTimeInMs": 1614012620421
+}

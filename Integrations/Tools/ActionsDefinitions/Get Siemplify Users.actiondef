@@ -1,0 +1,41 @@
+{
+  "Name": "Get Siemplify Users",
+  "Description": "This action will return an object containing all users configured in the Siemplify system.",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nimport requests\nimport json\nimport time\nfrom datetime import datetime\n\nGET_USERS_URL = '{}/external/v1/settings/GetUserProfiles'\nACTION_NAME = \"GetSiemplifyUsers\"\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ACTION_NAME\n    \n    \n    \n    hide_disabled = siemplify.parameters.get(\"Hide Disabled Users\").lower() == \"true\"\n    json_payload = {\"searchTerm\": \"\",\n                    \"filterRole\": False,\n                    \"requestedPage\": 0,\n                    \"pageSize\": 1000,\n                    \"shouldHideDisabledUsers\": hide_disabled\n                    }\n    \n    siemplify_users = siemplify.session.post(GET_USERS_URL.format(siemplify.API_ROOT), json=json_payload)\n    siemplify_users.raise_for_status()\n    siemplify.result.add_result_json({\"siemplifyUsers\":siemplify_users.json()['objectsList']})\n    output_message = \"Returned Siemplify Users.\"\n    siemplify.end(output_message, True)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n    \"siemplifyUsers\": [\n        {\n            \"permissionGroup\": \"string\",\n            \"firstName\": \"string\",\n            \"lastName\": \"string\",\n            \"permissionType\": 1,\n            \"role\": 1,\n            \"socRoleId\": 1,\n            \"email\": \"string\",\n            \"userName\": \"string\",\n            \"imageBase64\": null,\n            \"userType\": 1,\n            \"identityProvider\": -1,\n            \"isDisabled\": false,\n            \"shouldShowLicenseAgreement\": false,\n            \"lastLoginTime\": 1111111111111,\n            \"previousLoginTime\": 1111111111111,\n            \"environments\": [\n                \"string\"\n            ],\n            \"id\": 1,\n            \"creationTimeUnixTimeInMs\": 1111111111111,\n            \"modificationTimeUnixTimeInMs\": 1111111111111\n        },\n        {\n            \"permissionGroup\": \"string\",\n            \"firstName\": \"string\",\n            \"lastName\": \"string\",\n            \"permissionType\": 1,\n            \"role\": 1,\n            \"socRoleId\": 1,\n            \"email\": \"string\",\n            \"userName\": \"string\",\n            \"imageBase64\": \"string\",\n            \"userType\": 1,\n            \"identityProvider\": -1,\n            \"isDisabled\": false,\n            \"shouldShowLicenseAgreement\": false,\n            \"lastLoginTime\": 1111111111111,\n            \"previousLoginTime\": 1111111111111,\n            \"environments\": [\n                \"string\"\n            ],\n            \"id\": 1,\n            \"creationTimeUnixTimeInMs\": 1111111111111,\n            \"modificationTimeUnixTimeInMs\": 1111111111111\n        }\n    ]\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "Hide disabled users from the result.",
+      "Name": "Hide Disabled Users",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620550,
+      "ModificationTimeUnixTimeInMs": 1614012620550
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620543,
+  "ModificationTimeUnixTimeInMs": 1614012620543
+}

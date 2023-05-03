@@ -1,0 +1,42 @@
+{
+  "Name": "Get Chat Details",
+  "Description": "Gets the details of a specific chat.",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Get Chat Details\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n    chat_id = siemplify.extract_action_param(\"Chat ID\")\n\n    chat_details = {}\n    title = \"\"\n    link = \"\"\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n\n        chat_details = telegram_manager.get_chat_details(chat_id)\n\n        title = \"The chat invite link:\"\n        link = chat_details[\"result\"][\"invite_link\"]\n\n    except Exception as e:\n        output_message = f\"Could not find The chat {chat_id}. Error: {e}\"\n        return_value = False\n        status = EXECUTION_STATE_FAILED\n    else:\n        return_value = True\n        output_message = f\"The chat {chat_id} was found successfully\"\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n    siemplify.result.add_link(title, link)\n    siemplify.result.add_result_json(chat_details)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"id\": -1111111,\r\n\t\"title\": \"Test\",\r\n\t\"type\": \"supergroup\",\r\n\t\"invite_link\": \"https://t.me/joinchat/abcd\",\r\n\t\"permissions\": {\r\n\t\t\"can_send_messages\": \"False\",\r\n\t\t\"can_send_media_messages\": \"False\",\r\n\t\t\"can_send_polls\": \"False\",\r\n\t\t\"can_send_other_messages\": \"False\",\r\n\t\t\"can_add_web_page_previews\": \"False\",\r\n\t\t\"can_change_info\": \"False\",\r\n\t\t\"can_invite_users\": \"False\",\r\n\t\t\"can_pin_messages\": \"False\"\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 36.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "123456",
+      "Description": "The chat ID",
+      "Name": "Chat ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

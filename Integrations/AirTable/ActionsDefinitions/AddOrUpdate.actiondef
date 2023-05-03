@@ -1,0 +1,87 @@
+{
+  "Name": "AddOrUpdate",
+  "Description": "",
+  "Script": "from SiemplifyAction import *\nfrom airtable import Airtable\nfrom airtable.auth import AirtableAuth\nimport json, sys\nfrom datetime import datetime\nfrom datetime import timedelta\n\nINTEGRATION_NAME = \"AirTable\"\n\n\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Api key\")\n    base_id = siemplify.parameters[\"Base id\"]\n    table_name = siemplify.parameters[\"Table name\"]\n    field_name = str(siemplify.parameters[\"Field name\"])\n    json_fields_str = siemplify.parameters[\"Json fields\"]\n\n\n\n    json_fields_dict = json.loads(json_fields_str)\n    airtable = Airtable(base_id, table_name, api_key)\n\n    updated_count = 0\n    inserted_count = 0\n    for json_fields_item in json_fields_dict:\n        print(json_fields_item)\n        results = airtable.search(field_name, json_fields_item[field_name])\n        print(len(results))\n        if len(results) != 0:\n            for result in results:\n                record_id = result['id']\n                updated_count = updated_count + 1\n                airtable.update(record_id, json_fields_item)\n        else:\n            inserted_count = inserted_count + 1\n            res = airtable.insert(json_fields_item)\n\n    records_count = len(results)\n\n    output_message = \"{0} records were inserted, {1} records were updated.\".format(inserted_count,updated_count)\n    siemplify.end(output_message, inserted_count + updated_count)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "AirTable",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 7.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Base id>",
+      "Description": "Base id",
+      "Name": "Base id",
+      "Value": "<Base id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625304666937,
+      "ModificationTimeUnixTimeInMs": 1625304666937
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Table name>",
+      "Description": "Table name",
+      "Name": "Table name",
+      "Value": "<Table name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625304666937,
+      "ModificationTimeUnixTimeInMs": 1625304666937
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Field name",
+      "Description": "Field name",
+      "Name": "Field name",
+      "Value": "Field name",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625304666937,
+      "ModificationTimeUnixTimeInMs": 1625304666937
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{}",
+      "Description": "Json fields",
+      "Name": "Json fields",
+      "Value": "{}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625304666937,
+      "ModificationTimeUnixTimeInMs": 1625304666937
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1625304666929,
+  "ModificationTimeUnixTimeInMs": 1625304666931
+}

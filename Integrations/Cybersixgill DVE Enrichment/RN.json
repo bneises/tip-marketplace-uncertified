@@ -1,0 +1,36 @@
+[
+    {
+        "ChangeDescription": "NEW! Cybersixgill DVE Enrichment Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Cybersixgill DVE Enrichment",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1621942701
+    },{
+        "ChangeDescription": "Fixed the enrichment action - Enrich CVE.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Cybersixgill DVE Enrichment",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1631177455
+    },{
+        "ChangeDescription": "Updated Integration SVG.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Cybersixgill DVE Enrichment",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635781641
+    }
+]

@@ -1,0 +1,53 @@
+{
+    "Name": "Search Custom Lists",
+    "Description": "Search a specified string within the records of a custom list. (If no values are provided will return all custom lists records)",
+    "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nCUSTOM_LIST_ENDPOINT = \"{}/external/v1/settings/GetTrackingListRecords\"\n\n\ndef get_custom_list_records(siemplify):\n    \n    url = CUSTOM_LIST_ENDPOINT.format(siemplify.API_ROOT)\n    records = siemplify.session.get(url)\n    siemplify.validate_siemplify_error(records)\n    \n    return records.json()\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    categories = siemplify.extract_action_param(\"Categories\", print_value=True, default_value=None)\n    string = siemplify.extract_action_param(\"String to Search\", print_value=True, default_value=None)\n    \n    list_categories = [category.strip() for category in categories.split(\",\") if category.strip()] if categories else []\n    status = EXECUTION_STATE_COMPLETED \n    output_message = \"Failed to get custom list items with provided parameters.\" \n    result_value = True \n\n    \n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n\n\n    try:\n        siemplify.LOGGER.info(f\"Getting custom list records\")\n        records = get_custom_list_records(siemplify)\n        \n        siemplify.LOGGER.info(f\"Searching records for match criteria\")\n        if list_categories:\n            relevant_records = []\n            for record in records:\n                if record[\"category\"] in list_categories:\n                    relevant_records.append(record)\n        else:\n            relevant_records = records\n        \n        json_result = []\n        match_records = []\n        if relevant_records:\n            if string:\n                for record in relevant_records:\n                    if string in record[\"entityIdentifier\"]:\n                        match_records.append(record)\n            else:\n                match_records = relevant_records\n        if match_records:\n            siemplify.LOGGER.info(f\"Found {len(match_records)} matching records\")\n            json_result= match_records\n        else:\n            siemplify.LOGGER.info(f\"No matching records found\")\n            result_value = False\n            \n        if json_result:\n            siemplify.result.add_result_json(json_result)\n            output_message = f\"Found {len(match_records)} matching records\"\n    except Exception as e:\n        status = EXECUTION_STATE_FAILED\n        result_value = False\n        output_message = f\"Failed to find records in custom lists\"\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(e)\n        \n\n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "Lists",
+    "ScriptResultName": "Match_Records",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[{\"entityIdentifier\": \"192.168.0.1\", \"category\": \"vuln_scanner\", \"forDBMigration\": false, \"environments\": [\"Default Environment\"], \"id\": 5, \"creationTimeUnixTimeInMs\": 1673953571935, \"modificationTimeUnixTimeInMs\": 1673953571935}, {\"entityIdentifier\": \"192.168.0.2\", \"category\": \"vuln_scanner\", \"forDBMigration\": false, \"environments\": [\"Default Environment\"], \"id\": 6, \"creationTimeUnixTimeInMs\": 1673953584305, \"modificationTimeUnixTimeInMs\": 1673953584305}]",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "961229ec-955b-4459-a30d-1b00636d9f84",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 26.0,
+    "TimeoutSeconds": 600,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 3600,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 775,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "String to search within list values",
+            "Name": "String to Search",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 775,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "Comma separated values",
+            "Name": "Categories",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

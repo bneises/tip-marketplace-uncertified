@@ -1,0 +1,69 @@
+{
+  "Name": "Get Logs",
+  "Description": "Get logs by a given Kubernetes Namespace.\nFor more information: https://docs.datadoghq.com/api/latest/logs/#get-a-list-of-logs",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\n\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = [\"\"]\n    json_result = {}\n    namespace_logs = {}\n    \n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    namespace_list = siemplify.extract_action_param(\"Namespace\")\n    start_time = siemplify.extract_action_param(\"Start Time\")\n    end_time = siemplify.extract_action_param(\"End Time\")\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n    \n    #Converting the namespace_list into a list\n    if namespace_list is not None:\n        namespace_list = namespace_list.split(\",\")\n        \n    for namespace in namespace_list:\n        namespace = namespace.strip()\n        logs = datadog_manager.get_logs(namespace, start_time, end_time)\n        \n        if len(logs.get('logs')) > 0:\n            siemplify.LOGGER.info(f\"The Logs for the namespace: {namespace} were fetched successfully.\")\n            output_message.append(f\"The Logs for the namespace: {namespace} were fetched successfully.\")\n            result_value = True\n            json_result[f\"NameSpace: {namespace}\"] = logs\n\n        else:\n            siemplify.LOGGER.error(f\"The Logs for {namespace} were not found\")\n            output_message.append(f\"The Logs for {namespace} were not found\")\n\n    siemplify.result.add_result_json(json_result)\n\n    siemplify.end(\"\\n\".join(output_message), result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"NameSpace: kube-system\": {\r\n\t\t\"status\": \"done\",\r\n\t\t\"nextLogId\": \"1111111\",\r\n\t\t\"logs\": [{\r\n\t\t\t\"content\": {\r\n\t\t\t\t\"timestamp\": \"2021-01-01T02:02:01.894Z\",\r\n\t\t\t\t\"host\": \"i-11111\",\r\n\t\t\t\t\"message\": \"The messasge content\",\r\n\t\t\t\t\"service\": \"snapshot-controller\",\r\n\t\t\t\t\"tags\": [\"image_name:name\", \"container_name:name\", \"source:source name\", \"kube_namespace:kube-system\"]\r\n\t\t\t},\r\n\t\t\t\"id\": \"123456789\"\r\n\t\t}, {\r\n\t\t\t\"content\": {\r\n\t\t\t\t\"timestamp\": \"2021-01-01T02:02:01.894Z\",\r\n\t\t\t\t\"host\": \"i-22222\",\r\n\t\t\t\t\"message\": \"The messasge content\",\r\n\t\t\t\t\"service\": \"snapshot-controller\",\r\n\t\t\t\t\"tags\": [\"image_name:name\"]\r\n\t\t\t},\r\n\t\t\t\"id\": \"123456789\"\r\n\t\t}],\r\n\t\t\"requestId\": \"aaaabbbb11112222\"\r\n\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 42.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "2020-02-02T02:02:02Z",
+      "Description": "The end time which you want to retrieve the logs to.",
+      "Name": "End Time",
+      "Value": "2020-02-02T02:02:02Z",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532286,
+      "ModificationTimeUnixTimeInMs": 1615195532286
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "2020-02-02T02:02:02Z",
+      "Description": "The start time which you want to retrieve the logs from.",
+      "Name": "Start Time",
+      "Value": "2020-02-02T02:02:02Z",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532286,
+      "ModificationTimeUnixTimeInMs": 1615195532286
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "name_space1, name_space2",
+      "Description": "The Kubernetes namespace you would like to get logs for.",
+      "Name": "Namespace",
+      "Value": "name_space1, name_space2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532286,
+      "ModificationTimeUnixTimeInMs": 1615195532286
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532274,
+  "ModificationTimeUnixTimeInMs": 1615195532274
+}

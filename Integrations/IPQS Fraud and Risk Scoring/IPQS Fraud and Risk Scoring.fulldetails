@@ -1,0 +1,50 @@
+{
+    "IntegrationProperties": [
+        {
+            "PropertyName": "API Key", 
+            "PropertyDescription": "IPQualityScore API Key", 
+            "PropertyDisplayName": "API Key", 
+            "IntegrationIdentifier": "IPQS Fraud and Risk Scoring", 
+            "ModificationTimeUnixTimeInMs": 1656582022047, 
+            "IsMandatory": true, 
+            "PropertyType": 3, 
+            "Value": null, 
+            "CreationTimeUnixTimeInMs": 1656582022047, 
+            "Id": 0
+        }
+    ], 
+    "DisplayName": "IPQS Fraud and Risk Scoring", 
+    "Description": "IPQS Fraud and Risk Scoring provides enterprise grade fraud prevention, risk analysis, and threat detection. Analyze IP addresses, email addresses, and URLs or domains to identify sophisticated bad actors and high risk behavior.", 
+    "CustomFamilies": [], 
+    "Managers": [
+        "IPQSManager"
+    ], 
+    "PackageName": "IPQS Fraud and Risk Scoring", 
+    "IsCustom": false, 
+    "Actions": [
+        "Ping", 
+        "Enrich Domain", 
+        "Enrich Email", 
+        "Enrich URL", 
+        "Enrich Phone", 
+        "Enrich IP"
+    ], 
+    "Jobs": [], 
+    "ExampleUseCases": [], 
+    "Connectors": [], 
+    "Version": 2.0, 
+    "MappingRules": [], 
+    "MinimumSystemVersion": 0, 
+    "UploaderProfileLink": null, 
+    "Identifier": "IPQS Fraud and Risk Scoring", 
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 1656595747000, 
+            "Items": [
+                "NEW! IPQS Fraud and Risk Scoring"
+            ], 
+            "Version": 2.0
+        }
+    ], 
+    "DocumentationLink": null
+}

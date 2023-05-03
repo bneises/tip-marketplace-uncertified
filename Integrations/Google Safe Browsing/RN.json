@@ -1,0 +1,36 @@
+[
+    {
+        "ChangeDescription": "NEW! Google Safe Browsing Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Google Safe Browsing",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1602150072
+    },{
+        "ChangeDescription": "Updated SVG of Google Safe Browsing Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Google Safe Browsing",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1626774317
+    },{
+        "ChangeDescription": "Updated SVG of Google Safe Browsing Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Google Safe Browsing",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635784459
+    }
+]

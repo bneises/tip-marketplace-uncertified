@@ -1,0 +1,69 @@
+{
+  "Name": "Get Metric Snapshot Graph",
+  "Description": "Get metric snapshot graph for a given query.\nFor more information: https://docs.datadoghq.com/api/v1/snapshots/",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\n\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = \"\"\n\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    query_to_search = siemplify.extract_action_param( \"Query\")\n    start_time = siemplify.extract_action_param(\"Start Time\")\n    end_time = siemplify.extract_action_param(\"End Time\")\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n\n\n    snapshot_graph = datadog_manager.get_graph_snapshot(query_to_search, start_time, end_time)\n\n    if bool(snapshot_graph)==True:\n        siemplify.LOGGER.info(f\"The graph snapshot of the query {query_to_search} was fetched successfully\")\n        result_value = True\n        output_message = f\"The graph snapshot of the query {query_to_search} was fetched successfully\"\n    \n    else:\n        siemplify.LOGGER.info(f\"The graph snapshot of the query {query_to_search} wasn't fetched.\")\n        output_message = f\"The graph snapshot of the query {query_to_search} wasn't fetched.\"\n        \n    #Adding the snapshot URL link\n    title = 'The graph snapshot URL'\n    link = snapshot_graph.get(\"snapshot_url\")\n    siemplify.result.add_link(title, link)\n    \n    siemplify.result.add_result_json(snapshot_graph)\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n  \"graph_def\": \"string\",\r\n  \"metric_query\": \"string\",\r\n  \"snapshot_url\": \"https://app.datadoghq.com/s/f12345678/aaa-bbb-ccc\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 49.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "avg:aws.rds.cpuutilization{cloud_env:production}by{dbinstanceidentifier}",
+      "Description": "The metric query which you want to get the snapshot graph of.\nFor example: avg:aws.rds.cpuutilization{cloud_env:production}by{dbinstanceidentifier}",
+      "Name": "Query",
+      "Value": "avg:aws.rds.cpuutilization{cloud_env:production}by{dbinstanceidentifier}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532257,
+      "ModificationTimeUnixTimeInMs": 1615195532257
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1400000470",
+      "Description": "The start time of the metric snapshot graph in Unixtime.",
+      "Name": "Start Time",
+      "Value": "1400000470",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532257,
+      "ModificationTimeUnixTimeInMs": 1615195532257
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1610557457",
+      "Description": "The end time of the metric snapshot graph in Unixtime.",
+      "Name": "End Time",
+      "Value": "1610557457",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532257,
+      "ModificationTimeUnixTimeInMs": 1615195532257
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532245,
+  "ModificationTimeUnixTimeInMs": 1615195532245
+}

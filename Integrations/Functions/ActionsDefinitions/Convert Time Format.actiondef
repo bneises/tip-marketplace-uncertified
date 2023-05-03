@@ -1,0 +1,97 @@
+{
+  "Name": "Convert Time Format",
+  "Description": "Convert a datetime value from one format to another format.  ",
+  "Script": "from SiemplifyAction import *\nimport arrow\nfrom dateutil import tz\nimport pytz\n\ndef is_number(s):\n    try:\n        float(s)\n        return True\n    except ValueError:\n        return False\n\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name='Convert Time Format'\n    params = siemplify.parameters\n    input_str = params.get('Input')\n    from_format = params.get('From Format')\n    to_format = params.get('To Format')\n    time_delta_in_seconds = params.get('Time Delta In Seconds', 0) or 0\n    timezone = params.get(\"Timezone\")\n    if from_format.endswith(\"UTC\"):\n        input_str, temp_tz = input_str.split(\"UTC\")\n        from_format = from_format.strip(\"UTC\")\n        time_delta_in_seconds = int(time_delta_in_seconds) - int(temp_tz) * 3600\n    if from_format.endswith(\"GMT\"):\n        input_str, temp_tz = input_str.split(\"GMT\")\n        from_format = from_format.strip(\"GMT\")\n        time_delta_in_seconds = int(time_delta_in_seconds) - int(temp_tz) * 3600\n    \n    result_value = 'false'\n    new_time = ''\n    try:\n        if not to_format:\n            raise Exception(\"No output format\")\n        if not input_str:\n            new_time = arrow.get()\n        else:\n            if is_number(input_str):\n                if len(input_str) == 10:\n                    new_time = arrow.get(int(input_str))\n                elif len(input_str) == 13:\n                    new_time = arrow.get(int(input_str) / 1000).replace(microsecond=(int(int(input_str) % 1000) * 1000))\n                else:\n                    try:\n                        new_time = arrow.get(input_str)\n                    except Exception:\n                        siemplify.LOGGER.error(\"input is a timestamp, but badly formatted (not 10 or 13 digits)\")\n            else:\n                new_time = arrow.get(arrow.Arrow.strptime(input_str, from_format))\n    except Exception as e:\n        siemplify.LOGGER.error(e)\n        try:\n            if is_number(input_str):\n                if len(input_str) == 10:\n                    new_time = arrow.get(int(input_str))\n                elif len(input_str) == 13:\n                    new_time = arrow.get(int(input_str) / 1000).replace(microsecond=(int(int(input_str) % 1000) * 1000))\n                else:\n                    try:\n                        new_time = arrow.get(input_str)\n                    except Exception:\n                        siemplify.LOGGER.error(\"input is a timestamp, but badly formatted (not 10 or 13 digits)\")\n            else:\n                new_time = arrow.get(arrow.Arrow.strptime(input_str, from_format))\n            siemplify.LOGGER.info(\"Managed to process regardless of the provided format\")\n        except Exception:\n            raise Exception(\"Could not process\")\n    if time_delta_in_seconds:\n        #timezone = new_time.format(\"Z\")\n        new_time = new_time.shift(seconds=int(time_delta_in_seconds))\n    if timezone:\n        new_time = new_time.to(timezone)\n    result_value = new_time.format(to_format)\n    output_message = result_value\n    siemplify.end(output_message, result_value)\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<input val>",
+      "Description": "The input datetime value that will be converted.",
+      "Name": "Input",
+      "Value": "<input val>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102510,
+      "ModificationTimeUnixTimeInMs": 1610733102510
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "X",
+      "Description": "The datetime format the input string is in.  \nhttps://strftime.org/",
+      "Name": "From Format",
+      "Value": "X",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102510,
+      "ModificationTimeUnixTimeInMs": 1610733102510
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "YYYY/MM/DD",
+      "Description": "The desired time format of the output.  Use Arrow time format.  https://arrow.readthedocs.io/en/stable/#supported-tokens",
+      "Name": "To Format",
+      "Value": "YYYY/MM/DD",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102510,
+      "ModificationTimeUnixTimeInMs": 1610733102510
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0",
+      "Description": "Shift parameter that allows to change the output actual time to either the future (positive) or past (negative). This shift is measured in seconds",
+      "Name": "Time Delta In Seconds",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102510,
+      "ModificationTimeUnixTimeInMs": 1610733102510
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "Output timezone",
+      "Name": "Timezone",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102510,
+      "ModificationTimeUnixTimeInMs": 1610733102510
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610733102507,
+  "ModificationTimeUnixTimeInMs": 1610733102507
+}

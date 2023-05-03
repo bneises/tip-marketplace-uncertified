@@ -1,0 +1,38 @@
+[
+    {
+        "ChangeDescription": "NEW! PhilipsHUE Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "PhilipsHUE",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1634145924
+    },
+    {
+        "ChangeDescription": "Added alert effect functionality in Turn On Light and Color Action",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "PhilipsHUE",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635340692
+    },
+    {
+        "ChangeDescription": "Changed requests protocol to https and set timeouts for more security",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "PhilipsHUE",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1673435559
+    }
+]

@@ -1,0 +1,45 @@
+{
+  "Name": "Get Trust Monitor Events",
+  "Description": "Returns DUO Trust Monitor events from the last X days",
+  "Script": "'''\nUses DUO's Python SDK: https://github.com/duosecurity/duo_client_python\nUses the DUO Admin API: https://duo.com/docs/adminapi\n\nReturns Trust Monitor events from the last X days\n\nNote: Requires DUO Admin API keys\n\nCreated by: jtdepalm@sentara.com\n'''\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nINTEGRATION_NAME = \"DUO\"\nSCRIPT_NAME = \"DUO Get Trust Monitor Events\"\n\n@output_handler\ndef main():\n    import duo_client\n    import time\n    import json\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    result = True\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    try:\n        # list to contain results from action\n        res = []\n        \n        duoApi = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"API Hostname\")\n        adminSec = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Admin Secret Key\")\n        adminIntKey = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Admin Integration Key\")\n        \n        # ***parameters***\n        # number of days back to obtain DUO Trust Monitor Events\n        days_back = int(siemplify.extract_action_param(\"Number Days Back\", print_value=True))\n        \n        # logic to compute number of days back\n        x_days_back = (86400*1000) * days_back\n        timestamp_now = int(time.time()*1000)\n        timestamp_x_days_ago = timestamp_now - x_days_back\n    \n        # Using SDK. Setup initial authentication\n        admin_api = duo_client.Admin(ikey=adminIntKey, skey=adminSec, host=duoApi)\n        # Obtain DUO Trust Mon Events\n        trust_monitor = admin_api.get_trust_monitor_events_by_offset(maxtime=timestamp_now, mintime=timestamp_x_days_ago)\n        \n        \n        results = {\n            \"trust_monitor\":trust_monitor\n        }\n        res.append(results)\n        siemplify.result.add_result_json(res)\n        json_result = json.dumps(res)\n        output_message = \"Results: {}\".format(json_result)\n    \n    except Exception as e:\n        result = False\n        status = EXECUTION_STATE_FAILED\n        output_message = \"Failed. Error is : {}\".format(e)\n\n\n\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"Output Message: {}\".format(output_message))\n    siemplify.LOGGER.info(\"Result: {}\".format(result))\n    \n    siemplify.end(output_message, result, status)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "DUO",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "John",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 9.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "Number of days back to pull events from",
+      "Name": "Number Days Back",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539485,
+      "ModificationTimeUnixTimeInMs": 1635867539485
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635867539480,
+  "ModificationTimeUnixTimeInMs": 1635867539480
+}

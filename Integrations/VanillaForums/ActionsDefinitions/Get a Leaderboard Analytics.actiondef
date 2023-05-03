@@ -1,0 +1,87 @@
+{
+  "Name": "Get a Leaderboard Analytics",
+  "Description": "Fetch analytics for leaderboards in a given date range",
+  "Script": "from VanillaManager import VanillaManager\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n# Consts:\nINTEGRATION_NAME = \"VanillaForums\"\nSCRIPT_NAME = \"Get a Leaderboard Analytics\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    \n    # Integration params:\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    apiToken = conf.get(\"API Token\")\n    baseUrl = conf.get(\"URL\")\n    \n    # Action params:\n    leaderboards = siemplify.extract_action_param(param_name=\"Leaderboards\")\n    limit = siemplify.extract_action_param(param_name=\"Amount Limit\").strip()\n    start_time = siemplify.extract_action_param(param_name=\"From\").strip()\n    end_time = siemplify.extract_action_param(param_name=\"To\").strip()\n    # Split leaderboards to a list of boards:\n    leaderboards_lst = leaderboards.split(\",\")\n    \n    # Init result json:\n    res_json = []\n    res_sub_json = {}\n    \n    # Init result values:\n    status = EXECUTION_STATE_FAILED\n    output_message = \"\"\n    result_value = False\n    \n    # Creating manager instance for methods:\n    vanillaManager = VanillaManager(apiToken,baseUrl)\n    try:\n        # Fetch each leaderboard analytics:\n        for board in leaderboards_lst:\n            board = board.strip()\n            res_sub_json[\"board\"] = board\n            res_sub_json[\"board_details\"] = vanillaManager.get_leaderboard_analytics(board, limit, start_time, end_time)\n            res_json.append(res_sub_json)\n            output_message += f'The board <{board.capitalize()}> analytics fetched successfully.\\n '\n        status = EXECUTION_STATE_COMPLETED\n        output_message += f'All the requested leaderboards analytics were successfully fetched.\\n'\n        result_value = True\n\n    except Exception as e:\n        siemplify.LOGGER.error(e)\n        output_message += f'Could not fetch the <{leaderboards}> leaderbooard analytics. '\n        output_message += \"Error: \" + str(e)\n\n    finally:\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n\n        siemplify.result.add_result_json(res_json) \n        siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "VanillaForums",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\r\n\t\"board\": \"top-discussion-starters\",\r\n\t\"board_details\": [{\r\n\t\t\"recordID\": 1111,\r\n\t\t\"recordType\": \"user\",\r\n\t\t\"id\": 1111,\r\n\t\t\"position\": 1,\r\n\t\t\"positionChange\": \"New\",\r\n\t\t\"previous\": null,\r\n\t\t\"url\": \"/profile/Name%20LastName\",\r\n\t\t\"name\": \"FirstName LastName\",\r\n\t\t\"title\": \"FirstName LastName\",\r\n\t\t\"count\": 18\r\n\t}, {\r\n\t\t\"recordID\": 1111,\r\n\t\t\"recordType\": \"user\",\r\n\t\t\"id\": 1111,\r\n\t\t\"position\": 2,\r\n\t\t\"positionChange\": \"New\",\r\n\t\t\"previous\": null,\r\n\t\t\"url\": \"/profile/FirstName%20LastName\",\r\n\t\t\"name\": \"FirstName LastName\",\r\n\t\t\"title\": \"FirstName LastName\",\r\n\t\t\"count\": 6\r\n\t}, {\r\n\t\t\"recordID\": 0,\r\n\t\t\"recordType\": \"user\",\r\n\t\t\"id\": 0,\r\n\t\t\"position\": 3,\r\n\t\t\"positionChange\": \"Rise\",\r\n\t\t\"previous\": 6,\r\n\t\t\"url\": \"/profile/FirstName%20LastName\",\r\n\t\t\"name\": \"FirstName LastName\",\r\n\t\t\"title\": \"FirstName LastName\",\r\n\t\t\"count\": 4\r\n\t}, {\r\n\t\t\"recordID\": 1000,\r\n\t\t\"recordType\": \"user\",\r\n\t\t\"id\": 1000,\r\n\t\t\"position\": 3,\r\n\t\t\"positionChange\": \"New\",\r\n\t\t\"previous\": null,\r\n\t\t\"url\": \"/profile/FirstName%20LastName\",\r\n\t\t\"name\": \"FirstName LastName\",\r\n\t\t\"title\": \"FirstName LastName\",\r\n\t\t\"count\": 4\r\n\t}, {\r\n\t\t\"recordID\": 1000,\r\n\t\t\"recordType\": \"user\",\r\n\t\t\"id\": 1000,\r\n\t\t\"position\": 3,\r\n\t\t\"positionChange\": \"New\",\r\n\t\t\"previous\": null,\r\n\t\t\"url\": \"/profile/FirstName%20LastName\",\r\n\t\t\"name\": \"FirstName LastName\",\r\n\t\t\"title\": \"FirstName LastName\",\r\n\t\t\"count\": 4\r\n\t}]\r\n\r\n}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "shakedalontest",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 78.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "top-posters, top-discussion-starters",
+      "Description": "Leaderboards seperated by comma. \nFor example: top-posters, top-discussion-starters",
+      "Name": "Leaderboards",
+      "Value": "top-posters, top-discussion-starters",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841847143,
+      "ModificationTimeUnixTimeInMs": 1630841847143
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "2021-12-30",
+      "Description": "End of the time frame\nSyntax:\n{yyyy}-{mm}-{dd}",
+      "Name": "To",
+      "Value": "2021-12-30",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841847143,
+      "ModificationTimeUnixTimeInMs": 1630841847143
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "10",
+      "Description": "The max number of rows to return for each board",
+      "Name": "Amount Limit",
+      "Value": "10",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841847143,
+      "ModificationTimeUnixTimeInMs": 1630841847143
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "2021-01-01",
+      "Description": "Start of the time frame\nSyntax:\n{yyyy}-{mm}-{dd}",
+      "Name": "From",
+      "Value": "2021-01-01",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841847143,
+      "ModificationTimeUnixTimeInMs": 1630841847143
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1630841847137,
+  "ModificationTimeUnixTimeInMs": 1630841847139
+}

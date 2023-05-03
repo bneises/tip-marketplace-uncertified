@@ -1,0 +1,45 @@
+{
+  "Name": "Await Arcanna Inference",
+  "Description": "",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\n\nimport time\nfrom constants import AWAIT_ARCANNA_INFERENCE_SCRIPT_NAME\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = AWAIT_ARCANNA_INFERENCE_SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    period = siemplify.extract_action_param(\"Period\", print_value=True, is_mandatory=True)\n\n    status = EXECUTION_STATE_COMPLETED\n    output_message = \"Awaited Arcanna Inference\"\n    result_value = True\n    try:\n        siemplify.LOGGER.info(f\"Arcanna Period ={period}\")\n\n        time.sleep(int(period))\n    except Exception as e:\n        output_message = f'Error executing {AWAIT_ARCANNA_INFERENCE_SCRIPT_NAME}. Reason {e}'\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = False\n    siemplify.end(output_message, result_value, status)\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "ArcannaAI",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 11.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "10",
+      "Description": "time in seconds",
+      "Name": "Period",
+      "Value": "10",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1663236219699,
+      "ModificationTimeUnixTimeInMs": 1663236219699
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1663236219690,
+  "ModificationTimeUnixTimeInMs": 1663236219692
+}

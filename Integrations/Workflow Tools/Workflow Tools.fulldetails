@@ -1,0 +1,120 @@
+{
+    "IntegrationProperties": [
+        {
+            "PropertyName": "Siemplify API Root", 
+            "PropertyDescription": "You should only change this if your Siemplify architecture requires it and you know what you are doing.", 
+            "PropertyDisplayName": "Siemplify API Root", 
+            "IsMandatory": true, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 2, 
+            "Value": "https://localhost", 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }, 
+        {
+            "PropertyName": "Slack Webhook URL", 
+            "PropertyDescription": "An optional slack webhook URL that we can use to send audit messages.\nLeave empty to disable", 
+            "PropertyDisplayName": "Slack Webhook URL", 
+            "IsMandatory": false, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 2, 
+            "Value": null, 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }, 
+        {
+            "PropertyName": "Verify SSL", 
+            "PropertyDescription": "Whether to verify requests made to the Siemplify API", 
+            "PropertyDisplayName": "Verify SSL", 
+            "IsMandatory": false, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 0, 
+            "Value": "false", 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }, 
+        {
+            "PropertyName": "Siemplify API Key", 
+            "PropertyDescription": "API Key generated in Siemplify Settings", 
+            "PropertyDisplayName": "Siemplify API Key", 
+            "IsMandatory": false, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 3, 
+            "Value": null, 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }, 
+        {
+            "PropertyName": "Approval Manager", 
+            "PropertyDescription": "The Siemplify username or role of a person or group of people that is permitted to approve this action and allow the workflow to continue.", 
+            "PropertyDisplayName": "Approval Manager", 
+            "IsMandatory": true, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 2, 
+            "Value": "@Administrator", 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }, 
+        {
+            "PropertyName": "Secondary Approval Manager", 
+            "PropertyDescription": "The Siemplify username or role of a secondary person or group of people that is permitted to approve this action and allow the workflow to continue.", 
+            "PropertyDisplayName": "Secondary Approval Manager", 
+            "IsMandatory": false, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 2, 
+            "Value": null, 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }, 
+        {
+            "PropertyName": "Siemplify Instance Hostname", 
+            "PropertyDescription": "The address/hostname of your Siemplify instance. This is used to generate clickable links in slack message content so you can quickly jump into a case directly from slack. This could be a domain or an IP address that resolves your instance.", 
+            "PropertyDisplayName": "Siemplify Instance Hostname", 
+            "IsMandatory": true, 
+            "ModificationTimeUnixTimeInMs": 1624318430669, 
+            "IntegrationIdentifier": "Workflow Tools", 
+            "PropertyType": 2, 
+            "Value": "https://siemplify.mycompany.com", 
+            "CreationTimeUnixTimeInMs": 1624318430669, 
+            "Id": 0
+        }
+    ], 
+    "DisplayName": "Workflow Tools", 
+    "Description": "Gain more control over your workflows, with tools such as approval stages that can only be completed by a specified user or group. This can be actioned against a specific alert by moving it into a different case when the workflow requires, or by requiring an approval action against the case as a whole.\nDocumentation: https://github.com/snags141/SiemplifyIntegration_WorkflowTools", 
+    "CustomFamilies": [], 
+    "Managers": [
+        "WorkflowToolsManager"
+    ], 
+    "PackageName": "Workflow Tools", 
+    "IsCustom": false, 
+    "Actions": [
+        "Ping", 
+        "Approval Response", 
+        "Approval Request", 
+        "Assign Case to Current User"
+    ], 
+    "Jobs": [], 
+    "ExampleUseCases": [], 
+    "Connectors": [], 
+    "Version": 1.0, 
+    "MappingRules": [], 
+    "MinimumSystemVersion": 0, 
+    "UploaderProfileLink": null, 
+    "Identifier": "Workflow Tools", 
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 1626356148000, 
+            "Items": [
+                "NEW! Workflow Tools integration."
+            ], 
+            "Version": 1.0
+        }
+    ], 
+    "DocumentationLink": null
+}

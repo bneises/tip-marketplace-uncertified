@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test connectivity",
+  "Script": "from SiemplifyAction import *\nimport json, requests\n\nINTEGRATION_NAME = \"PhishTank\"\n\nHEADERS = {\n        'Content-Type': 'application/x-www-form-urlencoded',\n        'User-Agent': 'phishtank/Siemplify'\n    }\ndef main():\n    siemplify = SiemplifyAction()\n    \n    service_url = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Service Url\")\n    payload = {\"url\": 'google.com', \"format\": \"json\"}\n    res = requests.post(service_url, headers=HEADERS, params=payload)\n    res.raise_for_status()\n\n    siemplify.end('PhishTank is connected', True)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "PhishTank",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Yoav",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 7.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1593363310637,
+  "ModificationTimeUnixTimeInMs": 1593363310639
+}

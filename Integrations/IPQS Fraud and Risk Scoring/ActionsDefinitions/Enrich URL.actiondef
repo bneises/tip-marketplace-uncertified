@@ -1,0 +1,48 @@
+{
+	"Name": "Enrich URL",
+	"Description": "This action Scans links and domains in real-time to detect suspicious URLs using trusted machine learning models. These machine learning models can accurately identify phishing links, malware URLs, viruses, parked domains, and suspicious URLs with real-time risk scores. In addition, the machine learning models can confidently classify poor reputation domains, suspicious links, and phishing URLs with a real-time API integration. Features such as parking domain detection, domain spam scores, reputation checks, and domain age, elevates URL intelligence to a whole new level.",
+	"Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom IPQSManager import IPQSManager, PROVIDER\nfrom SiemplifyDataModel import EntityTypes\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    data_json = {}\n    api_key = siemplify.extract_configuration_param(PROVIDER,\"API Key\")\n    strictness = int(siemplify.extract_action_param(param_name=\"Strictness\", print_value=True))\n    fast = siemplify.extract_action_param(param_name=\"Fast\", print_value=True)\n    data_json['strictness'] = strictness\n    if fast:\n        data_json['fast'] = 'true'\n    ipqs_manager = IPQSManager(siemplify, api_key, data_json)\n    ipqs_manager.enrich([EntityTypes.URL])\n\nif __name__ == \"__main__\":\n    main()\n",
+	"IntegrationIdentifier": "IPQS Fraud and Risk Scoring",
+	"ScriptResultName": "ScriptResult",
+	"DynamicResultsMetadata": [{
+		"ResultName": "JsonResult",
+		"ResultExample": "{}",
+		"ShowResult": true
+	}],
+	"Creator": "IPQS",
+	"IsEnabled": true,
+	"IsCustom": false,
+	"IsSystem": false,
+	"Version": 8.0,
+	"TimeoutSeconds": 300,
+	"IsAsync": null,
+	"AsyncPollingIntervalInSeconds": 3600,
+	"TotalIntervalTimeoutForAsyncInSeconds": 86400,
+	"Parameters": [{
+		"CustomActionId": 0,
+		"IsMandatory": true,
+		"DefaultValue": "0",
+		"Description": "How strict should we scan this URL? Stricter checks may provide a higher false-positive rate.",
+		"Name": "Strictness",
+		"Value": "0",
+		"Type": 15,
+		"OptionalValues": ["0", "1", "2"],
+		"OptionalValuesJson": "[\"0\",\"1\",\"2\"]"
+	}, {
+		"CustomActionId": 0,
+		"IsMandatory": false,
+		"DefaultValue": "false",
+		"Description": "When enabled, the API will provide quicker response times using lighter checks and analysis.",
+		"Name": "Fast",
+		"Value": "false",
+		"Type": 1,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}],
+	"DefaultResultValue": "",
+	"PythonVersion": "None",
+	"SimulationData": {
+		"Entities": null
+	},
+	"SimulationDataJson": null
+}

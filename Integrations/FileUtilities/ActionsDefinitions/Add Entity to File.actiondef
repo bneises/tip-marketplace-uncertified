@@ -1,0 +1,41 @@
+{
+  "Name": "Add Entity to File",
+  "Description": "This action will add the identifier of a target entity to a local file.  It will only add one occurance of the entity to the file and will return False if the entity already exists.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED\nfrom FileUtilitiesManager import EntityFileManager\n\n# Example Consts:\nINTEGRATION_NAME = \"FileUtilities\"\n\nSCRIPT_NAME = \"Add Entity to File\"\nFILE_PATH = u'/tmp/'\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    \n    \n    filename = siemplify.extract_action_param(param_name=\"Filename\", is_mandatory=False, print_value=True)\n    \n    output_message = \"\"\n    result_value = True\n    filepath = FILE_PATH + filename\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    try:\n        # Lock the file from other actions that may use it. if file \n        with EntityFileManager(filepath, timeout) as efm:\n            for entity in siemplify.target_entities:\n                if entity.identifier not in efm.entities:\n                    siemplify.LOGGER.info(\"Adding entity: {}\".format(entity.identifier))\n                    efm.addEntity(entity.identifier)\n                    output_message += \"Added Entity: {}\\n\".format(entity.identifier)\n                else:\n                    siemplify.LOGGER.info(\"Entity is already in file: {}\".format(entity.identifier))\n                    output_message += \"Entity is already in file: {}\\n\".format(entity.identifier)\n                    result_value = False\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.end(output_message, result_value, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "AddedAllEntities",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 10.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<filename.out>",
+      "Description": "The name of the file to write the entities to.",
+      "Name": "Filename",
+      "Value": "<filename.out>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236894,
+      "ModificationTimeUnixTimeInMs": 1610399236894
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236891,
+  "ModificationTimeUnixTimeInMs": 1610399236891
+}

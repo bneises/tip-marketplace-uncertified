@@ -1,0 +1,100 @@
+{
+    "Identifier": "Flashpoint",
+    "PackageName": "Flashpoint",
+    "DisplayName": "Flashpoint",
+    "Description": "Flashpoint is a global trusted leader in risk intelligence for organizations. From bolstering cyber and physical security, to detecting fraud and insider threats. \nFlashpoint enables users to enrich and enhance their internal data with our targeted data acquired from highly-curated sources.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "PropertyName": "API Key",
+            "PropertyDescription": "API Key",
+            "PropertyDisplayName": "API Key",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1616671560974,
+            "IntegrationIdentifier": "Flashpoint",
+            "PropertyType": 3,
+            "Value": null,
+            "CreationTimeUnixTimeInMs": 1616671560974,
+            "Id": 0
+        }
+    ],
+    "Actions": [
+        "Custom Query",
+        "Indicators Custom Query",
+        "IOC_Enrichment",
+        "Ping",
+        "Run Query"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Flashpoint - Compromised Credential Connector"
+    ],
+    "Managers": [
+        "FlashpointManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 8.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Flashpoint integratiom."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1606822359000
+        },
+        {
+            "Items": [
+                "Bug fix in the query in the Flashpoint Connector."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1612265559000
+        },
+        {
+            "Items": [
+                "Limit result parameter has been added in the Flashpoint Connector."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1612956759000
+        },
+        {
+            "Items": [
+                "Bug fix in Event Priority in the Flashpoint Connector."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1612956759000
+        },
+        {
+            "Items": [
+                "Bug fix in script timeout error."
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1617622608000
+        },
+        {
+            "Items": [
+                "Bug fix to support Proxy."
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1621505898000
+        },
+        {
+            "Items": [
+                "Fixed Category"
+            ],
+            "Version": 7.0,
+            "PublishTimeUnixTime": 1629722429000
+        },
+        {
+            "Items": [
+                "Fixed Category"
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1629722429000
+        }
+    ]
+}

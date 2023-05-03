@@ -1,0 +1,55 @@
+{
+  "Name": "Authorize Security Group Ingress",
+  "Description": "Adds or updates the specified inbound IP permissions to a specific security group in a VPC.\nFor more information: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.authorize_security_group_ingress",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom EC2Manager import EC2Manager\nimport json\n\nIDENTIFIER = \"AWS - EC2\"\nSCRIPT_NAME = \"AWS EC2 - Authorize Security Group Ingress\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    authorized_security_group = {}\n    output_message = \"\"\n    result_value = False\n    \n    #Extracting the integration parameters\n    access_key_id = siemplify.extract_configuration_param(IDENTIFIER,\"Access Key ID\")\n    secret_access_key = siemplify.extract_configuration_param(IDENTIFIER, \"Secret Access Key\")\n    default_region = siemplify.extract_configuration_param(IDENTIFIER, \"Default Region\")\n    \n    #Extracting the action parameters\n    group_id = siemplify.extract_action_param(\"Group ID\")\n    ip_permisssions = siemplify.extract_action_param(\"IP Permissions\")\n    \n    ip_permisssions_dict = [json.loads(ip_permisssions)]\n\n    #Creating an instance of EC2Manager object\n    ec2_manager = EC2Manager(access_key_id, secret_access_key, default_region)\n    \n    try:\n        authorized_security_group = ec2_manager.authorize_security_group_ingress(group_id, ip_permisssions_dict)\n        siemplify.LOGGER.info(f\"The secrurity group id {group_id} was authorized successfully\" )\n        siemplify.result.add_result_json(authorized_security_group)\n\n    except Exception as e:\n\n        siemplify.LOGGER.error(f\"Error occured when authorizing the secrurity group id {group_id}.\\nError: {e}\")\n\n    if authorized_security_group:\n        output_message = f\"The secrurity group id {group_id} was authorized successfully\"\n        result_value = True\n\n    else:\n        output_message = \"An error occured, checks the logs\"\n        result = False\n        \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "AWS - EC2",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ResponseMetadata\": {\r\n\t\t\"RequestId\": \"123456\",\r\n\t\t\"HTTPStatusCode\": 200,\r\n\t\t\"HTTPHeaders\": {\r\n\t\t\t\"x-amzn-requestid\": \"1111\",\r\n\t\t\t\"content-type\": \"text/xml;charset=UTF-8\",\r\n\t\t\t\"content-length\": \"257\",\r\n\t\t\t\"date\": \"Thu, 17 Dec 2020 09:06:23 GMT\",\r\n\t\t\t\"server\": \"AmazonEC2\"\r\n\t\t},\r\n\t\t\"RetryAttempts\": 0\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 40.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "sg-1a2b3c4d",
+      "Description": "The security group ID which you want to add inbound IP permissions in a VPC (Virtual Private Cloud) egress.",
+      "Name": "Group ID",
+      "Value": "sg-1a2b3c4d",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172159689,
+      "ModificationTimeUnixTimeInMs": 1609172159689
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "{\"FromPort\": 80,\n\"IpProtocol\": \"tcp\",\n\"IpRanges\": [{\"CidrIp\": \"10.0.0.0/16\"}],\n\"ToPort\": 80}",
+      "Description": "The IP permissions in a JSON format.\nFor example:\n{\"FromPort\": 80,\"IpProtocol\": \"tcp\",\"IpRanges\": [{\"CidrIp\": \"10.0.0.0/16\"}],\"ToPort\": 80}",
+      "Name": "IP Permissions",
+      "Value": "{\"FromPort\": 80,\n\"IpProtocol\": \"tcp\",\n\"IpRanges\": [{\"CidrIp\": \"10.0.0.0/16\"}],\n\"ToPort\": 80}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172159689,
+      "ModificationTimeUnixTimeInMs": 1609172159689
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1609172159685,
+  "ModificationTimeUnixTimeInMs": 1609172159685
+}

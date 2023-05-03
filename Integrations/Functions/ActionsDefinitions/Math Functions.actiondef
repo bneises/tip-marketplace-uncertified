@@ -1,0 +1,66 @@
+{
+  "Name": "Math Functions",
+  "Description": "A set of built-in Python functions - \nAbs - returns the absolute value of a number\nFloat - returns a floating point number\nDisplay - converts the number to include commas where needed\nHex - converts a number into a hexadecimal value\nInt - returns an integer number\nMax - returns the largest item in an iterable \nMin - returns the smallest item in an iterable\nRound - rounds a number\nSort - returns a sorted number\nSum - sums the items of an iterator",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nimport json\n\ndef try_parse_float(s, val=None):\n  try:\n    number =  float(s)\n    return number\n  except ValueError:\n    return val\n    \ndef try_parse_int(s, val=None):\n  try:\n    number =  int(s, 10)\n    #print(number)\n    return number\n  except ValueError:\n    return val\ndef _get_int_elements(items):\n    numbers = []\n    for item in items:\n        int_val_after_parse = try_parse_int(item)\n        if int_val_after_parse:\n            numbers.append(int_val_after_parse)\n    return numbers\n    \ndef main():\n    siemplify = SiemplifyAction()\n    \n    numbers_csv_str = siemplify.parameters.get(\"Numbers\", \"\")\n    function = siemplify.parameters.get(\"Function\")\n\n    items = numbers_csv_str.split(',')\n    numbers = []\n    updated_numbers = []\n    for item in items:\n        float_val_after_parse = try_parse_float(item)\n        int_val_after_parse = try_parse_int(item)\n        \n        if float_val_after_parse:\n            numbers.append(float_val_after_parse)\n        elif int_val_after_parse:\n            numbers.append(int_val_after_parse)\n\n    output_message = ''\n    result = True\n\n    if function == 'Abs':\n        for number in numbers:\n            updated_number = abs(number)\n            updated_numbers.append(updated_number)\n        output_message  = '{0} successfully converted to {1} with abs function'.format(numbers,updated_numbers)\n\n    elif function == 'Float':\n        for number in numbers:\n            updated_number = abs(number)\n            updated_numbers.append(updated_number)\n        output_message  = '{0} successfully converted to {1} with float function'.format(numbers,updated_numbers)\n\n    elif function == 'Display':\n        for number in numbers:\n            updated_number = f\"{number:,}\"\n            updated_numbers.append(updated_number)\n        output_message = \"Successfully converted {0} to {1}\".format(numbers,updated_numbers) \n\n    elif function == 'Hex':\n        int_array = _get_int_elements(items)\n        for int_item in int_array:\n            updated_number = hex(int_item)\n            updated_numbers.append(updated_number)\n        output_message  = '{0} successfully converted to {1} with hex function'.format(numbers,updated_numbers)\n\n    elif function == 'Int':\n        for number in numbers:\n            updated_number = int(number)\n            updated_numbers.append(updated_number)\n        output_message  = '{0} successfully converted to {1} with int function'.format(numbers,updated_numbers)\n\n    elif function == 'Max':\n        max_number = max(numbers)\n        output_message  = 'Max number in {0} is {1}.'.format(numbers,max_number)\n        result = max_number\n        \n    elif function == 'Min':\n        min_number = min(numbers)\n        output_message  = 'Min number in {0} is {1}.'.format(numbers,min_number)\n        result = min_number\n\n    elif function == 'Round':\n        for number in numbers:\n            updated_number = round(number)\n            updated_numbers.append(updated_number)\n        output_message  = '{0} successfully converted to {1} with round function'.format(numbers,updated_numbers)\n\n    elif function == 'Sort':\n        updated_numbers = sorted(numbers)\n        output_message  = '{0} successfully converted to {1} with sorted function'.format(numbers,updated_numbers)\n\n    elif function == 'Sum':\n        sum_array = sum(numbers)\n        output_message  = 'Sum of array {0} is {1}.'.format(numbers,sum_array)\n        result = sum_array\n\n    siemplify.result.add_result_json(json.dumps(updated_numbers))\n    siemplify.result.add_json('Input after {0}'.format(function),json.dumps(updated_numbers))\n    \n\n    if(len(updated_numbers) == 1):\n        result = updated_numbers[0]\n    siemplify.end(output_message, result,EXECUTION_STATE_COMPLETED)\n\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 19.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Max",
+      "Description": "Select the Math Function you would like to run on the number",
+      "Name": "Function",
+      "Value": "Max",
+      "Type": 15,
+      "OptionalValues": [
+        "Max",
+        "Min",
+        "Round",
+        "Sort",
+        "Sum",
+        "Float",
+        "Hex",
+        "Int",
+        "Abs",
+        "Display"
+      ],
+      "OptionalValuesJson": "[\"Max\",\"Min\",\"Round\",\"Sort\",\"Sum\",\"Float\",\"Hex\",\"Int\",\"Abs\",\"Display\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102476,
+      "ModificationTimeUnixTimeInMs": 1610733102476
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "13.5,-90,566,11.32",
+      "Description": "The numbers you would like to run the Math function on.",
+      "Name": "Numbers",
+      "Value": "13.5,-90,566,11.32",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610733102476,
+      "ModificationTimeUnixTimeInMs": 1610733102476
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610733102473,
+  "ModificationTimeUnixTimeInMs": 1610733102473
+}

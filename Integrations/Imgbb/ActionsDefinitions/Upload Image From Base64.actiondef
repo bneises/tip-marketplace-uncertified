@@ -1,0 +1,41 @@
+{
+  "Name": "Upload Image From Base64",
+  "Description": "Upload base64 to Imgbb ( the outcome is the image URL)",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport requests, json\n\nINTEGRATION_NAME = u\"Imgbb\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    api_key = conf.get(\"API Key\")\n    verify_ssl = conf.get('Verify SSL', 'false').lower() == 'true'\n    \n\n    url = 'https://api.imgbb.com/1/upload?expiration=600&key={0}'.format(api_key)\n    \n    #Initializing the json_result\n    json_result = {}\n    \n    #Extracting the action params- base64 image string\n    image_in_base64 = siemplify.extract_action_param(\"Image in base64\")\n    \n    #Determing the body params-for the request \n    data = {'image': image_in_base64}\n    \n    response = requests.post(url , data = data, verify = verify_ssl)\n    \n    #Place the image details in image_details variable\n    image_details = response.json()\n\n\n    #Checking if the response content is in json format, otherwise it will raise an Exception\n    try:\n        response.json()\n    except:\n        raise Exception(response.content)\n    \n    response.raise_for_status()\n    \n    #Getting the value of the image url\n    image_url_link = image_details['data']['url']\n\n    #Checking the if image_url_link is None\n    if image_url_link:\n        json_result['url']=image_url_link\n        output_message = \"The image was uploaded successfully. Image URL is available in the action result\"\n        result_value = True\n    \n    else:\n        json_result['error_message'] = image_details['error']['message']\n        output_message = \"The image URL wasnt created\" \n        result_value = False  \n\n    #Adding the image URL link\n    title = 'Image URL link'\n    link = image_url_link\n    siemplify.result.add_link(title, link)\n    \n    #Adding json result to the action\n    siemplify.result.add_result_json(json_result)\n\n    siemplify.end(output_message, result_value)\n\n3\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Imgbb",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"data\": {\r\n\t\t\"id\": \"Ln3jtww\",\r\n\t\t\"title\": \"80e65c37e8d2\",\r\n\t\t\"url_viewer\": \"https://ibb.co/Ln3tww\",\r\n\t\t\"url\": \"https://i.ibb.co/2qMWcc/80e65c37e8d2.png\",\r\n\t\t\"display_url\": \"https://i.ibb.co/MMmwTT/80e6c37e8d2.png\",\r\n\t\t\"size\": 52056,\r\n\t\t\"time\": \"1600338508\",\r\n\t\t\"expiration\": \"600\",\r\n\t\t\"image\": {\r\n\t\t\t\"filename\": \"80e65ce8d2.png\",\r\n\t\t\t\"name\": \"80e65c37e8d2\",\r\n\t\t\t\"mime\": \"image/png\",\r\n\t\t\t\"extension\": \"png\",\r\n\t\t\t\"url\": \"https://i.ibb.co/72qWcc/80e657e8d2.png\"\r\n\t\t},\r\n\t\t\"thumb\": {\r\n\t\t\t\"filename\": \"80e65c37e8d2.png\",\r\n\t\t\t\"name\": \"80e65c37e8d2\",\r\n\t\t\t\"mime\": \"image/png\",\r\n\t\t\t\"extension\": \"png\",\r\n\t\t\t\"url\": \"https://i.ib.co/Ln3jtww/80ec37ed2.png\"\r\n\t\t},\r\n\t\t\"medium\": {\r\n\t\t\t\"filename\": \"80e637e8d2.png\",\r\n\t\t\t\"name\": \"80e65c38d2\",\r\n\t\t\t\"mime\": \"image/png\",\r\n\t\t\t\"extension\": \"png\",\r\n\t\t\t\"url\": \"https://i.ibb.co/MMwVTT/80ec37e8d2.png\"\r\n\t\t},\r\n\t\t\"delete_url\": \"https://ibb.co/Ln3jw/ef3fed8a0e9b987a04a25e86ef8bd9\"\r\n\t},\r\n\t\"success\": true,\r\n\t\"status\": 200\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 97.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "The base64 of the image you would like to upload to Imgbb",
+      "Name": "Image in base64",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1600932957322,
+      "ModificationTimeUnixTimeInMs": 1600932957322
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1600932957314,
+  "ModificationTimeUnixTimeInMs": 1600932957316
+}

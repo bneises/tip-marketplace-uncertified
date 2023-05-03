@@ -1,0 +1,87 @@
+{
+  "Name": "Time Duration Calculator",
+  "Description": "The Time Duration Calculator will calculate the time that has elapsed/difference between two dates with time.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom datetime import datetime\n\ndef getDuration(then, now = datetime.now(), interval = \"default\"):\n\n    # Returns a duration as specified by variable interval\n    # Functions, except totalDuration, returns [quotient, remainder]\n\n    duration = now - then # For build-in functions\n    duration_in_s = duration.total_seconds() \n    \n    def years():\n      return divmod(duration_in_s, 31536000) # Seconds in a year=31536000.\n\n    def days(seconds = None):\n      return divmod(seconds if seconds != None else duration_in_s, 86400) # Seconds in a day = 86400\n\n    def hours(seconds = None):\n      return divmod(seconds if seconds != None else duration_in_s, 3600) # Seconds in an hour = 3600\n\n    def minutes(seconds = None):\n      return divmod(seconds if seconds != None else duration_in_s, 60) # Seconds in a minute = 60\n\n    def seconds(seconds = None):\n      if seconds != None:\n        return divmod(seconds, 1)   \n      return duration_in_s\n\n    def totalDuration():\n        y = years()\n        d = days(y[1]) # Use remainder to calculate next variable\n        h = hours(d[1])\n        m = minutes(h[1])\n        s = seconds(m[1])\n\n        return \"Time between dates: {} years, {} days, {} hours, {} minutes and {} seconds\".format(int(y[0]), int(d[0]), int(h[0]), int(m[0]), int(s[0]))\n\n    return {\n        'years': int(years()[0]),\n        'days': int(days()[0]),\n        'hours': int(hours()[0]),\n        'minutes': int(minutes()[0]),\n        'seconds': int(seconds()),\n        'default': totalDuration()\n    }[interval]\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    json_results = {}\n    input_datetime1 = siemplify.extract_action_param(\"Input DateTime 1\", print_value=True)\n    input_datetime1_format = siemplify.extract_action_param(\"Input DateTime 1 Format\", print_value=True)\n    input_datetime2 = siemplify.extract_action_param(\"Input DateTime 2\", print_value=True)\n    input_datetime2_format = siemplify.extract_action_param(\"Input DateTime 2 Format\", print_value=True)\n\n    if input_datetime1 == \"now\":\n        input_dt1 = datetime.now()\n    else: \n        input_dt1 = datetime.strptime(input_datetime1, input_datetime1_format)\n\n    if input_datetime2 == \"now\":\n        input_dt2 = datetime.now()\n    else: \n        input_dt2 = datetime.strptime(input_datetime2, input_datetime2_format)        \n        \n    duration = getDuration(input_dt1, input_dt2)\n    \n    json_results['years'] = getDuration(input_dt1, input_dt2, 'years')\n    json_results['days'] = getDuration(input_dt1, input_dt2, 'days')\n    json_results['hours'] = getDuration(input_dt1, input_dt2, 'hours')\n    json_results['minutes'] = getDuration(input_dt1, input_dt2, 'minutes')\n    json_results['seconds'] = getDuration(input_dt1, input_dt2, 'seconds')\n    json_results['duration'] = duration\n    siemplify.result.add_result_json(json_results)\n    output_message = \"The duration between {} and {} is {}\".format(input_datetime1, input_datetime2, json_results['duration'])\n    result_value = json_results['seconds']\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "seconds",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The first input datetime value.  Supports either strftime format or \"now\" for the current time.",
+      "Name": "Input DateTime 1",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624041384463,
+      "ModificationTimeUnixTimeInMs": 1624041384463
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "%Y-%d-%m'T'%H:%M:%S",
+      "Description": "The strftime format of the DateTime string.\nhttps://strftime.org/",
+      "Name": "Input DateTime 1 Format",
+      "Value": "%Y-%m-%dT%H:%M:%S%z",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624041384463,
+      "ModificationTimeUnixTimeInMs": 1624041384463
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "now",
+      "Description": "The second input datetime value.  Supports either strftime format or \"now\" for the current time.",
+      "Name": "Input DateTime 2",
+      "Value": "now",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624041384463,
+      "ModificationTimeUnixTimeInMs": 1624041384463
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "%Y-%d-%m'T'%h:%m:%s",
+      "Description": "The strftime format of Input DateTime 2.",
+      "Name": "Input DateTime 2 Format",
+      "Value": "%Y-%m-%dT%H:%M:%S%z",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624041384463,
+      "ModificationTimeUnixTimeInMs": 1624041384463
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1624041384454,
+  "ModificationTimeUnixTimeInMs": 1624041384454
+}

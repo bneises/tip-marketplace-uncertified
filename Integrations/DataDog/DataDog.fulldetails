@@ -1,0 +1,44 @@
+{
+    "Identifier": "DataDog",
+    "PackageName": "DataDog",
+    "DisplayName": "DataDog",
+    "Description": "Datadog is an essential monitoring platform for cloud applications. It brings together data from servers, containers, databases, and third-party services to make your stack entirely observable. These capabilities help DevOps teams avoid downtime, resolve performance issues, and ensure customers are getting the best user experience.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1615195531858,
+            "Id": 0,
+            "IntegrationIdentifier": "DataDog",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1615195531858,
+            "PropertyDescription": "API Key",
+            "PropertyDisplayName": "API Key",
+            "PropertyName": "API Key",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1615195531858,
+            "Id": 0,
+            "IntegrationIdentifier": "DataDog",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1615195531858,
+            "PropertyDescription": "APP Key (Application Key)",
+            "PropertyDisplayName": "APP Key",
+            "PropertyName": "APP Key",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 7.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

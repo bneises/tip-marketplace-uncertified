@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Check connectivity",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nimport uuid\nimport sys\nimport requests\nimport json\nimport re\n\n# CONSTS\nINTEGRATION_NAME = \"beSECURE\"\n\ndef make_action(siemplify, url, verify_ssl, **kwargs):\n    params = dict([(k, v) for k, v in kwargs.items()])\n    \n    res = requests.get('{}/json.cgi'.format(url), params=params, verify=verify_ssl)\n    res.raise_for_status()\n    \n    return res.json()\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    output_message = \"Successful\"\n    result_value = \"true\"\n    status = EXECUTION_STATE_COMPLETED\n    \n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    api_key = conf[\"API Key\"]\n    api_key = re.sub('[^A-Z0-9\\-]', '', api_key) # Clean non-API related characters\n    \n    url = conf[\"URL\"]\n    if not url.startswith('https://') and not url.startswith('http://'):\n        url = 'https://' + url\n    \n    rotation_time = 1\n    verify_ssl = conf[\"Verify SSL Ceritifcate?\"].lower() == \"true\" \n    \n    \n    scans = make_action(siemplify, url, verify_ssl, primary='admin', secondary='networks', action='returnnetworks', \n                      apikey=api_key, search_limit=10000, \n                      search_datelastscanned_value=rotation_time, search_datelastscanned_type='minute')\n    \n    # raise Exception(json.dumps(scans))\n    if \"error\" in scans:\n        output_message = json.dumps(scans, indent=4)\n        result_value = 'false'\n        status = EXECUTION_STATE_FAILED\n    \n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n\n\n",
+  "IntegrationIdentifier": "beSECURE",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Noam",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 5.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1594042505103,
+  "ModificationTimeUnixTimeInMs": 1594042505105
+}

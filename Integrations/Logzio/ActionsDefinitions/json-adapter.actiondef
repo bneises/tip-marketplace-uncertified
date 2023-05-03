@@ -1,0 +1,59 @@
+{
+  "Name": "json-adapter",
+  "Description": "Converts logs from your Logz.io accounts into a constant JSON format that is compatible with Siemplify’s playbooks.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\n\nimport json\n\n\"\"\"\nThis adapter is suitable for jsons in the following format:\n{\n    \"results\": [\n        { \n            #log\n        },\n        .....\n    ]\n}\n\nand returns a json in the following format: \n{\n    \"results\": [\n        { \n            \"entityType\": \"field_from_json\",\n            \"entityIdentifier\": \"value_from_json\"\n        },\n        .....\n    ]\n}\n\nThis action will return EXECUTION_STATE_COMPLETED only when a requested field was found.\n\"\"\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    search_fields = siemplify.extract_action_param(\"fields_to_search\")\n    raw_json = siemplify.extract_action_param(\"raw_json\")\n    output = { \"results\": [] }\n    status = EXECUTION_STATE_FAILED # default value. Will considered success only if found values\n    is_success = False\n    \n    try:\n        fields = [f.strip() for f in search_fields.split(\",\")]\n        json_obj = json.loads(raw_json)\n        siemplify.LOGGER.info(\"Retrieved fields to search and json\")\n        \n        if fields is not None and len(fields) > 0 and json_obj is not None and len(json_obj) > 0:\n            for result in json_obj[\"results\"]:\n                for field in fields:\n                    siemplify.LOGGER.info(\"Searching field: {}\".format(field))\n                    if field in result:\n                        result_parse = { \"entityType\": field, \"entityIdentifier\": result[field] }\n                        output[\"results\"].append(result_parse)\n                    else:\n                        siemplify.LOGGER.info(\"Couldn't find field {} in given json\".format(field))\n        \n        siemplify.LOGGER.info(\"Found {} out of given {} fields\".format(len(output[\"results\"]), len(fields)))\n        siemplify.LOGGER.info(\"{}\".format(output))\n        \n        if len(output[\"results\"]) > 0:\n            output_json = json.dumps(output)\n            siemplify.result.add_result_json(output_json)\n            status = EXECUTION_STATE_COMPLETED\n            is_success = True\n            \n    except Exception as e:\n        siemplify.LOGGER.error(\"Error occurred while searching fields in json: {}\".format(e))\n        \n    output_message = get_output_by_status(status)\n    siemplify.end(output_message, is_success, status)\n\n\ndef get_output_by_status(status):\n    if status == EXECUTION_STATE_COMPLETED:\n        return \"Json adapter script finished successfully with results\"\n    else:\n        return \"Json adapter script could not filter json\"\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Logzio",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n   \"results\":[\n      {\n         \"entityType\":\"field_key\",\n         \"entityIdentifier\":\"field_value\"\n      },\n      {\n         \"entityType\":\"field_key2\",\n         \"entityIdentifier\":\"field_key2\"\n      }\n   ]\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 11.0,
+  "TimeoutSeconds": 30,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Comma separated list of fields to search within the JSON.",
+      "Name": "fields_to_search",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614763228357,
+      "ModificationTimeUnixTimeInMs": 1614763228357
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Raw data in JSON format that is to be searched.",
+      "Name": "raw_json",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614763228357,
+      "ModificationTimeUnixTimeInMs": 1614763228357
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614763228350,
+  "ModificationTimeUnixTimeInMs": 1614763228353
+}

@@ -1,0 +1,97 @@
+{
+  "Name": "Enrich Entity From JSON",
+  "Description": "The action extracts fields from a json file and adds them to the entity fields",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, add_prefix_to_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json, copy\n\nfrom jsonpath_ng import jsonpath\nfrom jsonpath_ng.ext import parse\n\n# CONSTS\nMULTIPLE_VALUES = \"MULTIPLE VALUES FOUND\"\nMISSING_VAL = \"NotFound\"\nNOT_SIMPLE_VAL = \"NOT A SIMPLE VALUE. ONLY SUPPORTS STRING\"\n\n\ndef get_alert_entities(siemplify):\n    return [entity for alert in siemplify.case.alerts for entity in alert.entities]\n    \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    json_data = siemplify.parameters.get(\"Enrichment JSON\")\n    enrichment_json = json.loads(json_data)  # we assume to have a list here\n    key_path_raw = siemplify.parameters.get(\"Identifier KeyPath\")\n    separator = siemplify.parameters.get(\"Separator\", \".\")\n    \n    list_of_key_lists = [key_path.split(separator) for key_path in key_path_raw.split(\"\\n\")]\n    prefix = siemplify.parameters.get(\"PrefixForEnrichment\")\n    enrichment_jsonpath = siemplify.parameters.get(\"Enrichment JSONPath\", None)\n    input_target_entities = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"Target Entities\", \"\").split(',')]))\n    \n    use_scoping = siemplify.parameters.get(\"Use Entity Scoping\", 'false').lower() == 'true'\n    \n    \n    list_of_enrich_keys = []\n    if enrichment_jsonpath:\n        json_expression = parse(enrichment_jsonpath)\n    #    list_of_enrich_keys = [key_path.split(separator) for key_path in enrichment_keypath.split(\"\\n\")]\n    updated_entities = []\n    \n    target_entities = []\n    if use_scoping:\n        target_entities = [entity for entity in siemplify.target_entities]\n    else:\n        alert_entities = get_alert_entities(siemplify)\n        for target_entity in input_target_entities:\n            for entity in alert_entities:\n                if entity.identifier == target_entity.upper():\n                    target_entities.append(entity)\n                    break\n                    \n    \n        \n    for entity in target_entities:\n        for curr_enrich_json in enrichment_json:\n            json_identifier = None\n            for key_list in list_of_key_lists:\n                json_identifier = find_key_path_in_json(key_list, curr_enrich_json)\n                if json_identifier:\n                    if json_identifier.upper() == entity.identifier.upper():\n                        if enrichment_jsonpath:\n                            enrich_dict = {}\n                            match = json_expression.find(curr_enrich_json)\n                            for m in match:\n                                enrich_dict[str(m.path)] = m.value.encode('utf-8')\n                            if prefix:\n                                entity.additional_properties.update(add_prefix_to_dict(dict_to_flat(enrich_dict), prefix))\n                            else:\n                                entity.additional_properties.update(dict_to_flat(enrich_dict))\n                            updated_entities.append(entity)\n                            break # Exit JSON loop and continue to the next entity\n                            \n                            \n                        if prefix:\n                            \n                            entity.additional_properties.update(add_prefix_to_dict(dict_to_flat(curr_enrich_json), prefix))\n                        else:\n                            \n                            entity.additional_properties.update(dict_to_flat(curr_enrich_json))\n                        updated_entities.append(entity)\n                        break # Exit JSON loop and continue to the next entity\n        \n    count_updated_entities = len(updated_entities)\n    \n    if count_updated_entities > 0:\n        siemplify.update_entities(updated_entities)\n\n    siemplify.end('{0} entities were successfully enriched'.format(count_updated_entities), count_updated_entities, EXECUTION_STATE_COMPLETED)\n\ndef get_unicode(val):\n    return str(val)\n\ndef find_key_path_in_json(key_path, json_data):\n    \"\"\"\n    Finds the relevant key_path in a json object. \n    If list encountered, if its of len 1, its value is used. Otherwise, it exits with default value (MULTIPLE VALUES FOUND)\n    \"\"\"\n    return find_key_path_recursive(key_path, json_data)\n    \ndef find_key_path_recursive(key_list, current_json):\n    if key_list:\n        if isinstance(current_json, list):\n            if key_list:\n                if len(current_json) == 1:\n                    return find_key_path_recursive(key_list, current_json[0])\n                else:\n                    return MULTIPLE_VALUES\n            return \", \".join(current_json)\n        if isinstance(current_json, dict):\n            if key_list[0] in current_json:\n                return find_key_path_recursive(key_list[1:], current_json[key_list[0]])\n            # raise Exception(\"Key: {}, json: {}\".format(key_list, current_json))\n            return MISSING_VAL\n    else:\n        if isinstance(current_json, dict):\n            raise Exception(\"Not a simple value.  Unable to enrich. Key: {}, json: {}\".format(key_list, current_json))\n        if isinstance(current_json, list):\n            return u\",\".join(current_json)\n        \n        return u\"{}\".format(current_json) # Found val, return it. Format to make everything into string\n\ndef dict_to_flat(target_dict):\n    \"\"\"\n    Receives nested dictionary and returns it as a flat dictionary.\n    :param target_dict: {dict}\n    :return: Flat dict : {dict}\n    \"\"\"\n    target_dict = copy.deepcopy(target_dict)\n\n    def expand(raw_key, raw_value):\n        key = raw_key\n        value = raw_value\n        \"\"\"\n        :param key: {string}\n        :param value: {string}\n        :return: Recursive function.\n        \"\"\"\n        \n        if value is None:\n            return [(get_unicode(key), u\"\")]\n        elif isinstance(value, dict):\n            # Handle dict type value\n            return [(u\"{0}_{1}\".format(get_unicode(key),\n                                       get_unicode(sub_key)),\n                     get_unicode(sub_value)) for sub_key, sub_value in dict_to_flat(value).items()]\n        elif isinstance(value, list):\n            # Handle list type value\n            count = 1\n            l = []\n            items_to_remove = []\n            for value_item in value:\n                if isinstance(value_item, dict):\n                    # Handle nested dict in list\n                    l.extend([(u\"{0}_{1}_{2}\".format(get_unicode(key),\n                                                     get_unicode(count),\n                                                     get_unicode(sub_key)),\n                               sub_value)\n                              for sub_key, sub_value in dict_to_flat(value_item).items()])\n                    items_to_remove.append(value_item)\n                    count += 1\n                elif isinstance(value_item, list):\n                    l.extend(expand(get_unicode(key) + u'_' + get_unicode(count), value_item))\n                    count += 1\n                    items_to_remove.append(value_item)\n\n            for value_item in items_to_remove:\n                value.remove(value_item)\n\n            for value_item in value:\n                l.extend([(get_unicode(key) + u'_' + get_unicode(count), value_item)])\n                count += 1\n\n            return l\n        else:\n            \n            return [(get_unicode(key), get_unicode(value))]\n\n    items = [item for sub_key, sub_value in target_dict.items() for item in\n             expand(sub_key, sub_value)]\n    return dict(items)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Enrichment",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 12.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "[   {     \"EntityResult\": {       \"permalink\": \"https://www.virustotal.com/file/275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f/analysis/1549381312/\",       \"sha1\": \"3395856ce81f2b7382dee72602f798b642f14140\",       \"resource\": \"275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F\",       \"response_code\": 1,       \"scan_date\": \"2019-02-05 15:41:52\",       \"scan_id\": \"275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f-1549381312\",       \"verbose_msg\": \"Scan finished, information embedded\",       \"total\": 60,       \"positives\": 54,       \"sha256\": \"275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f\",       \"md5\": \"44d88612fea8a8f36de82e1278abb02f\",       \"scans\": {         \"Bkav\": {           \"detected\": true,           \"version\": \"1.1.1.1\",           \"result\": \"DOS.EiracA.Trojan\",           \"update\": \"20190201\"         },         \"MicroWorld-eScan\": {           \"detected\": true,           \"version\": \"14.0.297.0\",           \"result\": \"EICAR-Test-File\",           \"update\": \"20190205\"         }       }     },     \"Entity\": \"275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F\"   } ]",
+      "Description": " JSON from which you would like to enrich an entity. (List of JSONs)",
+      "Name": "Enrichment JSON",
+      "Value": "[   {     \"EntityResult\": {       \"permalink\": \"https://www.virustotal.com/file/275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f/analysis/1549381312/\",       \"sha1\": \"3395856ce81f2b7382dee72602f798b642f14140\",       \"resource\": \"275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F\",       \"response_code\": 1,       \"scan_date\": \"2019-02-05 15:41:52\",       \"scan_id\": \"275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f-1549381312\",       \"verbose_msg\": \"Scan finished, information embedded\",       \"total\": 60,       \"positives\": 54,       \"sha256\": \"275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f\",       \"md5\": \"44d88612fea8a8f36de82e1278abb02f\",       \"scans\": {         \"Bkav\": {           \"detected\": true,           \"version\": \"1.1.1.1\",           \"result\": \"DOS.EiracA.Trojan\",           \"update\": \"20190201\"         },         \"MicroWorld-eScan\": {           \"detected\": true,           \"version\": \"14.0.297.0\",           \"result\": \"EICAR-Test-File\",           \"update\": \"20190205\"         }       }     },     \"Entity\": \"275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F\"   } ]",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568166,
+      "ModificationTimeUnixTimeInMs": 1610732568166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "key1.key2",
+      "Description": "KeyPath to the Entity Identifier in the JSON",
+      "Name": "Identifier KeyPath",
+      "Value": "key1.key2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568166,
+      "ModificationTimeUnixTimeInMs": 1610732568166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": ".",
+      "Description": "The \"Separator\" for the keypath. For example, if its XXX then the example would be:\nkey1XXXkey2",
+      "Name": "Separator",
+      "Value": ".",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568166,
+      "ModificationTimeUnixTimeInMs": 1610732568166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "What prefix to use for enrichment",
+      "Name": "PrefixForEnrichment",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568166,
+      "ModificationTimeUnixTimeInMs": 1610732568166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "JSONPath expressions always refers to a JSON structure in the same way as XPath expressions are used in combination with an XML document.",
+      "Name": "Enrichment JSONPath",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568166,
+      "ModificationTimeUnixTimeInMs": 1610732568166
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610732568163,
+  "ModificationTimeUnixTimeInMs": 1610732568163
+}

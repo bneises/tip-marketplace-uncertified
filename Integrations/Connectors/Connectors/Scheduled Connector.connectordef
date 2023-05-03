@@ -1,0 +1,110 @@
+{
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Integration": "Connectors",
+  "DocumentationLink": null,
+  "Name": "Scheduled Connector",
+  "Description": "A custom connector created to trigger playbooks by a given alert product, name and type and enables to edit the parameters according to your specific use case. ",
+  "Creator": "Admin",
+  "Script": "from SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyUtils import output_handler, unix_now\nfrom SiemplifyConnectorsDataModel import CaseInfo\nimport SiemplifyUtils\nimport uuid\nimport sys\nimport json\nVENDOR = \"Siemplify\"\n\n@output_handler\ndef generate_alert(product_name, alert_name, alert_type, alert_fields):\n\n    alert_id = str(uuid.uuid4())\n    case_info = CaseInfo()\n    case_info.events = []\n    case_info.source_grouping_identifier = alert_id\n    case_info.ticket_id = alert_id \n    case_info.display_id = alert_id \n\n    if alert_type:\n        case_info.rule_generator = alert_type\n    else:\n        case_info.rule_generator = \"Scheduled Alert\"\n\n    print(alert_name)\n    if alert_name:\n        case_info.name = alert_name\n    else:\n        case_info.name = \"Scheduled Alert - \" + alert_id\n    \n    case_info.device_product = product_name\n    print('product_name - ' + product_name)\n    for alert_field in alert_fields:\n        case_info.extensions[alert_field.strip()] = alert_fields[alert_field]\n\n\n\n\n    case_info.priority = 60  # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n    case_info.start_time = SiemplifyUtils.unix_now()  # Times should be saved in UnixTime. You may use SiemplifyUtils DateTime conversions\n    case_info.end_time = SiemplifyUtils.unix_now()\n\n    case_info.device_vendor = VENDOR\n    \n    event = generate_event(case_info)\n    case_info.events.append(event)\n\n    return case_info\n\n\ndef generate_event(case_info):\n    event = {}\n\n    event[\"StartTime\"] = SiemplifyUtils.unix_now()\n    event[\"EndTime\"] = SiemplifyUtils.unix_now()\n    event[\"name\"] = case_info.name\n    event[\"event_type\"] = case_info.rule_generator\n    event[\"device_product\"] = case_info.device_product  \n\n    return event\n\n@output_handler\ndef main():\n\n    siemplify = SiemplifyConnectorExecution()  # Siemplify main SDK wrapper\n    env_list = []\n    \n    product_name = siemplify.extract_connector_param(\"Product name\")\n    alert_name = siemplify.extract_connector_param(\"Alert name\")\n    alert_type = siemplify.extract_connector_param(\"Alert type\")\n    alert_fields_str = siemplify.parameters[\"Alert fields\"]\n\n    alert_fields = json.loads(alert_fields_str)\n\n    output_variables = {}\n    log_items = []  #\n    cases = []\n    \n    alert_obj = generate_alert(product_name, alert_name,alert_type,alert_fields)\n    cases.append(alert_obj)\n    print(json.dumps(cases[0].__dict__))\n    siemplify.return_package(cases, output_variables, log_items)\n\n\n\nif __name__ == \"__main__\":\n    main()",
+  "Version": 7,
+  "MappingRules": [],
+  "ProductToVisualFamilyRecords": [],
+  "SimulationUseCases": {
+    "CasesForUseCase": [],
+    "UseCaseName": null
+  },
+  "Parameters": [
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": true,
+      "DefaultValue": "{\n  \"field_name_1\": \"field_value_1\",\n  \"field_name_2\": \"field_value_2\"\n}",
+      "Name": "Alert fields",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "The alert fields you would like to insert in a json format",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    },
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": true,
+      "DefaultValue": "<alert_name>",
+      "Name": "Alert name",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "The Alert name associated with the alert that will be created",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    },
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": false,
+      "DefaultValue": "<alert_type>",
+      "Name": "Alert type",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "The Alert type associated with the alert that will be created",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    },
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": true,
+      "DefaultValue": "<none>",
+      "Name": "DeviceProductField",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the device product",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    },
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": true,
+      "DefaultValue": "<none>",
+      "Name": "EventClassId",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the event name (sub-type)",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    },
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": false,
+      "DefaultValue": "<product_name>",
+      "Name": "Product name",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "The Product name associated with the alert that will be created",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    },
+    {
+      "ConnectorDefinitionId": 6,
+      "IsMandatory": true,
+      "DefaultValue": "30",
+      "Name": "PythonProcessTimeout",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The timeout limit (in seconds) for the python process running current script",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603722241296,
+      "ModificationTimeUnixTimeInMs": 1603722241296
+    }
+  ],
+  "Rules": [],
+  "IsConnectorRulesSupported": true,
+  "IsSystem": false,
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1603722241290,
+  "ModificationTimeUnixTimeInMs": 1603722241292
+}

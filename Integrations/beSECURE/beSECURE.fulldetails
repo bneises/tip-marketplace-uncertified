@@ -1,0 +1,69 @@
+{
+    "Identifier": "beSECURE",
+    "PackageName": "beSECURE",
+    "DisplayName": "beSECURE",
+    "Description": "beSecure is a flexible, accurate, low maintenance Vulnerability Assessment and Management solution that delivers solid security improvements. ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1594043343441,
+            "Id": 0,
+            "IntegrationIdentifier": "beSECURE",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1594043343441,
+            "PropertyDescription": "API key to use for authentication",
+            "PropertyDisplayName": "API Key",
+            "PropertyName": "API Key",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1594043343441,
+            "Id": 0,
+            "IntegrationIdentifier": "beSECURE",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1594043343441,
+            "PropertyDescription": "API root of the bSecure server",
+            "PropertyDisplayName": "URL",
+            "PropertyName": "URL",
+            "PropertyType": 2,
+            "Value": "https://"
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1594043343441,
+            "Id": 0,
+            "IntegrationIdentifier": "beSECURE",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1594043343441,
+            "PropertyDescription": "Should use SSL verification or not",
+            "PropertyDisplayName": "Verify SSL Ceritifcate?",
+            "PropertyName": "Verify SSL Ceritifcate?",
+            "PropertyType": 0,
+            "Value": "true"
+        }
+    ],
+    "Actions": [
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Pull reports"
+    ],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 8.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "Updated the integration's categories.\n"
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1630059393000
+        }
+    ]
+}

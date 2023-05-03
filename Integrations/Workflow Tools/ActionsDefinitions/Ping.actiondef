@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Default ping action for system.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom WorkflowToolsManager import WorkflowToolsManager\n\nSCRIPT_NAME=\"Workflow Tools Ping\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    status = EXECUTION_STATE_FAILED\n    output_message = \"output message: \"\n\n    # A Siemplify API key is required to interact with the API\n    api_key = siemplify.extract_configuration_param('Workflow Tools',\"Siemplify API Key\")\n    api_root = siemplify.extract_configuration_param('Workflow Tools',\"Siemplify API Root\")\n    siemplify_hostname = siemplify.extract_configuration_param('Workflow Tools',\"Siemplify Instance Hostname\")\n    slack_webhook_url = siemplify.extract_configuration_param('Workflow Tools',\"Slack Webhook URL\")\n    # The approval manager that the case/alert should be assigned to\n    reviewer = siemplify.extract_configuration_param('Workflow Tools', \"Approval Manager\")\n    reviewer_secondary = siemplify.extract_configuration_param('Workflow Tools', \"Secondary Approval Manager\",\n                                             default_value=\"\", input_type=str)\n    \n    try:\n        manager = WorkflowToolsManager(siemplify_hostname=siemplify_hostname, api_root=api_root, api_key=api_key, siemplify=siemplify, slack_webhook_url=slack_webhook_url)\n        \n        manager.check_user(current_user=reviewer, approval_manager=reviewer)\n        manager.check_user(current_user=reviewer, approval_manager=reviewer_secondary)\n        manager.log_slack_message(\"This is a test message. Posted by {}.\".format(SCRIPT_NAME))\n        status = EXECUTION_STATE_COMPLETED\n        output_message = u\"Output Message: Action {} completed successfully.\".format(SCRIPT_NAME)\n    except Exception as e:\n        siemplify.LOGGER.error(u\"General error performing action {}. Error: {}\".format(SCRIPT_NAME, e))\n        siemplify.LOGGER.exception(e)\n        output_message = u\"Output Message: General error performing action {}. Error: {}\".format(SCRIPT_NAME, e)\n    \n    result_value = True\n    \n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Workflow Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 16.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1624319103082,
+  "ModificationTimeUnixTimeInMs": 1624319103085
+}

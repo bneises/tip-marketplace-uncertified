@@ -1,0 +1,19 @@
+{
+    "Identifier": "Connectors",
+    "PackageName": "Connectors",
+    "DisplayName": "Connectors",
+    "Description": "A set of custom connectors created for Siemplify Community to power up automation capabilities.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

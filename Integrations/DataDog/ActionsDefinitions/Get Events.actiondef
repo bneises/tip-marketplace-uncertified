@@ -1,0 +1,115 @@
+{
+  "Name": "Get Events",
+  "Description": "Get events from Datadog.\nFor more information: https://docs.datadoghq.com/api/v1/events/",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\nimport json\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = \"\"\n\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    sources = siemplify.extract_action_param(\"Sources\")\n    start_time = siemplify.extract_action_param(\"Start Time\")\n    end_time = siemplify.extract_action_param(\"End Time\")\n    tags = siemplify.extract_action_param(\"Tags\")\n    priority = siemplify.extract_action_param(\"Priority\")\n    unaggregated = siemplify.extract_action_param(\"Unaggregated\", input_type=bool)\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n\n    events = datadog_manager.get_datadog_events(start_time, end_time, sources, tags, priority, unaggregated)\n    print(json.dumps(events))\n    if len(events) > 0:\n        siemplify.LOGGER.info(f\"The events from the source {sources} were fetched successfully.\")\n        result_value = True\n        output_message = f\"The events from the source {sources} were fetched successfully.\"\n    \n    else:\n        siemplify.LOGGER.info(f\"The events from the source {sources} weren't fetched.\")\n        output_message = f\"The events from the source {sources} weren't fetched.\"\n        \n    siemplify.result.add_result_json(events)\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"events\": [{\r\n\t\t\"date_happened\": 1610487676,\r\n\t\t\"alert_type\": \"error\",\r\n\t\t\"is_aggregate\": false,\r\n\t\t\"title\": \"[Triggered on {host:i-123456}] Node filesystem used in Percent i-123456\",\r\n\t\t\"url\": \"/event/event?id=1111111111\",\r\n\t\t\"text\": \"\",\r\n\t\t\"tags\": [\"monitor\", \"region:us-west-2\", \"security-group:y\", \"security-group:x\"],\r\n\t\t\"comments\": [],\r\n\t\t\"device_name\": null,\r\n\t\t\"priority\": \"normal\",\r\n\t\t\"source\": \"Monitor Alert\",\r\n\t\t\"host\": \"i-123456\",\r\n\t\t\"resource\": \"/api/v1/events/aaabbbccc111\",\r\n\t\t\"id\": \"aaabbbccc111\"\r\n\t}, {\r\n\t\t\"date_happened\": 1610487676,\r\n\t\t\"alert_type\": \"error\",\r\n\t\t\"is_aggregate\": true,\r\n\t\t\"title\": \"[Triggered on {host:i-123456}] Node filesystem used in Percent i-123456\",\r\n\t\t\"url\": \"/event/event?id=22222222\",\r\n\t\t\"text\": \"\",\r\n\t\t\"tags\": [\"monitor\", \"region:us-west-2\"],\r\n\t\t\"comments\": [],\r\n\t\t\"children\": [{\r\n\t\t\t\"date_happened\": 1610487676,\r\n\t\t\t\"alert_type\": \"error\",\r\n\t\t\t\"id\": \"22222222\"\r\n\t\t}],\r\n\t\t\"priority\": \"normal\",\r\n\t\t\"source\": \"Monitor Alert\",\r\n\t\t\"host\": \"i-123456\",\r\n\t\t\"resource\": \"/api/v1/events/2222222\",\r\n\t\t\"device_name\": null,\r\n\t\t\"id\": 2222222\r\n\t}]\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 73.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "alert",
+      "Description": "The sources to retrieve the events from.\nFor example in order to see events from the triggered monitor write: 'alert'  ",
+      "Name": "Sources",
+      "Value": "alert",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532232,
+      "ModificationTimeUnixTimeInMs": 1615195532232
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1400000470",
+      "Description": "The start time of the events in Unixtime.",
+      "Name": "Start Time",
+      "Value": "1400000470",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532232,
+      "ModificationTimeUnixTimeInMs": 1615195532232
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1610557457",
+      "Description": "The end time of the events  in Unixtime.",
+      "Name": "End Time",
+      "Value": "1610557457",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532232,
+      "ModificationTimeUnixTimeInMs": 1615195532232
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "all",
+      "Description": "The priority of the events you want to retrieve. \n",
+      "Name": "Priority",
+      "Value": "all",
+      "Type": 15,
+      "OptionalValues": [
+        "all",
+        "normal",
+        "low"
+      ],
+      "OptionalValuesJson": "[\"all\",\"normal\",\"low\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532232,
+      "ModificationTimeUnixTimeInMs": 1615195532232
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "monitor",
+      "Description": "A comma separated list of tags that will filter the list of monitors by scope.\nFor example: 'monitor'.",
+      "Name": "Tags",
+      "Value": "monitor",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532232,
+      "ModificationTimeUnixTimeInMs": 1615195532232
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "True- if you want to retrieve the full list of events.\nFalse - if you want to retrieve aggregated list of events.",
+      "Name": "Unaggregated",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532232,
+      "ModificationTimeUnixTimeInMs": 1615195532232
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532230,
+  "ModificationTimeUnixTimeInMs": 1615195532230
+}

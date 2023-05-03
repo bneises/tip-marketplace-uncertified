@@ -1,0 +1,41 @@
+{
+  "Name": "Get User Image",
+  "Description": "Get the image base64 and URL for a specific employee",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom HibobManager import HibobManager, dict_to_flat\nimport base64, json\n\nINTEGRATION_NAME = u\"Hibob\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    api_root = 'https://api.hibob.com'\n    api_token = conf.get(\"API Token\")\n\n    #Declaring an empty dictionary of the json_result\n    json_result = {}\n    \n    #Creating an instance of hibobmanager object\n    hibob_manager = HibobManager(api_root, api_token)\n    \n    #Extracting the action params\n    user_email = siemplify.extract_action_param(\"Employee's Email\")\n    \n    #Extracting the employee id(the employee id is a serial number that is generated automatically when creating the user)\n    employee_details = hibob_manager.get_user_details(user_email)\n    \n    json_result = {}\n    \n    #If the user url is empty- returns false \n    if not employee_details :\n        return_value = False\n        json_result[\"exists\"] = \"False\"\n        json_result[\"imageBase64\"] = \"None\"\n        json_result[\"imageUrl\"] = \"None\"\n        output_message = \"The user {0} was not found.\".format(user_email)\n        \n    \n    if employee_details:\n        \n        employee_identifier = employee_details.get('id')\n\n        #Calling the function get_user_image() in the HibobManager\n        # The function get_user_image() returns response.content\n        user_image_url = hibob_manager.get_user_image(employee_identifier)\n\n        if not user_image_url:\n            return_value = False\n            json_result[\"exists\"] = \"True\"\n            json_result[\"imageBase64\"] = \"None\"\n            json_result[\"imageUrl\"] = \"None\"\n            output_message = \"The user {0} doesn't have an image.\".format(user_email) \n            \n        else:\n            #Converting the user image to base64\n            image_converted_to_base64 = (base64.b64encode(user_image_url))\n            image_base64_string = image_converted_to_base64.decode('UTF-8')\n            image_url_string = user_image_url.decode('UTF-8')\n            \n            return_value = True\n            json_result[\"exists\"]= \"True\"\n            json_result[\"imageBase64\"] = image_base64_string\n            json_result[\"imageUrl\"] = image_url_string\n    \n            output_message = \"The user image was fetched for {0}\".format(user_email )\n\n    #Adding json result to the action\n    siemplify.result.add_result_json(json_result)\n    \n    #Siemplify end function\n    siemplify.end(output_message, return_value)\n\n    \n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Hibob",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"exists\": \"True\",\r\n\t\"imageBase64\": \"aHR0cHM6Ly9jZG4uZmlsZXN0YWNrY29udGVudC5jb20vWWE0dHhkWjRReUtjd0NCUkE2MUs/cG9saWN5PWV5Sm9ZVzVrYkdVaU9pSlpZVFIwZUdSYU5GRjVTMk4zUTBKU1FUWXhTeUlzSW1WNGNHbHllU0k2TkRZek5Ua3hPRGN3TkgwPSZzaWduYXR1cmU9ODhjM2ZhYTliN2RkMTE0ZWM2MmQwM2I2Y2I2OTFmNjM5ZWM0ODYxM2JlZGYyOGQwZjRlZDg3MTI5MmY0YjA1Mw==\",\r\n\t\"imageUrl\": \"https://cdn.filestackcontent.com/Ya4txdZ4QyKcwCBRA61K?policy=eyJoYW5kbGUiOiJZYTR0eGRaNFF5S2N3Q0JSQTYxSyIsImV4cGlyeSI6NDYzNTkxODcwNH0=&signature=88c3faa9b7dd114ec62d03b6cb691f639ec48613bedf28d0f4ed871292f4b053\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 197.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email@gmail.com",
+      "Description": "The employee's email you want to upload a photo.",
+      "Name": "Employee's Email",
+      "Value": "email@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1600337236693,
+      "ModificationTimeUnixTimeInMs": 1600337236693
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1600337236688,
+  "ModificationTimeUnixTimeInMs": 1600337236690
+}

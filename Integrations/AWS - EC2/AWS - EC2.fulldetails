@@ -1,0 +1,56 @@
+{
+    "Identifier": "AWS - EC2",
+    "PackageName": "AWS - EC2",
+    "DisplayName": "AWS - EC2",
+    "Description": "Amazon Elastic Compute Cloud (Amazon EC2) is a web service that provides secure, resizable compute capacity in the cloud.\nAmazon EC2\u2019s simple web service interface allows you to obtain and configure capacity with minimal friction. It provides you with complete control of your computing resources and lets you run on Amazon\u2019s proven computing environment.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1609172159543,
+            "Id": 0,
+            "IntegrationIdentifier": "AWS - EC2",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1609172159543,
+            "PropertyDescription": "EC2 Access Key ID",
+            "PropertyDisplayName": "Access Key ID",
+            "PropertyName": "Access Key ID",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1609172159543,
+            "Id": 0,
+            "IntegrationIdentifier": "AWS - EC2",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1609172159543,
+            "PropertyDescription": "Default Region.\nFor more information: https://docs.aws.amazon.com/general/latest/gr/rande.html",
+            "PropertyDisplayName": "Default Region",
+            "PropertyName": "Default Region",
+            "PropertyType": 2,
+            "Value": "us-east-1"
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1609172159543,
+            "Id": 0,
+            "IntegrationIdentifier": "AWS - EC2",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1609172159543,
+            "PropertyDescription": "EC2 Secret Access Key",
+            "PropertyDisplayName": "Secret Access Key",
+            "PropertyName": "Secret Access Key",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 9.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

@@ -1,0 +1,55 @@
+{
+  "Name": "Send Invitation",
+  "Description": "Sending an invitation to a new employee in order to invite them to log in the Hibob system for the first time or reinvite the user after he was disabled",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom HibobManager import HibobManager, dict_to_flat\nimport json\n\nINTEGRATION_NAME = u\"Hibob\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    #Getting the integration parameters\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    api_root = 'https://api.hibob.com'\n    api_token = conf.get(\"API Token\")\n\n    #Creating an HibobManager object instance\n    hibob_manager = HibobManager(api_root, api_token)\n    \n\n    #The welcome wizard serial number- created via hibob.\n    welcome_wizard_name = siemplify.extract_action_param(\"Welcome Wizard Name\")\n    \n    #Extracting the action params= The employee's email\n    user_email= siemplify.extract_action_param(\"Employee's Email\")\n    \n    #Extracting the employee id(the employee id is a serial number that is generated automatically when creating the user)\n    employee_details = hibob_manager.get_user_details(user_email)\n    \n    json_result = {}\n    \n    \n    if not employee_details:\n        return_value = False\n        json_result[\"exists\"] = \"False\"\n        json_result[\"invitationWasSent\"] = \"False\"\n        output_message = \"The employee {0} doesn't exist in Hibob\".format(user_email)\n        \n  \n    if employee_details:\n        #Extracting the employee invite status\n        employee_invite_status = employee_details.get('state')\n\n        #Extracting the employee id \n        employee_identifier = employee_details.get('id')\n        \n        if employee_invite_status == 'invited':\n            return_value = False\n            json_result[\"exists\"] = \"True\"\n            json_result[\"invitationWasSent\"] = \"False\"\n            output_message = \" {0} was already invited to Hibob \".format(user_email)\n        \n        else:\n            #Getting all the wizards details\n            welcome_wizards_details = hibob_manager.get_summery_about_all_wizards()\n    \n            #Finding the wizard id of the wizard name written in the action params.\n            for wizard in welcome_wizards_details['wizards']:\n                if wizard['name'] == welcome_wizard_name:\n                    welcome_wizard_id= wizard['id']\n                \n                    #calling the function invite_employee_to_hibob() in the HibobManager\n            invitation_user_response = hibob_manager.invite_employee_to_hibob(employee_identifier, welcome_wizard_id)\n\n            if invitation_user_response:\n                return_value = True\n                json_result[\"Does employee exists\"] = \"True\"\n                json_result[\"Invitation was sent\"] = \"True\"\n                json_result[\"wizardName\"] = welcome_wizard_name\n                json_result[\"wizardId\"] = welcome_wizard_id\n                output_message = \"The invitation for {0} was sent successfully .\".format(user_email)\n\n        \n    print(json_result)\n    siemplify.result.add_result_json(json_result)\n    siemplify.end(output_message, return_value)\n    \n    \n\nif __name__ == '__main__':\n    main()",
+  "IntegrationIdentifier": "Hibob",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"exists\": \"True\",\r\n\t\"invitationWasSent\": \"False\",\r\n\t\"wizardName\": \"Welcome!\",\r\n\t\"wizardId\": \"954554\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 221.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email@gmail.com",
+      "Description": "The email of the employee that you want to send the invitation in order to start using Hibob system.",
+      "Name": "Employee's Email",
+      "Value": "email@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1600337936107,
+      "ModificationTimeUnixTimeInMs": 1600337936107
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Welcome!",
+      "Description": "The wizard name found in Hibob (Setting-> Flows), for example: \"Welcome!\". \nPlease note: this is case sensitive!\n",
+      "Name": "Welcome Wizard Name",
+      "Value": "Welcome!",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1600337936107,
+      "ModificationTimeUnixTimeInMs": 1600337936107
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1600337936100,
+  "ModificationTimeUnixTimeInMs": 1600337936103
+}

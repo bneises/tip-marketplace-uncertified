@@ -1,0 +1,59 @@
+{
+  "Name": "Create Sheet",
+  "Description": "Creates a new Sheet ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport gspread\nimport uuid\n\nIDENTIFIER = u'Google Sheet'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n    sheet_name = siemplify.extract_action_param(param_name=u'Sheet Name', is_mandatory=True)\n    emails_to_share = siemplify.extract_action_param(param_name=u'Share with emails')\n\n    f = open(\"credentials.json\", \"w+\")\n    f.write(credentials_json)\n    f.close()\n\n    gc = gspread.service_account(filename='./credentials.json')\n    sh = gc.create(sheet_name)\n\n    if(emails_to_share):\n        emails = emails_to_share.split(';')\n        for email in emails:\n            sh.share(email, perm_type='user', role='writer')\n\n    siemplify.end('The Sheet was created successfully', sh.id)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Sheets",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 18.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Sheet-Name>",
+      "Description": "The worksheet name is the Sheet tab name. The default Sheet name is \"Sheet1\". ",
+      "Name": "Sheet Name",
+      "Value": "<Sheet-Name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602514620072,
+      "ModificationTimeUnixTimeInMs": 1602514620072
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "email1@gmail.com;email2@gmail.com;email3@gmail.com",
+      "Description": "Email address of the person you would like to add permission to the Spreadsheet. You can add multiple emails by adding \";\" as a separator. ",
+      "Name": "Share with emails",
+      "Value": "email1@gmail.com;email2@gmail.com;email3@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602514620072,
+      "ModificationTimeUnixTimeInMs": 1602514620072
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602514620066,
+  "ModificationTimeUnixTimeInMs": 1602514620068
+}

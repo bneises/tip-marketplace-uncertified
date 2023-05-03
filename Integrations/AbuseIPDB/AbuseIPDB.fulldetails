@@ -1,0 +1,73 @@
+{
+    "Identifier": "AbuseIPDB",
+    "PackageName": "AbuseIPDB",
+    "DisplayName": "AbuseIPDB",
+    "Description": "Leverage the AbuseIPDB threat intelligence API with this integration.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1607349218871,
+            "Id": 0,
+            "IntegrationIdentifier": "AbuseIPDB",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1607349218871,
+            "PropertyDescription": null,
+            "PropertyDisplayName": "Api Key",
+            "PropertyName": "Api Key",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1607349218871,
+            "Id": 0,
+            "IntegrationIdentifier": "AbuseIPDB",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1607349218871,
+            "PropertyDescription": null,
+            "PropertyDisplayName": "Verify SSL",
+            "PropertyName": "Verify SSL",
+            "PropertyType": 0,
+            "Value": "true"
+        }
+    ],
+    "Actions": [
+        "Check IP Reputation",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "AbuseIPDB",
+        "datamodels"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Abuse IPDB Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1608201500000
+        },
+        {
+            "Items": [
+                "- Entity Explorer: Added functionality to update the entity properties/metadata under the relevant prefix.\n- Fixed a bug due to not parsing create insight parameter as a bool, which caused the check to always return true."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1630051933000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1635762436000
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+  "Name": "Get Certificate Details",
+  "Description": "Getting the certificate of a given URL",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom OpenSSL import SSL\nfrom cryptography import x509\nfrom cryptography.x509.oid import NameOID\nimport idna\nimport json\nfrom socket import socket\nfrom collections import namedtuple\nfrom datetime import datetime\nimport pprint\n\nHostInfo = namedtuple(field_names='cert hostname peername', typename='HostInfo')\n\n\ndef get_certificate(hostname, port):\n    hostname_idna = idna.encode(hostname)\n    sock = socket()\n\n    sock.connect((hostname, port))\n    peername = sock.getpeername()\n    ctx = SSL.Context(SSL.SSLv23_METHOD) # most compatible\n    ctx.check_hostname = False\n    ctx.verify_mode = SSL.VERIFY_NONE\n\n    sock_ssl = SSL.Connection(ctx, sock)\n    sock_ssl.set_connect_state()\n    sock_ssl.set_tlsext_host_name(hostname_idna)\n    sock_ssl.do_handshake()\n    cert = sock_ssl.get_peer_certificate()\n    crypto_cert = cert.to_cryptography()\n    sock_ssl.close()\n    sock.close()\n\n    return HostInfo(cert=crypto_cert, peername=peername, hostname=hostname)\n\ndef  get_alt_names(cert):\n    try:\n        ext = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)\n        return ext.value.get_values_for_type(x509.DNSName)\n    except x509.ExtensionNotFound:\n        return None\n\ndef get_common_name(cert):\n    try:\n        names = cert.subject.get_attributes_for_oid(NameOID.COMMON_NAME)\n        return names[0].value\n    except x509.ExtensionNotFound:\n        return None\n\ndef get_issuer(cert):\n    try:\n        names = cert.issuer.get_attributes_for_oid(NameOID.COMMON_NAME)\n        #cmp = cert.issuer.get_components()\n        return names[0].value\n    except x509.ExtensionNotFound:\n        return None\n\n\ndef get_json_result(hostinfo):\n    common_name = get_common_name(hostinfo.cert)\n    san =get_alt_names(hostinfo.cert),\n    issuer = get_issuer(hostinfo.cert)\n\n    now  = datetime.now()\n    delta = hostinfo.cert.not_valid_after - now   \n    days_to_expiration = delta.days\n    is_expired = days_to_expiration < 0 \n    is_self_signed = common_name == issuer\n    date_time = hostinfo.cert.not_valid_before.strftime(\"%m/%d/%Y\")\n\n    cert_details = {\n        'hostname': hostinfo.hostname,\n        'ip': hostinfo.peername[0],\n        'commonName':common_name,\n        'is_self_signed':is_self_signed,\n        'SAN': san,\n        'is_expired': is_expired,\n        'issuer': issuer,\n        'not_valid_before': hostinfo.cert.not_valid_before.strftime(\"%m/%d/%Y\"),\n        'not_valid_after': hostinfo.cert.not_valid_after.strftime(\"%m/%d/%Y\"),\n        'days_to_expiration': days_to_expiration\n    }\n\n    return cert_details\n    \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    url = siemplify.extract_action_param(\"Url to check\", print_value=True)\n    hostinfo = get_certificate(url, 443)\n    json_res = get_json_result(hostinfo)\n    output_message = \"Url Certificate <{0}> was successfully analyzed.\".format(url)\n    pprint.pprint(json_res)\n    print(json_res)\n    siemplify.result.add_result_json(json_res)\n\n    siemplify.end(output_message, True, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n  \"SAN\": [\r\n    \"*.badssl.com\",\r\n    \"badssl.com\"],\r\n  \"commonName\": \"*.badssl.com\",\r\n  \"days_to_expiration\": 160,\r\n  \"hostname\": \"self-signed.badssl.com\",\r\n  \"ip\": \"104.154.89.105\",\r\n  \"is_expired\": false,\r\n  \"is_self_signed\": true,\r\n  \"issuer\": \"*.badssl.com\",\r\n  \"not_valid_after\": \"10/08/2021\",\r\n  \"not_valid_before\": \"10/09/2019\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "use-cases",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 11.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "expired.badssl.com",
+      "Description": "Url to check",
+      "Name": "Url to check",
+      "Value": "expired.badssl.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1619851320931,
+      "ModificationTimeUnixTimeInMs": 1619851320931
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1619851320907,
+  "ModificationTimeUnixTimeInMs": 1619851320913
+}

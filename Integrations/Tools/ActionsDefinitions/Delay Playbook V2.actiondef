@@ -1,0 +1,102 @@
+{
+  "Name": "Delay Playbook V2",
+  "Description": "This action will temporarily stop a playbook from completing for a period of time.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_INPROGRESS\nimport arrow\nimport sys\nimport croniter\nimport datetime\n\n\nSCRIPT_NAME =\"Siemplify - Delay Playbook\"\n\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    seconds = int(siemplify.parameters.get('Seconds', 0))\n    minutes = int(siemplify.parameters.get('Minutes', 0))\n    hours = int(siemplify.parameters.get('Hours', 0))\n    days = int(siemplify.parameters.get('Days', 0))\n    cron_expression = siemplify.parameters.get(\"Cron Expression\")\n    \n    if cron_expression:\n        now = arrow.utcnow().datetime\n        cron = croniter.croniter(cron_expression, now)\n        next_timestamp = cron.get_next(datetime.datetime)\n        if now < next_timestamp:\n            siemplify.LOGGER.info(\"Cron expression not matched, waiting until {}\".format(next_timestamp.isoformat()))\n            siemplify.end(\n            u\"Hasn't reached the desired date {}. Current date: {}\".format(next_timestamp.isoformat(), now.isoformat()),\n            next_timestamp.isoformat(), EXECUTION_STATE_INPROGRESS)\n        else:\n            siemplify.LOGGER.info(\"Cron expression matched, finishing waiting\")\n            siemplify.end(u\"Reached target date {}\".format(next_timestamp.isoformat()),\n                      'true', EXECUTION_STATE_COMPLETED)\n\n    target_date = arrow.utcnow().shift(seconds=seconds, minutes=minutes,\n                                    hours=hours, days=days)\n\n    siemplify.LOGGER.info(\n        u\"Waiting until {}\".format(str(target_date.isoformat())))\n\n    if target_date <= arrow.utcnow():\n        # Reached target date\n        siemplify.LOGGER.info(\n            u\"Reached target date {}\".format(target_date.isoformat()))\n        siemplify.end(u\"Reached target date {}\".format(target_date.isoformat()),\n                      'true', EXECUTION_STATE_COMPLETED)\n\n    else:\n        siemplify.LOGGER.info(\n            u\"Hasn't reached the desired date {}. Current date: {}\".format(\n                target_date.isoformat(), arrow.utcnow().isoformat()))\n        siemplify.end(\n            u\"Hasn't reached the desired date {}\".format(target_date.isoformat()),\n            target_date.isoformat(), EXECUTION_STATE_INPROGRESS)\n\ndef wait():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    target_date = arrow.get(siemplify.parameters[\"additional_data\"])\n    cron_expression = siemplify.parameters.get(\"Cron Expression\")\n    \n    if cron_expression:\n        now = arrow.utcnow().datetime\n        if now < target_date:\n            siemplify.LOGGER.info(\"Cron expression not matched, waiting until {}\".format(target_date.isoformat()))\n            siemplify.end(\n            u\"Hasn't reached the desired date {}. Current date: {}\".format(target_date.isoformat(), now.isoformat()),\n            target_date.isoformat(), EXECUTION_STATE_INPROGRESS)\n        else:\n            siemplify.LOGGER.info(\"Cron expression matched, finishing waiting\")\n            siemplify.end(u\"Reached target date {}\".format(target_date.isoformat()),\n                      'true', EXECUTION_STATE_COMPLETED)\n\n    if target_date <= arrow.utcnow():\n        # Reached target date\n        siemplify.LOGGER.info(\n            u\"Reached target date {}\".format(target_date.isoformat()))\n        siemplify.end(u\"Reached target date {}\".format(target_date.isoformat()),\n                      'true', EXECUTION_STATE_COMPLETED)\n\n    else:\n        siemplify.LOGGER.info(\n            u\"Hasn't reached the desired date {}. Current date: {}\".format(\n                target_date.isoformat(), arrow.utcnow().isoformat()))\n        siemplify.end(\n            u\"Hasn't reached the desired date {}\".format(target_date.isoformat()),\n            target_date.isoformat(), EXECUTION_STATE_INPROGRESS)\n\n\nif __name__ == \"__main__\":\n    if len(sys.argv) < 3 or sys.argv[2] == 'True':\n        main()\n    else:\n        wait()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Elisv",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "IsAsync": true,
+  "Version": 11.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "0",
+      "Description": "The amount of seconds to delay the playbook for.",
+      "Name": "Seconds",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1634147096534,
+      "ModificationTimeUnixTimeInMs": 1634147096534
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "1",
+      "Description": "The amount of minutes to delay the playbook for.",
+      "Name": "Minutes",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1634147096534,
+      "ModificationTimeUnixTimeInMs": 1634147096534
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "0",
+      "Description": "The amount of hours to delay the playbook for.",
+      "Name": "Hours",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1634147096534,
+      "ModificationTimeUnixTimeInMs": 1634147096534
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "0",
+      "Description": "The amount of days to delay the playbook for.",
+      "Name": "Days",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1634147096534,
+      "ModificationTimeUnixTimeInMs": 1634147096534
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "Determines when the playbook should proceed using a cron expression. Will be prioritized over the other parameters.",
+      "Name": "Cron Expression",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1634147096534,
+      "ModificationTimeUnixTimeInMs": 1634147096534
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1634147096515,
+  "ModificationTimeUnixTimeInMs": 1634147096524
+}

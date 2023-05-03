@@ -1,0 +1,44 @@
+{
+    "Identifier": "Docker Hub",
+    "PackageName": "Docker Hub",
+    "DisplayName": "Docker Hub",
+    "Description": "Docker is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all of the parts it needs, such as libraries and other dependencies, and deploy it as one package.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1595327829386,
+            "Id": 0,
+            "IntegrationIdentifier": "Docker Hub",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1595327829386,
+            "PropertyDescription": "Docker hub username",
+            "PropertyDisplayName": "Username",
+            "PropertyName": "Username",
+            "PropertyType": 2,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1595327829386,
+            "Id": 0,
+            "IntegrationIdentifier": "Docker Hub",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1595327829386,
+            "PropertyDescription": "Docker Hub password",
+            "PropertyDisplayName": "Password",
+            "PropertyName": "Password",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 11.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

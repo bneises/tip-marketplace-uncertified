@@ -1,0 +1,69 @@
+{
+  "Name": "Count Files",
+  "Description": "The action counts files in a given folder path according to a specific file extension",
+  "Script": "from SiemplifyAction import SiemplifyAction\r\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\r\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\r\nimport os\r\nimport glob\r\n\r\n@output_handler\r\ndef main():\r\n    siemplify = SiemplifyAction()\r\n    \r\n    folder          = siemplify.extract_action_param(\"Folder\", print_value=True)\r\n    is_recursive    = siemplify.extract_action_param(\"Is Recursive\", print_value=True)\r\n    file_extension  = siemplify.extract_action_param(\"File Extension\")\r\n    files_num       = -1\r\n    \r\n    if not file_extension:\r\n        file_extension = '*.*'\r\n    full_path   = folder + '/' +  file_extension\r\n    \r\n    print( \"Count files at : \" + full_path )\r\n    files       = glob.glob( full_path, recursive=is_recursive )\r\n    files_num   = len( files ) \r\n    \r\n    print( files_num )\r\n\r\n    siemplify.end( files_num, files_num, EXECUTION_STATE_COMPLETED )\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    main()",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "*.txt",
+      "Description": "Count the files that include a specific file extension",
+      "Name": "File Extension",
+      "Value": "*.txt",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236910,
+      "ModificationTimeUnixTimeInMs": 1610399236910
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "/tempFolder",
+      "Description": "The folder path from which you would like to count the files",
+      "Name": "Folder",
+      "Value": "/tempFolder",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236910,
+      "ModificationTimeUnixTimeInMs": 1610399236910
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "If enabled, this will recursively count all files in the directory.",
+      "Name": "Is Recursive",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236910,
+      "ModificationTimeUnixTimeInMs": 1610399236910
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236906,
+  "ModificationTimeUnixTimeInMs": 1610399236906
+}

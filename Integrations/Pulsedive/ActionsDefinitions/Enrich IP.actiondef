@@ -1,0 +1,94 @@
+{
+  "Name": "Enrich IP",
+  "Description": "Enrich IP using information from Pulsedive.",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_INPROGRESS\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyUtils import output_handler, convert_dict_to_json_result_dict\nfrom TIPCommon import extract_configuration_param, extract_action_param, construct_csv, add_prefix_to_dict\nfrom PulsediveManager import PulsediveManager\nfrom constants import PROVIDER_NAME, INTEGRATION_NAME, ENRICH_IP_SCRIPT_NAME, DEFAULT_COMMENTS_COUNT, \\\n    DATA_ENRICHMENT_PREFIX, RISK_SCORE, RISK_NAME, COMPLETED\nfrom exceptions import PulsediveNotFoundException, ForceRaiseException\nimport sys\nimport json\nfrom UtilsManager import get_entity_original_identifier, prepare_entity_for_manager\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ENRICH_IP_SCRIPT_NAME\n\n    siemplify.LOGGER.info(\"----------------- Main - Param Init -----------------\")\n\n    api_root = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=\"API Root\")\n    api_key = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=\"API Key\")\n    verify_ssl = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=\"Verify SSL\",\n                                             default_value=True, input_type=bool)\n                                        \n    retrieve_comments = extract_action_param(siemplify, param_name=\"Retrieve Comments\", is_mandatory=False,\n                                                 input_type=bool)\n    max_returned_comments = extract_action_param(siemplify, param_name=\"Max Comments To Return\", is_mandatory=False,\n                                                 input_type=int, default_value=DEFAULT_COMMENTS_COUNT)\n    only_suspicious_insight = extract_action_param(siemplify, param_name=\"Only Suspicious Entity Insight\",\n                                                   is_mandatory=False, input_type=bool, default_value=False)\n    threshold = extract_action_param(siemplify, param_name=\"Threshold\", is_mandatory=True, print_value=True)\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    global_is_risky = False\n    successful_entities = []\n    failed_entities = []\n\n    status = EXECUTION_STATE_COMPLETED\n    json_results = {}\n    result_value = \"false\"\n    output_message = ''\n\n    suitable_entities = [entity for entity in siemplify.target_entities if entity.entity_type == EntityTypes.ADDRESS]\n    result_value, output_message = False, ''\n\n    try:\n        manager = PulsediveManager(api_root=api_root, api_key=api_key, verify_ssl=verify_ssl)\n\n        for entity in suitable_entities:\n            siemplify.LOGGER.info(\"Started processing entity: {}\".format(get_entity_original_identifier(entity)))\n            \n            try:\n                identifier = get_entity_original_identifier(entity)\n                is_risky = False\n                ip_data = manager.get_indicator_data(indicator=identifier, retrieve_comments=retrieve_comments,\n                                                      comment_limit=max_returned_comments)\n    \n                if int(RISK_SCORE.get(ip_data.threshold)) >= int(RISK_SCORE.get(RISK_NAME.get(threshold))):\n                    is_risky = True\n                    entity.is_suspicious = True\n                    global_is_risky = True\n                \n                # Enrich entity\n                enrichment_data = ip_data.to_enrichment_data()\n                entity.additional_properties.update(enrichment_data)\n    \n                # Fill json with every entity data\n                json_results[get_entity_original_identifier(entity)] = ip_data.to_json(comments=ip_data.comments)\n                \n                # Create case wall table for comments\n                if ip_data.comments:\n                    comments_table = construct_csv([comment.to_table() for comment in ip_data.comments])\n                    siemplify.result.add_data_table(title=\"Comments: {}\".format(get_entity_original_identifier(entity)),\n                                                    data_table=comments_table)\n    \n                if not only_suspicious_insight or (only_suspicious_insight and is_risky):\n                    siemplify.add_entity_insight(entity, ip_data.to_insight(threshold),\n                                                 triggered_by=INTEGRATION_NAME)\n    \n                entity.is_enriched = True\n                successful_entities.append(entity)\n                siemplify.LOGGER.info(\"Finished processing entity {0}\".format(get_entity_original_identifier(entity)))\n    \n            except Exception as e:\n                if isinstance(e, ForceRaiseException):\n                    raise\n                failed_entities.append(get_entity_original_identifier(entity))\n                siemplify.LOGGER.error(\"An error occurred on entity {0}\".format(get_entity_original_identifier(entity)))\n                siemplify.LOGGER.exception(e)\n    \n        if successful_entities:\n            output_message += \"Successfully enriched the following IPs using {}: \\n {} \\n\" \\\n                .format(PROVIDER_NAME,\n                        ', '.join([get_entity_original_identifier(entity) for entity in successful_entities]))\n            siemplify.update_entities(successful_entities)\n    \n        if failed_entities:\n            output_message += \"Action wasn’t able to enrich the following IPs using {}: \\n {} \\n\" \\\n                .format(PROVIDER_NAME, ', '.join(failed_entities))\n    \n        if not successful_entities:\n            output_message = \"No IPs were enriched\"\n            result_value = False\n    \n        # Main JSON result\n        if json_results:\n            result = {\n                'results': convert_dict_to_json_result_dict(json_results),\n                'is_risky': global_is_risky\n            }\n            siemplify.result.add_result_json(result)\n    except Exception as err:\n        output_message = \"Error executing action “Enrich IP”. Reason: {}\".format(err)\n        result_value = False\n        status = EXECUTION_STATE_FAILED\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(err)\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"Status: {}:\".format(status))\n    siemplify.LOGGER.info(\"Result Value: {}\".format(result_value))\n    siemplify.LOGGER.info(\"Output Message: {}\".format(output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Pulsedive",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"results\": [\n    {\n      \"Entity\": \"46.30.215.58\",\n      \"EntityResult\": {\n        \"iid\": 178,\n        \"type\": \"ip\",\n        \"indicator\": \"46.30.215.58\",\n        \"risk\": \"low\",\n        \"risk_recommended\": \"low\",\n        \"manualrisk\": 0,\n        \"retired\": \"No recent activity\",\n        \"stamp_added\": \"2017-09-27 18:12:13\",\n        \"stamp_updated\": \"2020-12-10 00:13:33\",\n        \"stamp_seen\": \"2020-12-10 00:13:33\",\n        \"stamp_probed\": \"2020-12-10 00:13:32\",\n        \"stamp_retired\": null,\n        \"recent\": 0,\n        \"riskfactors\": [\n          {\n            \"rfid\": 60,\n            \"description\": \"found in threat feeds\",\n            \"risk\": \"medium\"\n          },\n          {\n            \"rfid\": 1,\n            \"description\": \"returns PTR record\",\n            \"risk\": \"none\"\n          }\n        ],\n        \"attributes\": {\n          \"port\": [\n            \"443\",\n            \"80\"\n          ],\n          \"protocol\": [\n            \"HTTP\",\n            \"HTTPS\"\n          ],\n          \"technology\": [\n            \"Varnish\"\n          ]\n        },\n        \"properties\": {\n          \"dns\": {\n            \"ptr\": \"webcluster2.webpod5-cph3.one.com\"\n          },\n          \"dom\": {\n            \"screenshot\": \"\"\n          },\n          \"geo\": {\n            \"asn\": \"AS51468\",\n            \"city\": \"Kobenhavn S\",\n            \"country\": \"Denmark\",\n            \"countrycode\": \"DK\",\n            \"isp\": \"One.com A/S\",\n            \"lat\": \"55.6759\",\n            \"long\": \"12.5655\",\n            \"org\": \"One.com A/S\",\n            \"region\": \"Capital Region\",\n            \"zip\": \"1071\"\n          },\n          \"http\": {\n            \"++code\": \"403\",\n            \"++content-type\": \"text/html\",\n            \"++status\": \"Forbidden\",\n            \"connection\": \"keep-alive\",\n            \"content-length\": \"7\",\n            \"content-type\": \"text/html; charset=utf-8\",\n            \"date\": \"Thu, 10 Dec 2020 00:13:16 GMT\",\n            \"server\": \"Varnish\",\n            \"x-varnish\": \"206348409\"\n          },\n          \"meta\": {\n            \"++title\": \"404 Not Found\"\n          },\n          \"whois\": {\n            \"++abuse\": \"abuse@ripe.net\",\n            \"++email\": \"hostmaster@ripe.net\",\n            \"++phone\": \"+31 20 535 4444\",\n            \"++registered\": \"2009-09-28 00:00:00\",\n            \"++registrant\": \"RIPE Network Coordination Centre\",\n            \"++updated\": \"2009-09-30 00:00:00\",\n            \"address\": \"P.O. Box 10096\",\n            \"cidr\": \"46.0.0.0/8\",\n            \"city\": \"Amsterdam\",\n            \"country\": \"NL\",\n            \"nethandle\": \"NET-46-0-0-0-0\",\n            \"netname\": \"46-RIPE\",\n            \"netrange\": \"46.0.0.0 - 46.255.255.255\",\n            \"nettype\": \"Allocated to RIPE NCC\",\n            \"orgabuseemail\": \"abuse@ripe.net\",\n            \"orgabusehandle\": \"ABUSE3850-ARIN\",\n            \"orgabusename\": \"Abuse Contact\",\n            \"orgabusephone\": \"+31205354444\",\n            \"orgabuseref\": \"https://rdap.arin.net/registry/entity/ABUSE3850-ARIN\",\n            \"organization\": \"RIPE Network Coordination Centre (RIPE)\",\n            \"orgid\": \"RIPE\",\n            \"orgname\": \"RIPE Network Coordination Centre\",\n            \"orgtechemail\": \"hostmaster@ripe.net\",\n            \"orgtechhandle\": \"RNO29-ARIN\",\n            \"orgtechname\": \"RIPE NCC Operations\",\n            \"orgtechphone\": \"+31 20 535 4444\",\n            \"orgtechref\": \"https://rdap.arin.net/registry/entity/RNO29-ARIN\",\n            \"parent\": \"()\",\n            \"postalcode\": \"1001EB\",\n            \"ref\": [\n              \"https://rdap.arin.net/registry/ip/46.0.0.0\",\n              \"https://rdap.arin.net/registry/entity/RIPE\"\n            ],\n            \"referralserver\": \"whois://whois.ripe.net\",\n            \"regdate\": \"2009-09-28\",\n            \"resourcelink\": [\n              \"whois.ripe.net\",\n              \"https://apps.db.ripe.net/search/query.html\"\n            ],\n            \"updated\": [\n              \"2009-09-30\",\n              \"2013-07-29\"\n            ]\n          }\n        },\n        \"threats\": [\n          {\n            \"tid\": 546,\n            \"name\": \"qsnatch\",\n            \"category\": \"general\",\n            \"risk\": \"unknown\",\n            \"stamp_linked\": \"2020-08-14 12:04:46\"\n          },\n          {\n            \"tid\": 1,\n            \"name\": \"Zeus\",\n            \"category\": \"malware\",\n            \"risk\": \"high\",\n            \"stamp_linked\": \"2018-04-18 07:00:12\"\n          }\n        ],\n        \"feeds\": [\n          {\n            \"fid\": 4,\n            \"name\": \"C&C IPs\",\n            \"category\": \"malware\",\n            \"organization\": \"Bambenek Consulting\",\n            \"pricing\": \"free\",\n            \"stamp_linked\": \"2020-08-14 12:04:46\"\n          }\n        ]\n      }\n    }\n  ],\n  \"is_risky\": false\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 36.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "medium",
+      "Description": "Specify the threshold where the entity should be marked as malicious or suspicious, for Siemplify to label it as suspicious. ",
+      "Name": "Threshold",
+      "Value": "medium",
+      "Type": 15,
+      "OptionalValues": [
+        "verylow",
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "OptionalValuesJson": "[\"verylow\",\"low\",\"medium\",\"high\",\"critical\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614032395434,
+      "ModificationTimeUnixTimeInMs": 1614032395434
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "If enabled, action will retrieve comments about the entity.",
+      "Name": "Retrieve Comments",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614032395434,
+      "ModificationTimeUnixTimeInMs": 1614032395434
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "If enabled, action will only create an insight for suspicious entities.",
+      "Name": "Only Suspicious Entity Insight",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614032395434,
+      "ModificationTimeUnixTimeInMs": 1614032395434
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "50",
+      "Description": "Specify how many comments to return.",
+      "Name": "Max Comments To Return",
+      "Value": "50",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614032395434,
+      "ModificationTimeUnixTimeInMs": 1614032395434
+    }
+  ],
+  "DefaultResultValue": null,
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "IsAsync": true,
+  "CreationTimeUnixTimeInMs": 1612372663662,
+  "ModificationTimeUnixTimeInMs": 1614032395431
+}

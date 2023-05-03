@@ -1,0 +1,45 @@
+{
+  "Name": "Get Allowed Domain Lists",
+  "Description": "Get a list of Domains in an Allowed Domain List",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyUtils import flat_dict_to_csv, construct_csv, dict_to_flat, convert_dict_to_json_result_dict\nfrom SiemplifyUtils import output_handler\nfrom BanduraCyberManager import BanduraCyberManager\nfrom TIPCommon import extract_configuration_param, extract_action_param\nimport json\n\n# CONTS\nINTEGRATION_NAME = \"BanduraCyber\"\nSCRIPT_NAME = \"Show Allowed Domain Lists\"\nADDRESS = EntityTypes.ADDRESS\n\n@output_handler\ndef main():\n    json_results = {}\n    entities_with_results = []\n    result_value = False\n    \n    # Configuration.\n    siemplify = SiemplifyAction()\n    siemplify.script_name = u\"{} - {}\".format(INTEGRATION_NAME, SCRIPT_NAME)\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    # INIT INTEGRATION CONFIGURATION:\n    api_root = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"API Root\",\n                                           is_mandatory=True, input_type=unicode)\n    username = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Username\",\n                                           is_mandatory=True, input_type=unicode)\n    password = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Password\",\n                                           is_mandatory=True, input_type=unicode)\n    verify_ssl = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Verify SSL\",\n                                             default_value=False, input_type=bool)\n                                             \n    list_name = extract_action_param(siemplify, param_name=u\"List Name\", is_mandatory=False, input_type=unicode,\n                                       print_value=True)\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    bandura_cyber_manager = BanduraCyberManager(username=username, password=password, verify_ssl=verify_ssl)\n    \n    results = bandura_cyber_manager.show_allowed_domain_list(list_name=list_name)\n    \n    # Close the session\n    bandura_cyber_manager.logout()\n    \n    if results:\n        # Add original json as attachment\n        siemplify.result.add_attachment(\"Bandura Allowed Domain Lists Output\", \"allowed_domain_lists.txt\", json.dumps(results))\n    \n        # Add data table\n        siemplify.result.add_data_table(\"Bandura Allowed Domain Lists\", construct_csv(results))\n\n        siemplify.result.add_result_json(results)\n        output_message = 'Following Allowed Domain Lists were found.\\n'\n        result_value = True\n    else:\n        output_message = 'No Allowed Domain Lists were found.'\n        result_value = False\n        \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Bandura Cyber",
+  "ScriptResultName": "allowed_domain_list",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"count\":2,\"isPublic\":false,\"description\":\"\",\"lastUpdateDatetime\":\"2021-07-06T16:47:01+00:00\",\"pluginParameters\":{},\"pluginUuid\":\"00000000-6714-4000-8000-000000000000\",\"interval\":60,\"enabled\":true,\"isHealthy\":true,\"name\":\"Test\",\"lastSyncDatetime\":null,\"type\":\"manual\",\"uuid\":\"b0e90a31-744e-4c94-bbb2-da0a38ad9fc0\"}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 44.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "List Name",
+      "Description": "Name of the list to add the IP. (The List Name is Case Sensitive)",
+      "Name": "List Name",
+      "Value": "List Name",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1625590089318,
+      "ModificationTimeUnixTimeInMs": 1625590089318
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1625588514463,
+  "ModificationTimeUnixTimeInMs": 1625590089308
+}

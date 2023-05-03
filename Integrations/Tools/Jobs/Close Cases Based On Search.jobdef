@@ -1,0 +1,78 @@
+{
+  "Name": "Close Cases Based On Search",
+  "Integration": "Tools",
+  "Script": "from SiemplifyJob import SiemplifyJob\nimport json\nimport requests\n\nSCRIPT_NAME = \"CloseCasesBasedOnSearch\"\n\ndef get_bearer_token(siemplify, username, password):\n    address = \"{0}/{1}\".format(siemplify.API_ROOT, \"external/v1/accounts/Login?format=camel\")\n    response = siemplify.session.post(address, json={\"Username\": username, \"Password\": password}, verify=False)\n    response.raise_for_status()\n    return response.json()[\"token\"]\n\nSEARCH_URL = 'https://localhost/api/external/v1/search/CaseSearchEverything'\nBULK_ASSIGN_URL = 'https://localhost/api/external/v1/cases/ExecuteBulkAssign'\nBULK_CLOSE_URL = 'https://localhost/api/external/v1/cases/ExecuteBulkCloseCase'\n\nCLOSE_PAYLOAD = {\"closeComment\":\"asdasd\",\"closeReason\":\"Maintenance\",\"rootCause\":\"Employee error\",\"casesIds\":[10289]} # Example, will be replaced during execution\n\ndef main():\n    siemplify = SiemplifyJob()\n    siemplify.script_name = SCRIPT_NAME # In order to use the SiemplifyLogger, you must assign a name to the script.\n    username = siemplify.parameters[\"Siemplify Username\"]\n    password = siemplify.parameters[\"Siemplify Password\"]\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    try:\n        bearer_token = get_bearer_token(siemplify, username, password)\n        #raise Exception(bearer_token)\n        session = requests.Session()\n        session.headers = {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': \"Bearer {}\".format(bearer_token)}\n        session.verify = False\n        \n        payload = json.loads(siemplify.parameters.get('Search Payload'))\n        payload[\"isCaseClosed\"] = False\n        res_search = session.post(SEARCH_URL, json=payload)\n        res_search.raise_for_status()\n        \n        #raise Exception(len(res_search.json()[\"results\"]), res_search.json())\n        results = res_search.json().get('results') or res_search.json().get('Results')\n        case_ids = [item.get('id') or item.get(\"Id\") for item in results]\n        \n        siemplify.LOGGER.info(\"The following cases will be affected: {}\".format(case_ids))\n        \n        res_assign = session.post(BULK_ASSIGN_URL, json={\n\"casesIds\": case_ids,\n\"userName\": username\n})\n        res_assign.raise_for_status()\n        \n        close_payload = {}\n        close_payload['closeComment'] = siemplify.parameters.get('Close Comment')\n        close_payload['closeReason'] = siemplify.parameters.get('Close Reason')\n        close_payload['rootCause'] = siemplify.parameters.get('Root Cause')\n        close_payload['casesIds'] = case_ids\n        res_close = session.post(BULK_CLOSE_URL, json=close_payload)\n        res_close.raise_for_status()\n        siemplify.LOGGER.info(res_close.content)\n            \n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.end_script()\n\n\nif __name__ == \"__main__\":\n    main()",
+  "Creator": "Rob",
+  "RunIntervalInSeconds": 900,
+  "Description": "This job will close all cases based on a search query.  The Search Payload is the payload used in the 'CaseSearchEverything' API call.  To get an example of this value, go to Search in the UI and open Developer Tools.  Search for the cases to delete.  Look for the \"CaseSearchEverything\" api call in DevTools.  Copy the JSON payload of the POST request and paste in \"Search Payload\".  The Close Reason should be 0 or 1.   0 = malicious 1  = not malicious.  Root Cause comes from Settings -> Case Data -> Case Close Root Cause",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Version": 13,
+  "IsSystem": false,
+  "Parameters": [
+    {
+      "JobDefinitionId": 23,
+      "IsMandatory": false,
+      "DefaultValue": "{}",
+      "Name": "Search Payload",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1617818891578,
+      "ModificationTimeUnixTimeInMs": 1617818891578
+    },
+    {
+      "JobDefinitionId": 23,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Close Comment",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1617818891578,
+      "ModificationTimeUnixTimeInMs": 1617818891578
+    },
+    {
+      "JobDefinitionId": 23,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Name": "Close Reason",
+      "Type": 1,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1617818891578,
+      "ModificationTimeUnixTimeInMs": 1617818891578
+    },
+    {
+      "JobDefinitionId": 23,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Root Cause",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1617818891578,
+      "ModificationTimeUnixTimeInMs": 1617818891578
+    },
+    {
+      "JobDefinitionId": 23,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Siemplify Username",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1617818891578,
+      "ModificationTimeUnixTimeInMs": 1617818891578
+    },
+    {
+      "JobDefinitionId": 23,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Siemplify Password",
+      "Type": 3,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1617818891578,
+      "ModificationTimeUnixTimeInMs": 1617818891578
+    }
+  ],
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1617818891568,
+  "ModificationTimeUnixTimeInMs": 1617818891571
+}

@@ -1,0 +1,73 @@
+{
+  "Name": "Create",
+  "Description": "Create new records in a specific table",
+  "Script": "from SiemplifyAction import *\nfrom airtable import Airtable\nfrom airtable.auth import AirtableAuth\nimport json, sys\nfrom datetime import datetime\nfrom datetime import timedelta\n\nINTEGRATION_NAME = \"AirTable\"\n\n\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Api key\")\n    base_id = siemplify.parameters[\"Base id\"]\n    table_name = siemplify.parameters[\"Table name\"]\n    json_fields_str = siemplify.parameters[\"Json fields\"]\n\n    airtable = Airtable(base_id, table_name, api_key)\n    output_results = {}\n    rows = json.loads(json_fields_str)\n    for row in rows:\n        res = airtable.insert(row)\n        output_results[res['id']] = res['fields']\n\n    output_results_count = len(output_results)\n    output_message = '{0} records added successfully to table {1}.'.format(output_results_count,table_name)\n    print(output_message)\n\n    siemplify.result.add_result_json(json.dumps(output_results))\n    siemplify.end(output_message, True)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "AirTable",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 22.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Base is a database in Airtable in which you store data.The base ID can be found in the URL of the API page of the base. ",
+      "Name": "Base id",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199464,
+      "ModificationTimeUnixTimeInMs": 1603730199464
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "A table stores similar (structured) data, and each base can have multiple tables.  This parameter indicates the name of the table within the base.",
+      "Name": "Table name",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199464,
+      "ModificationTimeUnixTimeInMs": 1603730199464
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "[   {     \"Field_Name_1\": \"Value1\",     \"Field_Name_2\": \"Value2\",   },   {     \"Field_Name_1\": \"Value1\",     \"Field_Name_2\": \"Value2\",   } ]",
+      "Description": "The fields (columns) and their value in a JSON format. This action supports creation of multiple rows. ",
+      "Name": "Json fields",
+      "Value": "[   {     \"Field_Name_1\": \"Value1\",     \"Field_Name_2\": \"Value2\",   },   {     \"Field_Name_1\": \"Value1\",     \"Field_Name_2\": \"Value2\",   } ]",
+      "Type": 11,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199464,
+      "ModificationTimeUnixTimeInMs": 1603730199464
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1603730199460,
+  "ModificationTimeUnixTimeInMs": 1603730199460
+}

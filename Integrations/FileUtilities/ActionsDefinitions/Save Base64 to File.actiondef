@@ -1,0 +1,69 @@
+{
+  "Name": "Save Base64 to File",
+  "Description": "The action saves a base64 string to a file.  It supports comma separated lists for Filename and Base64 Input.  The optional File Extension parameter is used to add an extension to the output filename.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport errno\nimport json\nimport base64\nimport os\nimport re\n\n\nINTEGRATION_NAME = u\"FileUtilities\"\nSCRIPT_NAME = u\"Save Base64 to File\"\nLOCAL_FOLDER = u\"downloads\"\n\ndef get_valid_filename(s):\n    s = str(s).strip().replace(' ', '_')\n    return re.sub(r'(?u)[^-\\w.]', '', s)\n    \n    \ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    base64_inputs = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"Base64 Input\").split(',')]))\n    filenames = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"Filename\").split(',')]))\n    #file_extension = siemplify.parameters.get(\"File Extension\")\n    file_extensions_str = siemplify.parameters.get(\"File Extension\", None)\n    file_extensions = []\n    if file_extensions_str:\n        file_extensions = list(filter(None, [x.strip() for x in file_extensions_str.split(',')]))\n    folder_path = os.path.join(siemplify.RUN_FOLDER, LOCAL_FOLDER)\n    if len(file_extensions) > 0:\n        while len(file_extensions) < len(list(filenames)):\n            file_extensions.append(file_extensions[-1])\n        \n    json_results = {}\n    json_results['files'] = []\n    file_paths = []\n    try:\n        os.makedirs(folder_path)\n    except OSError as e:\n        if e.errno != errno.EEXIST:\n            raise\n    if len(file_extensions) > 0:\n        for filename, base64_input, file_extension in zip(filenames, base64_inputs, file_extensions):\n            file_path = os.path.join(folder_path, get_valid_filename(filename))\n            if not file_extension.startswith(\".\"):\n                file_path = file_path + \".\" + file_extension\n            \n                \n            try:\n                with open(file_path, \"wb\") as fh:\n                    fh.write(base64.b64decode(base64_input))\n            except Exception as e:\n                siemplify.LOGGER.error(\"Error: {}\".format(e))\n                raise\n            file_paths.append(file_path)\n            filedets = {}\n            filedets['file_name'] = filename\n            filedets['file_path'] = file_path\n            filename, file_extension = os.path.splitext(file_path)\n            filedets['extension'] = file_extension\n            json_results['files'].append(filedets)\n    else:\n        for filename, base64_input in zip(filenames, base64_inputs):\n            file_path = os.path.join(folder_path, get_valid_filename(filename))\n            \n            try:\n                with open(file_path, \"wb\") as fh:\n                    fh.write(base64.b64decode(base64_input))\n            except Exception as e:\n                siemplify.LOGGER.error(\"Error: {}\".format(e))\n                raise\n            file_paths.append(file_path)\n            filedets = {}\n            \n            filedets['file_name'] = filename\n            filedets['file_path'] = file_path\n            filename, file_extension = os.path.splitext(file_path)\n            filedets['extension'] = file_extension\n            \n            json_results['files'].append(filedets)\n    \n    \n    status = EXECUTION_STATE_COMPLETED\n    siemplify.result.add_result_json(json.dumps(json_results))\n    output_message = 'Saved the base64 images to: ' + \",\".join(file_paths)\n    siemplify.end(output_message, True, status)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"files\": [\n    {\n      \"file_name\": \"ABCDE.COM\",\n      \"file_path\": \"/opt/siemplify/siemplify_server/Scripting/downloads/HTTPSACCOUNT.LIVE.COMSECURITYNOTIFICATIONSUPDATE\",\n      \"extension\": \".COM\"\n    },\n    {\n      \"file_name\": \"archive1.zip\",\n      \"file_path\": \"/opt/siemplify/siemplify_server/Scripting/downloads/archive1.zip\",\n      \"extension\": \".zip\"\n    }\n  ]\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 50.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Optional: this will add the supplied extension to the filename.",
+      "Name": "File Extension",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236980,
+      "ModificationTimeUnixTimeInMs": 1610399236980
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<base64_encoded_string>",
+      "Description": "The base64 string that will be converted to a file.  Supports comma separation. ",
+      "Name": "Base64 Input",
+      "Value": "<base64_encoded_string>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236980,
+      "ModificationTimeUnixTimeInMs": 1610399236980
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "The filename the base64 string will be saved as.",
+      "Name": "Filename",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236980,
+      "ModificationTimeUnixTimeInMs": 1610399236980
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236975,
+  "ModificationTimeUnixTimeInMs": 1610399236975
+}

@@ -1,0 +1,73 @@
+{
+    "Identifier": "Cybersixgill DVE Enrichment",
+    "PackageName": "Cybersixgill DVE Enrichment",
+    "DisplayName": "Cybersixgill DVE Enrichment",
+    "Description": "By enriching CVEs with the DVE Score, Siemplify customers gain deeper visibility with relevant threat intel from the deep and dark web with dynamic attributes such as where they are trending, POC exploit details, and more. Loaded with extra-context, this allows users to accurately understand the real impact of CVEs to effectively prioritize critical vulnerabilities.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "PropertyName": "Client Id",
+            "PropertyDescription": "Client ID",
+            "PropertyDisplayName": "Client Id",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1621857367182,
+            "IntegrationIdentifier": "Cybersixgill DVE Enrichment",
+            "PropertyType": 2,
+            "Value": "Client_Id",
+            "CreationTimeUnixTimeInMs": 1621857367182,
+            "Id": 0
+        },
+        {
+            "PropertyName": "Client Secret",
+            "PropertyDescription": "Secret Key",
+            "PropertyDisplayName": "Client Secret",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1621857367182,
+            "IntegrationIdentifier": "Cybersixgill DVE Enrichment",
+            "PropertyType": 3,
+            "Value": null,
+            "CreationTimeUnixTimeInMs": 1621857367182,
+            "Id": 0
+        }
+    ],
+    "Actions": [
+        "Enrich CVE",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "CybersixgillManager",
+        "CybersixgillResultProcessor"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Cybersixgill DVE Enrichment Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1621942701000
+        },
+        {
+            "Items": [
+                "Fixed the enrichment action - Enrich CVE."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1631177455000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1635781641000
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+  "Name": "Get Lead By Entity Email",
+  "Description": "Get lead data from Marketo by email type entities",
+  "Script": "from marketorestpython.client import MarketoClient\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler, get_email_address, convert_dict_to_json_result_dict, create_entity_json_result_object\nfrom SiemplifyDataModel import EntityTypes\nimport json\nimport re\n\nINTEGRATION_NAME = \"Marketo\"\n\nSCRIPT_NAME = \"Get Lead By Entity Email\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    # INIT ACTION PARAMETERS:\n    munchkin_id = siemplify.extract_action_param(param_name=\"Munchkin Id\")\n    client_id = siemplify.extract_action_param(param_name=\"Client Id\")\n    client_secret = siemplify.extract_action_param(param_name=\"Client Secret\")\n    \n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    status = EXECUTION_STATE_COMPLETED# used to flag back to siemplify system, the action final status\n    output_message = \"\"  # human readable message, showed in UI as the action result\n    result_value = False  # Set a simple result value, used for playbook if\\else and placeholders.\n    failed_entities = []  # In case this actions contains entity based logic, collect failed entity.identifiers\n    successfull_entities = []  # In case this reactions contains entity based logic, collect successfull entity.identifiers\n\n    mc = MarketoClient(munchkin_id, client_id, client_secret, None, None)\n    enriched_entities = []\n    json_result = {}\n    json_result_enities = {}\n    leads_count = 0\n    try:\n        for ent in siemplify.target_entities:\n            if re.match(r\"[^@]+@[^@]+\\.[^@]+\", ent.identifier):\n                valid_email = ent.identifier\n                valid_email = valid_email.lower()\n            else:\n                valid_email = None\n                output_message += \"\\n entity: {}, is not a valid email address. Skipping entity.\"\n            if ent.entity_type == EntityTypes.USER and valid_email is not None:\n                lead_details = mc.execute(method='get_multiple_leads_by_filter_type', filterType='email', filterValues=str(valid_email))\n                if  lead_details is not None and len(lead_details) > 0:\n                    enrichments = lead_details\n                    enrichment_json = { \n                        'Marketo_firstName': enrichments[0]['firstName'],\n                        'Marketo_lastName': enrichments[0]['lastName'],\n                        'Marketo_email': enrichments[0]['email'],\n                        'LeadID': enrichments[0]['id']\n                    }\n                    ent.is_enriched = True\n    \n                    ent.additional_properties.update(enrichment_json)\n                    \n                    json_result_enities[ent.identifier] = enrichment_json\n                    enriched_entities.append(ent)\n                    leads_count += 1\n                    output_message += f\"The entity <{valid_email}> was enriched successfully.\"\n                    result_value = True\n                else:\n                    output_message += \"\\n failed to find lead for: {}\".format(str(valid_email))\n                    result_value = False\n                    \n    except Exception as e:\n        output_message += \"\\n failed to find lead for: {}\".format(str(valid_email))\n        result_value = False\n        raise Exception(f\"Some error occured: {e}\")\n    if len(enriched_entities) > 0:\n        siemplify.update_entities(enriched_entities)\n        siemplify.LOGGER.info(\"\\n Enriched entities: {}\".format(enriched_entities))\n    else:\n        siemplify.LOGGER.info(\"\\n Did not enrich any entity. {}\".format(enriched_entities))\n    json_result_enities = convert_dict_to_json_result_dict(json_result_enities)\n    json_result[\"entites\"] = json_result_enities\n    json_result[\"leads_count\"] = leads_count\n\n    siemplify.result.add_result_json(json_result)\n\n    \n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Marketo",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"entites\": [{\r\n\t\t\"Entity\": \"email@siemplify.co\",\r\n\t\t\"EntityResult\": {\r\n\t\t\t\"Marketo_firstName\": \"Marketo_firstName\",\r\n\t\t\t\"Marketo_lastName\": \"Marketo_lastName\",\r\n\t\t\t\"Marketo_email\": \"email@siemplify.co\",\r\n\t\t\t\"LeadID\": 1111\r\n\t\t}\r\n\t}],\r\n\t\"leads_count\": 1\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 73.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1628166466243,
+  "ModificationTimeUnixTimeInMs": 1628166466249
+}

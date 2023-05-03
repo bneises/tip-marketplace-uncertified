@@ -1,0 +1,19 @@
+{
+    "Identifier": "CountryFlags",
+    "PackageName": "CountryFlags",
+    "DisplayName": "CountryFlags",
+    "Description": "Country Flags includes a list of all the countries and their associated flags. You can use this integration to present a country's  flag as a base64.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 4.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

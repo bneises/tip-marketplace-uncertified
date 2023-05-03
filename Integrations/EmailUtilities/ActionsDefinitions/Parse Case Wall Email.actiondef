@@ -1,0 +1,120 @@
+{
+    "Name": "Parse Case Wall Email",
+    "Description": "This action will parse an EML or MSG file that has been attached to the case wall.",
+    "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import Attachment\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, add_prefix_to_dict, dict_to_flat, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport datetime\nimport json\nimport base64\n\nfrom EmailManager import EmailManager, EmailUtils\nfrom AttachmentsManager import AttachmentsManager\n\n\n\nimport os\nimport time\nimport copy\n\nSUPPORTED_ATTACHMENTS = [\".eml\", \".msg\"]\nORIG_EMAIL_DESCRIPTION = [\"This is the original message as EML\", \"Original email attachment\"]\n\ndef json_serial(obj):\n    \"\"\"JSON serializer for objects not serializable by default json code\"\"\"\n\n    if isinstance(obj, datetime.datetime):\n        serial = obj.isoformat()\n        return serial\n    elif isinstance(obj, bytes):\n\n        return base64.b64encode(obj).decode()\n    raise TypeError(\"Type not serializable\")\n    \n        \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    siemplify.script_name = \"Parse Email\"\n    siemplify.LOGGER.info(f\"Starting {siemplify.script_name}.\")\n    \n    save_to_case_wall = siemplify.parameters[\"Save Attachments to Case Wall\"].lower() == \"true\"\n    create_base_entities = siemplify.parameters[\"Create Entities\"].lower() == \"true\"\n    create_observed_entity_types = siemplify.parameters.get(\"Create Observed Entities\", \"All\")\n    original_eml_only =  siemplify.parameters[\"Original EML Only\"].lower() == \"true\"\n\n    exclude_regex = siemplify.parameters.get(\"Exclude Entities Regex\", None)\n    fang_entities =  siemplify.parameters[\"Fang Entities\"].lower() == \"true\"\n    custom_regex = siemplify.parameters.get(\"Custom Entity Regexes\", \"{}\")\n    \n    try:\n        custom_regex = json.loads(custom_regex)\n    except:\n        output_message += \"\\nFailed to load custom regex mappings.\"\n        custom_regex = {}\n    attachments = []\n    parsed_emails = []\n    md5_attachments = {}\n    \n    \n    email_mgr = EmailManager(siemplify=siemplify, logger=siemplify.LOGGER, custom_regex=custom_regex)\n    attach_mgr = AttachmentsManager(siemplify=siemplify)\n    attachments = attach_mgr.get_alert_attachments()# \n    \n    orig_email_attachment = {}\n    attached_email = {}\n    \n    for eml_attachment in attachments:\n        if eml_attachment['description'] in ORIG_EMAIL_DESCRIPTION and eml_attachment['fileType'] in SUPPORTED_ATTACHMENTS:\n            orig_email_attachment = eml_attachment\n        elif eml_attachment['fileType'] in SUPPORTED_ATTACHMENTS and not eml_attachment['description'] in ORIG_EMAIL_DESCRIPTION:\n            attached_email = eml_attachment\n            \n    if attached_email and not original_eml_only:\n        attachment = attached_email\n    else:\n        attachment = orig_email_attachment\n    \n    if not attachment:\n        attachments = attach_mgr.get_attachments()\n        orig_email_attachment = {}\n        attached_email = {}\n    \n        for eml_attachment in attachments:\n            if eml_attachment['description'] in ORIG_EMAIL_DESCRIPTION and eml_attachment['fileType'] in SUPPORTED_ATTACHMENTS:\n                orig_email_attachment = eml_attachment\n            elif eml_attachment['fileType'] in SUPPORTED_ATTACHMENTS and not eml_attachment['description'] in ORIG_EMAIL_DESCRIPTION:\n                attached_email = eml_attachment\n            \n        if attached_email:\n            attachment = attached_email\n        else:\n            attachment = orig_email_attachment\n\n    attachment_record = siemplify.get_attachment(attachment['id'])\n    attachment_name = f\"{attachment['evidenceName']}{attachment['fileType']}\"\n    attachment_content = attachment_record.getvalue()\n    siemplify.LOGGER.info(f\"Extracting from Case Wall Attachment: {attachment_name}\")\n    parsed_email = email_mgr.parse_email(attachment_name, attachment_content)\n    parsed_email['attachment_name'] = f\"{attachment['evidenceName']}{attachment['fileType']}\"\n    parsed_email['attachment_id'] = attachment['id']\n    parsed_emails.append(parsed_email)\n            \n    if create_observed_entity_types != \"None\" or create_base_entities:\n        sorted_emails = sorted(parsed_email['attached_emails'], key=lambda d: d['level'], reverse=True) \n        for r_email in sorted_emails:\n            email_mgr.create_entities(create_base_entities, create_observed_entity_types, exclude_regex, r_email, fang_entities)\n                    \n    if save_to_case_wall:\n        updated_entities = []\n        for attachment in parsed_email['attachments']:\n            if attachment['raw']  != '':\n                try:\n                    attachment_res = attach_mgr.add_attachment(attachment['filename'], attachment['raw'], siemplify.case_id, siemplify.alert_id)\n                    del attachment['raw']\n                    name, attachment_type = os.path.splitext(attachment['filename'].strip().upper())\n                    for entity in email_mgr.get_alert_entities():\n                        if (attachment['filename'].strip().upper() == entity.identifier.strip().upper() or name == entity.identifier.strip().upper())  and entity.entity_type == \"FILENAME\":\n                            entity.additional_properties['attachment_id'] = attachment_res\n                            updated_entities.append(entity)\n                            break\n                except Exception as e: \n                    if 'raw' in attachment:\n                        del attachment['raw']\n                    siemplify.LOGGER.error(e)\n                    raise\n                    output_message += f\"Unable to add file {attachment['filename']}.  \"\n        if updated_entities:\n            siemplify.LOGGER.info(f\"updating file entity attachment_id: {updated_entities}\")\n            siemplify.update_entities(updated_entities)     \n    siemplify.result.add_json(attachment_name, parsed_email,\"Email File\")\n                \n            \n    \n    print(json.dumps({\"parsed_emails\": parsed_emails}, sort_keys=True, default=json_serial))\n    siemplify.result.add_result_json(json.dumps({\"parsed_emails\": parsed_emails}, sort_keys=True, default=json_serial))\n\n    output_message += \"Parsed message file.\"\n    siemplify.LOGGER.info(\n        \"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()",
+    "IntegrationIdentifier": "EmailUtilities",
+    "ScriptResultName": "ScriptResult",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "{\r\n    \"parsed_emails\": [\r\n        {\r\n            \"attached_emails\": [\r\n                {\r\n                    \"attachments\": [\r\n                        {\r\n                            \"extension\": \"string\",\r\n                            \"filename\": \"string\",\r\n                            \"hash\": {\r\n                                \"md5\": \"string\",\r\n                                \"sha1\": \"string\",\r\n                                \"sha256\": \"string\",\r\n                                \"sha512\": \"string\"\r\n                            },\r\n                            \"level\": 0,\r\n                            \"mime_type\": \"string\",\r\n                            \"mime_type_short\": \"string\",\r\n                            \"size\": 0\r\n                        }\r\n                    ],\r\n                    \"body\": [\r\n                        {\r\n                            \"content\": \"string\",\r\n                            \"content_type\": \"string\",\r\n                            \"hash\": \"string\"\r\n                        }\r\n                    ],\r\n                    \"header\": {\r\n                        \"cc\": \"string\",\r\n                        \"date\": \"string\",\r\n                        \"from\": \"string\",\r\n                        \"header\": {\r\n                            \"authentication-results\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"cc\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"content-type\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"date\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"dkim-signature\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"from\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"message-id\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"mime-version\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"original-recipient\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"received\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"received-spf\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"return-path\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"subject\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"to\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"x-icloud-spam-score\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"x-proofpoint-spam-details\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"x-proofpoint-virus-version\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"x-received\": [\r\n                                \"string\"\r\n                            ]\r\n                        },\r\n                        \"received\": [\r\n                            {\r\n                                \"by\": [\r\n                                    \"string\"\r\n                                ],\r\n                                \"date\": \"string\",\r\n                                \"from\": [\r\n                                    \"string\"\r\n                                ],\r\n                                \"src\": \"string\",\r\n                                \"with\": \"string\"\r\n                            }\r\n                        ],\r\n                        \"receiving\": [\r\n                            {\r\n                                \"domains\": [\r\n                                    \"string\"\r\n                                ],\r\n                                \"hosts\": [\r\n                                    \"string\"\r\n                                ]\r\n                            }\r\n                        ],\r\n                        \"sending\": [\r\n                            {\r\n                                \"domains\": [\r\n                                    \"string\"\r\n                                ],\r\n                                \"hosts\": [\r\n                                    \"string\"\r\n                                ],\r\n                                \"ips\": [\r\n                                    \"string\"\r\n                                ]\r\n                            }\r\n                        ],\r\n                        \"subject\": \"string\",\r\n                        \"to\": [\r\n                            \"string\"\r\n                        ]\r\n                    },\r\n                    \"level\": 0,\r\n                    \"source_file\": \"string\"\r\n                }\r\n            ],\r\n            \"attachment_id\": 0,\r\n            \"attachment_name\": \"string\",\r\n            \"attachments\": [\r\n                {\r\n                    \"content_header\": {\r\n                        \"content-disposition\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"content-id\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"content-transfer-encoding\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"content-type\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"x-attachment-id\": [\r\n                            \"string\"\r\n                        ]\r\n                    },\r\n                    \"extension\": \"string\",\r\n                    \"filename\": \"string\",\r\n                    \"hash\": {\r\n                        \"md5\": \"string\",\r\n                        \"sha1\": \"string\",\r\n                        \"sha256\": \"string\",\r\n                        \"sha512\": \"string\"\r\n                    },\r\n                    \"level\": 0,\r\n                    \"mime_type\": \"string\",\r\n                    \"mime_type_short\": \"string\",\r\n                    \"ole_data\": [\r\n                        {\r\n                            \"hide_if_false\": 0,\r\n                            \"id\": \"string\",\r\n                            \"name\": \"string\",\r\n                            \"risk\": \"string\",\r\n                            \"value\": \"string\"\r\n                        }\r\n                    ],\r\n                    \"size\": 0\r\n                }\r\n            ],\r\n            \"result\": {\r\n                \"attachments\": [\r\n                    {\r\n                        \"content_header\": {\r\n                            \"content-disposition\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"content-id\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"content-transfer-encoding\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"content-type\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"x-attachment-id\": [\r\n                                \"string\"\r\n                            ]\r\n                        },\r\n                        \"extension\": \"string\",\r\n                        \"filename\": \"string\",\r\n                        \"hash\": {\r\n                            \"md5\": \"string\",\r\n                            \"sha1\": \"string\",\r\n                            \"sha256\": \"string\",\r\n                            \"sha512\": \"string\"\r\n                        },\r\n                        \"level\": 0,\r\n                        \"mime_type\": \"string\",\r\n                        \"mime_type_short\": \"string\",\r\n                        \"ole_data\": [\r\n                            {\r\n                                \"hide_if_false\": 0,\r\n                                \"id\": \"string\",\r\n                                \"name\": \"string\",\r\n                                \"risk\": \"string\",\r\n                                \"value\": \"string\"\r\n                            }\r\n                        ],\r\n                        \"size\": 0\r\n                    }\r\n                ],\r\n                \"body\": [\r\n                    {\r\n                        \"content\": \"string\",\r\n                        \"content_type\": \"string\",\r\n                        \"hash\": \"string\"\r\n                    }\r\n                ],\r\n                \"header\": {\r\n                    \"date\": \"string\",\r\n                    \"from\": \"string\",\r\n                    \"header\": {\r\n                        \"content-type\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"date\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"from\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"message-id\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"mime-version\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"subject\": [\r\n                            \"string\"\r\n                        ],\r\n                        \"to\": [\r\n                            \"string\"\r\n                        ]\r\n                    },\r\n                    \"received\": [\r\n                        {\r\n                            \"by\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"date\": \"string\",\r\n                            \"from\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"src\": \"string\",\r\n                            \"with\": \"string\"\r\n                        }\r\n                    ],\r\n                    \"receiving\": [\r\n                        {\r\n                            \"domains\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"hosts\": [\r\n                                \"string\"\r\n                            ]\r\n                        }\r\n                    ],\r\n                    \"sending\": [\r\n                        {\r\n                            \"domains\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"hosts\": [\r\n                                \"string\"\r\n                            ],\r\n                            \"ips\": [\r\n                                \"string\"\r\n                            ]\r\n                        }\r\n                    ],\r\n                    \"subject\": \"string\",\r\n                    \"to\": [\r\n                        \"string\"\r\n                    ]\r\n                },\r\n                \"level\": 0,\r\n                \"source_file\": \"string\"\r\n            }\r\n        }\r\n    ]\r\n}",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "2afb1e45-9047-46ac-8f30-af7a83000d3b",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 100.0,
+    "TimeoutSeconds": 1200,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 30,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "true",
+            "Description": "When enabled, this will create User entities out of the To and From headers and a Email Subject entity out of the Subject field. ",
+            "Name": "Create Entities",
+            "Value": "true",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "Observed entities that match the supplied regex will not be created.",
+            "Name": "Exclude Entities Regex",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "true",
+            "Description": "Extract attachments from the original EML only.",
+            "Name": "Original EML Only",
+            "Value": "true",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "All",
+            "Description": "Create Entities out of the observed entities in the email body.\n'All' will create URL, Email, IP, and Hash entities.",
+            "Name": "Create Observed Entities",
+            "Value": "All",
+            "Type": 15,
+            "OptionalValues": [
+                "All",
+                "URLs",
+                "Emails",
+                "IPs",
+                "Hashes",
+                "URLs, Emails, and IPs",
+                "URLs, Emails, and Hashes",
+                "Emails and IPs",
+                "URLs and Hashes",
+                "Emails and Hashes",
+                "None"
+            ],
+            "OptionalValuesJson": "[\"All\",\"URLs\",\"Emails\",\"IPs\",\"Hashes\",\"URLs, Emails, and IPs\",\"URLs, Emails, and Hashes\",\"Emails and IPs\",\"URLs and Hashes\",\"Emails and Hashes\",\"None\"]"
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "true",
+            "Description": "Save the extracted attachments to the case wall.",
+            "Name": "Save Attachments to Case Wall",
+            "Value": "true",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "true",
+            "Description": "When enabled, entities that are defanged (example.com => example[.]com) will be converted to fanged entities.",
+            "Name": "Fang Entities",
+            "Value": "true",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "{ }",
+            "Description": "A JSON object that can parse out entities from body and subject.",
+            "Name": "Custom Entity Regexes",
+            "Value": "{ }",
+            "Type": 16,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

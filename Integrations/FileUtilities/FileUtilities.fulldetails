@@ -1,0 +1,70 @@
+{
+    "Identifier": "FileUtilities",
+    "PackageName": "FileUtilities",
+    "DisplayName": "FileUtilities",
+    "Description": "A set of file utility actions created for Siemplify Community to power up playbook capabilities.  ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 12.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 1623870905,
+            "Items": [
+                "Save Base64 to File - Update to support saving to agent."
+            ],
+            "Version": 3.0
+        },
+        {
+            "PublishTimeUnixTime": 1625581903,
+            "Items": [
+                "Add Entity to File - Bug Fix, added timeout variable.",
+                "Remove Entity from File - Bug Fix, added timeout variable."
+            ],
+            "Version": 7.0
+        },
+        {
+            "PublishTimeUnixTime": 1639424430,
+            "Items": [
+                "Get Files as Base64 - New Update: Now supports files with commas in the name."
+            ],
+            "Version": 8.0
+        },
+        {
+            "PublishTimeUnixTime": 1645189707,
+            "Items": [
+                "Extract ZIP Files - Extracts files from ZIP files and creates entities.  Uses FILENAME entities."
+            ],
+            "Version": 9.0
+        },
+	    {
+            "PublishTimeUnixTime": 1674241401,
+            "Items": [
+                "Create Hash From Base64 - Generate hash values from a base64 strings."
+            ],
+            "Version": 10.0
+        },
+	    {
+            "PublishTimeUnixTime": 1678137309,
+            "Items": [
+                "Get Attachment - Fixed API endpoint"
+            ],
+            "Version": 11.0
+        },
+	    {
+            "PublishTimeUnixTime": 1682002075,
+            "Items": [
+                "Get Files as Base64 - Fixed emtpy script result"
+            ],
+            "Version": 12.0
+        }
+    ]
+}

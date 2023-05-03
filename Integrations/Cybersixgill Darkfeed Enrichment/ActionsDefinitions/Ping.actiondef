@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test Connectivity",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nfrom SixgillManager import SixgillEnrichManager,PROVIDER\nfrom SixgillResultProcessor import SixgillActionResultProcessor\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    client_id = siemplify.extract_configuration_param(PROVIDER,\"Client Id\")\n    client_secret = siemplify.extract_configuration_param(PROVIDER,\"Client Secret\")\n\n    sixgill_manager = SixgillEnrichManager(client_id,client_secret)\n    sixgill_process = SixgillActionResultProcessor(siemplify,sixgill_manager)\n    status,message,result = sixgill_process.test_connectivity()\n    siemplify.end(message, result, status)\n    \n\nif __name__ == \"__main__\":\n    main()\n\n\n\n",
+  "IntegrationIdentifier": "Cybersixgill Darkfeed Enrichment",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 12.0,
+  "TimeoutSeconds": 120,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1630500261534,
+  "ModificationTimeUnixTimeInMs": 1630500261534
+}

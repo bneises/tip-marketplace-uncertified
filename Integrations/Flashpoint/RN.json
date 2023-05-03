@@ -1,0 +1,98 @@
+[
+    {
+        "ChangeDescription": "NEW! Flashpoint integratiom.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Flashpoint",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1606822359
+    },
+    {
+        "ChangeDescription": "Bug fix in the query in the Flashpoint Connector.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Flashpoint - Compromised Credential Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1612265559
+    },
+    {
+        "ChangeDescription": "Limit result parameter has been added in the Flashpoint Connector.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Flashpoint - Compromised Credential Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1612956759
+    },
+    {
+        "ChangeDescription": "Bug fix in Event Priority in the Flashpoint Connector.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 4.0,
+        "ItemName": "Flashpoint - Compromised Credential Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1612956759
+    },
+    {
+        "ChangeDescription": "Bug fix in script timeout error.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 5.0,
+        "ItemName": "Flashpoint - Compromised Credential Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1617622608
+    },
+    {
+        "ChangeDescription": "Bug fix to support Proxy.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 6.0,
+        "ItemName": "Flashpoint - Compromised Credential Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1621505898
+    },
+    {
+        "ChangeDescription": "Fixed Category",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 7.0,
+        "ItemName": "Flashpoint",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1629722429
+    },
+    {
+        "ChangeDescription": "Fixed Category",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 8.0,
+        "ItemName": "Flashpoint",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1629722429
+    }
+]

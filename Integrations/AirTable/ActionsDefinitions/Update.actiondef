@@ -1,0 +1,115 @@
+{
+  "Name": "Update",
+  "Description": "Update specific fields  in a table",
+  "Script": "from SiemplifyAction import *\nfrom airtable import Airtable\nfrom airtable.auth import AirtableAuth\nimport json, sys\nfrom datetime import datetime\nfrom datetime import timedelta\n\nINTEGRATION_NAME = \"AirTable\"\n\n\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Api key\")\n    base_id = siemplify.parameters[\"Base id\"]\n    table_name = siemplify.parameters[\"Table name\"]\n    field_name = str(siemplify.parameters[\"Field name\"])\n    field_value = str(siemplify.parameters[\"Field value\"])\n    json_fields_str = siemplify.parameters[\"Json fields\"]\n    max_records_str = str(siemplify.parameters[\"Max records\"])\n\n    max_records = 5\n\n    try:\n        max_records = int(max_records_str)\n    except ValueError:\n        print(max_records_str + \" is not an int!\")\n\n    json_fields_dict = json.loads(json_fields_str)\n\n    airtable = Airtable(base_id, table_name, api_key)\n    results = airtable.search(field_name, field_value,max_records)\n    for result in results:\n        record_id = result['id']\n        airtable.update(record_id, json_fields_dict)\n\n    matched_records_count = len(results)\n\n    output_message = '{0} records were updated successfully according to {1}={2}'.format(matched_records_count, field_name, field_value)\n    siemplify.end(output_message, matched_records_count)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "AirTable",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 20.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "100",
+      "Description": "The maximum records (rows) that will be affected by the action",
+      "Name": "Max records",
+      "Value": "100",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199506,
+      "ModificationTimeUnixTimeInMs": 1603730199506
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\"Field_Name_1\":\"Value1\"}",
+      "Description": "The fields (columns) and their value in a JSON format. ",
+      "Name": "Json fields",
+      "Value": "{\"Field_Name_1\":\"Value1\"}",
+      "Type": 11,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199506,
+      "ModificationTimeUnixTimeInMs": 1603730199506
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The value of a specific field in a table",
+      "Name": "Field value",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199506,
+      "ModificationTimeUnixTimeInMs": 1603730199506
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The name of a specific field (column) in the table\n",
+      "Name": "Field name",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199506,
+      "ModificationTimeUnixTimeInMs": 1603730199506
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "A table stores similar (structured) data, and each base can have multiple tables.  This parameter indicates the name of the table within the base.",
+      "Name": "Table name",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199506,
+      "ModificationTimeUnixTimeInMs": 1603730199506
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Base is a database in Airtable in which you store data.The base ID can be found in the URL of the API page of the base. ",
+      "Name": "Base id",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603730199506,
+      "ModificationTimeUnixTimeInMs": 1603730199506
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1603730199504,
+  "ModificationTimeUnixTimeInMs": 1603730199504
+}

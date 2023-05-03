@@ -1,0 +1,114 @@
+{
+    "Identifier": "VanillaForums",
+    "PackageName": "VanillaForums",
+    "DisplayName": "VanillaForums",
+    "Description": "Vanilla provides a modern customer community platform to organizations who want to improve customer service, increase advocacy, and strengthen brand loyalty.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "VanillaForums",
+            "PropertyName": "API Token",
+            "PropertyDescription": "API Token",
+            "PropertyDisplayName": "API Token",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1630841645158,
+            "ModificationTimeUnixTimeInMs": 1630841645158
+        },
+        {
+            "IntegrationIdentifier": "VanillaForums",
+            "PropertyName": "URL",
+            "PropertyDescription": "Community URL",
+            "PropertyDisplayName": "URL",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "https://vanillaforums.com/api",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1630841645158,
+            "ModificationTimeUnixTimeInMs": 1630841645158
+        }
+    ],
+    "Actions": [
+        "Add User",
+        "Generate Password",
+        "Get a Leaderboard Analytics",
+        "Get User Details",
+        "Ping",
+        "Search User By Email and Name",
+        "Update Badge",
+        "Update Rank",
+        "Update User Role"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "VanillaManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 8.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Vanilla integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1629105080000
+        },
+        {
+            "Items": [
+                "Fixed Bugs in Vanilla integration."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1629366940000
+        },
+        {
+            "Items": [
+                "Fixed Bugs in Vanilla Manager."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1629384926000
+        },
+        {
+            "Items": [
+                "Fixed Bugs in Vanilla Manager."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1629384926000
+        },
+        {
+            "Items": [
+                "Fixed Bugs in Vanilla Manager."
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1629392763000
+        },
+        {
+            "Items": [
+                "Fixed Bugs in Vanilla Integration."
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1630853256000
+        },
+        {
+            "Items": [
+                "Added action Generate Password and updated action Add User ."
+            ],
+            "Version": 7.0,
+            "PublishTimeUnixTime": 1647523619000
+        },
+        {
+            "Items": [
+                "Updated Generate Password and Add User."
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1647529874000
+        }
+    ]
+}

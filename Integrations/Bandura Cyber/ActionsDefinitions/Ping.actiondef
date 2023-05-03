@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Tests Connectivity to Bandura Cyber",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyUtils import flat_dict_to_csv, construct_csv, dict_to_flat, convert_dict_to_json_result_dict\nfrom SiemplifyUtils import output_handler\nfrom BanduraCyberManager import BanduraCyberManager\nfrom TIPCommon import extract_configuration_param, extract_action_param\nimport json\n\n# CONTS\nINTEGRATION_NAME = \"BanduraCyber\"\nSCRIPT_NAME = \"Ping\"\n\n@output_handler\ndef main():\n    json_results = {}\n    entities_with_results = []\n    result_value = False\n    \n    # Configuration.\n    siemplify = SiemplifyAction()\n    siemplify.script_name = u\"{} - {}\".format(INTEGRATION_NAME, SCRIPT_NAME)\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    # INIT INTEGRATION CONFIGURATION:\n    api_root = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"API Root\",\n                                           is_mandatory=True, input_type=unicode)\n    username = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Username\",\n                                           is_mandatory=True, input_type=unicode)\n    password = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Password\",\n                                           is_mandatory=True, input_type=unicode)\n    verify_ssl = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=u\"Verify SSL\",\n                                             default_value=False, input_type=bool)\n                                             \n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    bandura_cyber_manager = BanduraCyberManager(username=username, password=password, verify_ssl=verify_ssl)\n    \n    # Close the session\n    bandura_cyber_manager.logout()\n    \n    if bandura_cyber_manager.access_token:\n        output_message = 'Connection Established.'\n        result_value = 'true'\n    else:\n        output_message = 'Connection Failed.'\n\n    # End Action\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Bandura Cyber",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "ddiserens",
+  "IsEnabled": false,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 11.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1625583464575,
+  "ModificationTimeUnixTimeInMs": 1625583464580
+}

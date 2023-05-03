@@ -1,0 +1,41 @@
+{
+  "Name": "Enrich Entity From Event Field",
+  "Description": "The action extracts fields from the event and adds them to the Entity fields",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n\n\n    fields = siemplify.parameters.get(\"Fields to enrich\").split(',')\n    event = siemplify.current_alert.security_events[0]\n    fields_to_enrich = {}\n    lower_dict = {k.lower(): v for k, v in event.additional_properties.items()}\n    updated_entities = []\n    \n    for entity in siemplify.target_entities:\n        entity_is_updated = False\n        for field in fields:\n            lower_field = field.lower()\n            if lower_field in lower_dict:\n                fields_to_enrich[lower_field] = lower_dict[lower_field]\n                entity.additional_properties[lower_field] = lower_dict[lower_field]\n                entity_is_updated = True\n        if entity_is_updated == True:\n            updated_entities.append(entity)\n    \n    count_updated_entities = len(updated_entities)\n    \n    if count_updated_entities > 0:\n        siemplify.update_entities(updated_entities)\n    \n    for updated_entity in updated_entities:\n        siemplify.result.add_json(updated_entity.identifier, json.dumps(fields_to_enrich))\n\n    siemplify.result.add_result_json(json.dumps(fields_to_enrich))\n    siemplify.end('{0} entities were successfully were enriched'.format(count_updated_entities), count_updated_entities, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Enrichment",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"user label\": \"SiemplifyTest\",\n  \"user email\": \"siemplifytest@siemplify.co\"\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "field_name_1,field_name_2",
+      "Description": "The name of the fields in the event that will be used to enrich the entity.  Supports comma separated list.",
+      "Name": "Fields to enrich",
+      "Value": "field_name_1,field_name_2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610732568110,
+      "ModificationTimeUnixTimeInMs": 1610732568110
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610732568089,
+  "ModificationTimeUnixTimeInMs": 1610732568089
+}

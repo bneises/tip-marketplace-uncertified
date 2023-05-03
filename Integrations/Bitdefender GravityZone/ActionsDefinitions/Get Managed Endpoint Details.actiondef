@@ -1,0 +1,45 @@
+{
+  "Name": "Get Managed Endpoint Details",
+  "Description": "This method returns detailed information, such as: details to identify the endpoint and the security agent, the status of installed protection modules.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n    endpoint_id = siemplify.extract_action_param(\"Endpoint ID\", print_value=True)\n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n        \n        endpoints_data = mtm.get_managed_endpoint(access_url, endpoint_id)\n        \n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"success\"\n        result_value = \"success\"\n        siemplify.result.add_result_json(endpoints_data)\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n        siemplify.end(output_message, result_value, status)\n    except Exception as e:\n        siemplify.LOGGER.error(\"An error occurred: {0}\".format(e))\n        siemplify.LOGGER.exception(e)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n    \"result\": {\r\n        \"id\": \"54a28b41b1a43d89367b23fd\",\r\n        \"name\": \"WIN-TGQDU499RS4\",\r\n        \"companyId\": \"5575a235d2172c65038b454e\",\r\n        \"operatingSystem\": \"Windows Server 2008 R2 Datacenter\",\r\n        \"state\": 1,\r\n        \"ip\": \"10.10.24.154\",\r\n        \"lastSeen\": \"2015-06-22T13:46:59\",\r\n        \"machineType\": 1,\r\n        \"agent\": {\r\n        \"engineVersion\": \"7.61184\",\r\n        \"primaryEngine\": 1,\r\n        \"fallbackEngine\": 2,\r\n        \"lastUpdate\": \"2015-06-22T13:40:06\",\r\n        \"licensed\": 1,\r\n        \"productOutdated\": false,\r\n        \"productUpdateDisabled\": false,\r\n        \"productVersion\": \"6.2.3.569\",\r\n        \"signatureOutdated\": false,\r\n        \"signatureUpdateDisabled\": false,\r\n        \"type\": 3\r\n        },\r\n        \"group\": {\r\n        \"id\": \"5575a235d2172c65038b456d\",\r\n        \"name\": \"Custom Groups\"\r\n        },\r\n        \"malwareStatus\": {\r\n        \"detection\": false,\r\n        \"infected\": false\r\n        },\r\n        \"modules\": {\r\n            \"advancedThreatControl\": false,\r\n            \"antimalware\": false,\r\n            \"contentControl\": false,\r\n            \"deviceControl\": false,\r\n            \"firewall\": false,\r\n            \"powerUser\": false,\r\n            \"networkAttackDefense\": false\r\n            },\r\n            \"policy\": {\r\n            \"id\": \"5121da426803fa2d0e000017\",\r\n            \"applied\": true,\r\n            \"name\": \"Default policy\"\r\n            },\r\n            \"label\" : \"endpoint label\",\r\n            \"moveState\": 1,\r\n            \"riskScore\": {\r\n            \"value\": \"81%\",\r\n            \"impact\": \"High\",\r\n            \"misconfigurations\": \"70%\",\r\n            \"appVulnerabilities\": \"11%\",\r\n            \"humanRisks\": \"19%\"\r\n            }\r\n            \r\n    }\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 44.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "oBFA8Ie3Oh4iXCtyr5Z9iw",
+      "Description": "The ID of the endpoint for which the details will be returned",
+      "Name": "Endpoint ID",
+      "Value": "oBFA8Ie3Oh4iXCtyr5Z9iw",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071175678,
+      "ModificationTimeUnixTimeInMs": 1616071175678
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071175666,
+  "ModificationTimeUnixTimeInMs": 1616071175673
+}

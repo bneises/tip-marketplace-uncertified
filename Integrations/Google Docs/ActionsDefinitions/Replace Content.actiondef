@@ -1,0 +1,59 @@
+{
+  "Name": "Replace Content",
+  "Description": "Replaces specific text in a document ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleDocsManager import GoogleDocsManager\nimport json\nIDENTIFIER = u'Google Docs'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    document_id = siemplify.extract_action_param(param_name=u'Document Id', is_mandatory=True)\n    json_str = siemplify.extract_action_param(param_name=u'Json', is_mandatory=True)\n    \n    json_object = json.loads(json_str)\n    items = json_object['items']\n    requests = []\n\n    for item in items:\n        text_to_search = item['text_to_search']\n        text_to_replace = item['text_to_replace']\n        match_case = item['match_case']\n\n        item_to_replace ={\n                'replaceAllText': {\n                    'containsText': {\n                        'text': text_to_search,\n                        'matchCase': match_case\n                    },\n                    'replaceText': text_to_replace\n                }\n            }\n        requests.append(item_to_replace)\n    \n    google_doc_manager = GoogleDocsManager(credentials_json)\n    res = google_doc_manager.execute_request(document_id,requests)\n    \n    siemplify.result.add_result_json(res)\n\n\n    siemplify.end('Content was successfully replaced', document_id)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Docs",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 36.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<document_id>",
+      "Description": "The document Id can be found in the URL.\nFor example: https://docs.google.com/document/d/{YourDocumentId}/",
+      "Name": "Document Id",
+      "Value": "<document_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602156929732,
+      "ModificationTimeUnixTimeInMs": 1602156929732
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\n  \"items\": [\n    {\n      \"text_to_search\": \"Hello\",\n      \"text_to_replace\": \"HELLO\",\n      \"match_case\": \"true\"\n    },\n    {\n      \"text_to_search\": \"World\",\n      \"text_to_replace\": \"WORLD\",\n      \"match_case\": \"true\"\n    }\n  ]\n}",
+      "Description": "The content in json format you want to replace in the document. ",
+      "Name": "Json",
+      "Value": "{\n  \"items\": [\n    {\n      \"text_to_search\": \"Hello\",\n      \"text_to_replace\": \"HELLO\",\n      \"match_case\": \"true\"\n    },\n    {\n      \"text_to_search\": \"World\",\n      \"text_to_replace\": \"WORLD\",\n      \"match_case\": \"true\"\n    }\n  ]\n}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602156929732,
+      "ModificationTimeUnixTimeInMs": 1602156929732
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602156929725,
+  "ModificationTimeUnixTimeInMs": 1602156929727
+}

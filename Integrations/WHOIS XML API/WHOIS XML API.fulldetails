@@ -1,0 +1,32 @@
+{
+    "Identifier": "WHOIS XML API",
+    "PackageName": "WHOIS XML API",
+    "DisplayName": "WHOIS XML API",
+    "Description": "Whois API provides consistent, well-structured whois data in XML & JSON. It provides WHOIS record and domain related information. ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1595358706118,
+            "Id": 0,
+            "IntegrationIdentifier": "WHOIS XML API",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1595358706118,
+            "PropertyDescription": "API Key",
+            "PropertyDisplayName": "API Key",
+            "PropertyName": "API Key",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

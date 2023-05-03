@@ -1,0 +1,41 @@
+{
+  "Name": "Normalize Entity Enrichment",
+  "Description": "The action receives a list of keys from the entity and replaces them",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    json_data = siemplify.parameters.get(\"Normalization Data\")\n    enrichment_data = json.loads(json_data)\n\n    updated_entities = []\n    \n    for entity in siemplify.target_entities:\n        for pair in enrichment_data:\n            if pair['entitiy_field_name'] in entity.additional_properties:\n                entity.additional_properties[pair['new_name']] = entity.additional_properties.get(pair['entitiy_field_name'], \"NotFound\")\n            else: # field does not exist\n                if pair['new_name'] not in entity.additional_properties: # Normalized key does not exist yet anyway\n                    entity.additional_properties[pair['new_name']] = \"\"  # No key anyway, we put empty string\n        updated_entities.append(entity)\n        \n    count_updated_entities = len(updated_entities)\n    \n    if count_updated_entities > 0:\n        siemplify.update_entities(updated_entities)\n    \n    \n\n    siemplify.end('{0} entities were successfully were enriched'.format(count_updated_entities), count_updated_entities, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "[     {         \"entitiy_field_name\": \"AT_fields_Name\",         \"new_name\": \"InternalEnrichment_Name\"     },     {         \"entitiy_field_name\": \"AT_fields_Direct-Manager\",         \"new_name\": \"InternalEnrichment_DirectManager_Name\"     },     {         \"entitiy_field_name\": \"AT_Manager_fields_Work-Email\",         \"new_name\": \"InternalEnrichment_DirectManager_Email\"     } ]",
+      "Description": "Enter a  JSON in the format of the example presented below. ",
+      "Name": "Normalization Data",
+      "Value": "[     {         \"entitiy_field_name\": \"AT_fields_Name\",         \"new_name\": \"InternalEnrichment_Name\"     },     {         \"entitiy_field_name\": \"AT_fields_Direct-Manager\",         \"new_name\": \"InternalEnrichment_DirectManager_Name\"     },     {         \"entitiy_field_name\": \"AT_Manager_fields_Work-Email\",         \"new_name\": \"InternalEnrichment_DirectManager_Email\"     } ]",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620579,
+      "ModificationTimeUnixTimeInMs": 1614012620579
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620576,
+  "ModificationTimeUnixTimeInMs": 1614012620576
+}

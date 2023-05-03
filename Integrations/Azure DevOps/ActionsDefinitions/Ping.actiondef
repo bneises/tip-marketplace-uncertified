@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Test Connectivity with Azure Devops",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom azure.devops.connection import Connection\nfrom msrest.authentication import BasicAuthentication\nimport pprint\n\nINTEGRATION = \"Azure DevOps\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    personal_access_token = siemplify.extract_configuration_param(INTEGRATION, \"Personal Access Token\")\n    project_name = siemplify.extract_configuration_param(INTEGRATION, \"Project\")\n    organization = siemplify.extract_configuration_param(INTEGRATION, \"Organization\")\n    base_url = siemplify.extract_configuration_param(INTEGRATION, \"Base URL\")\n\n    try:\n        credentials = BasicAuthentication('', personal_access_token)\n        connection = Connection(base_url=f\"{base_url}/{organization}\", creds=credentials)\n        core_client = connection.clients.get_core_client()\n\n        # Get the first page of projects\n        get_projects_response = core_client.get_projects()\n        result_value = True\n        output_message = 'Connected successfully'\n        siemplify.LOGGER.info('Connected successfully')\n\n    except Exception as e:\n        result_value = False\n        output_message = 'The Connection failed'\n        raise Exception(f\"Response:{connection}. Error:{e}\")\n\n    siemplify.LOGGER.info(\"\\n  result_value: {}\\n  output_message: {}\".format(result_value, output_message))\n    siemplify.end(output_message, result_value)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Azure DevOps",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "community-automation",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 31.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

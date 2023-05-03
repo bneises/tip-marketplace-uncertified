@@ -1,0 +1,67 @@
+{
+  "Name": "Extract URL Domain",
+  "Description": "This action enriches all entities with a new field \"siemplifytools_extracted_domain\" containing the extracted domain out of the entity identifier. If the entity has no domain (file hash for example) it will simply not return anything.\nIn addition to entities, the user can specify a list of URLs as a parameter and process them, without enriching, naturally.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom SiemplifyDataModel import EntityTypes\n\n\nimport re\nimport json\nfrom tldextract import extract\n\n# Consts:\nINTEGRATION_NAME = \"Tools\"\nSCRIPT_NAME = \"Tools_ExtractURLDomain\"\n\nDOMAON_REGEX = r'(?:[a-zA-Z0-9](?:[a-zA-Z0-9\\-]{,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,6}'\n\ndef get_domain_from_string(identifier):\n    tsd, td, tsu = extract(identifier.lower())\n    domain = td + '.' + tsu\n    domain = domain.strip(\".\")\n    \n    return domain\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    try:\n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"No URLs processed\"\n        result_value = 0\n        failed_entities = []\n        successfull_entities = []\n        json_result = {}\n        out_message_list = []\n        \n        urls = siemplify.parameters.get(\"URLs\")\n        if urls:\n            separator = siemplify.parameters.get(\"Separator\")\n            for url in urls.split(separator):\n                try:\n                    domain = get_domain_from_string(url.strip())\n                    out_message_list.append(\"Domain extracted for param URL {}\".format(url))\n                    json_result[url.strip()] = {\"domain\": domain}\n                    result_value += 1\n                except Exception as e:\n                    out_message_list.append(\"Failed extracting domain for param URL {}\".format(url))\n                    json_result[url.strip()] = {\"Error\": \"Exception: {}\".format(e)}\n                \n\n        \n        for entity in siemplify.target_entities:\n            try:\n                domain = get_domain_from_string(entity.identifier)\n                entity.additional_properties[\"siemplifytools_extracted_domain\"] = domain\n                successfull_entities.append(entity)\n                json_result[entity.identifier] = {\"domain\": domain}\n            except Exception as e:\n                failed_entities.append(entity)\n                json_result[entity.identifier] = {\"Error\": \"Exception: {}\".format(e)}\n        \n        \n        \n        if successfull_entities:\n            siemplify.update_entities(successfull_entities)\n            out_message_list.append(\"Domain extracted for {}\".format([x.identifier for x in successfull_entities]))\n            \n        \n        if failed_entities:\n            out_message_list.append(\"Failed extracting domain for {}\".format([x.identifier for x in failed_entities]))\n        \n        if json_result:\n            siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_result))\n        if out_message_list:\n            output_message = \"\\n\".join(out_message_list)\n        \n        result_value += len(successfull_entities)\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = \"Failed\"\n        output_message += \"\\n unknown failure\"\n        raise\n\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\n  {\n    \"Entity\": \"https://regex101.com/\",\n    \"EntityResult\": {\n      \"domain\": \"regex101.com\"\n    }\n  },\n  {\n    \"Entity\": \"https://pay.ebay.com/rxo?action=view&sessionid=1353028532011\",\n    \"EntityResult\": {\n      \"domain\": \"ebay.com\"\n    }\n  },\n  {\n    \"Entity\": \"YAIR@SIEMPLIFY.CO\",\n    \"EntityResult\": {\n      \"domain\": \"siemplify.co\"\n    }\n  },\n  {\n    \"Entity\": \"JAMES.BOND@SIEMPLIFYCYARX.ONMICROSOFT.COM\",\n    \"EntityResult\": {\n      \"domain\": \"onmicrosoft.com\"\n    }\n  },\n  {\n    \"Entity\": \"FWD: EML ATTACHED WITH PHISHING FROM TREND MICRO\",\n    \"EntityResult\": {\n      \"domain\": \"fwd\"\n    }\n  },\n  {\n    \"Entity\": \"HTTPS://WWW.ONLINESERVICETECH.WEBSITE/LINK/L/P70IPXZLZO2CEED77GJMLWWQXFQCJSVQBYNKZZ346JQYYIKTR6QGAMNQW4L-MXXYSSTIHAEIICD-W1IURFSBN6IUMCO4GWZ_1SBG-62FGIZQK3ZPNIST9WGCBTW-62BXD-FJP7TCWFBSQKVUBEVYLIF_DTC6OYGMQFXDSTFNDB_-CFFKQ4AZNFF13ZWONARJ\",\n    \"EntityResult\": {\n      \"domain\": \"onlineservicetech.website\"\n    }\n  },\n  {\n    \"Entity\": \"HTTPS://WWW.ONLINESERVICETECH.WEBSITE/LINK/T/KEDVS-MM3MP5MILZ6YJDRDZJBBXICMAKHKWUTCO7ZKD4J2-IWL-RGHO3GIXNJDOK)[](\",\n    \"EntityResult\": {\n      \"domain\": \"onlineservicetech.website\"\n    }\n  },\n  {\n    \"Entity\": \"HTTPS://WWW.ONLINESERVICETECH.WEBSITE/LINK/B/KEDVS-MM3MP5MILZ6YJDRDZJBBXICMAKHKWUTCO7ZKD4J2-IWL-RGHO3GIXNJDOK\",\n    \"EntityResult\": {\n      \"domain\": \"onlineservicetech.website\"\n    }\n  }\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": ",",
+      "Description": "Separator string to use to separate URLs",
+      "Name": "Separator",
+      "Value": ",",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620445,
+      "ModificationTimeUnixTimeInMs": 1614012620445
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "One or more URLs to extract the domain from",
+      "Name": "URLs",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620445,
+      "ModificationTimeUnixTimeInMs": 1614012620445
+    },
+      {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": "false",
+            "Description": "When set to True, the code will also extract the subdomain from the URLs and include it in the result.",
+            "Name": "Extract subdomain",
+            "Value": "false",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620443,
+  "ModificationTimeUnixTimeInMs": 1614012620443
+}

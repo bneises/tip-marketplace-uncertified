@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test connectivity with Country Flags product",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nimport requests, os, json, base64\n\n# Consts:\nSCRIPT_NAME = \"GetCountryFlag\"\nFLAGS_FILE = \"flags.json\"\nFLAGS_URL = \"https://www.countryflags.io/{}/flat/64.png\"\n\nSHOULD_UPDATE_FILE = False\n\ndef get_base64_flag_data(country_code, flags_data, siemplify):\n    if country_code in flags_data:\n        siemplify.LOGGER.info(\"Country flag found in cache. Country - {}\".format(country_code))\n    else:\n        siemplify.LOGGER.info(\"Country flag not found in cache. Country - {}\".format(country_code))\n        flag_res = requests.get(FLAGS_URL.format(country_code))\n        flag_res.raise_for_status()\n        base64_flag = base64.b64encode(flag_res.content).decode('utf-8')\n        flags_data[country_code] = base64_flag\n        SHOULD_UPDATE_FILE = True\n    \n    return flags_data[country_code]\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    siemplify.LOGGER.info(\"Attempting to open cache file\")\n    try:\n        with open(os.path.join(siemplify.run_folder, FLAGS_FILE), 'r') as f:\n            data = f.read()\n    except:\n        siemplify.LOGGER.info(\"Cache file not found, defaulting to empty cache\")\n        data = {}\n    \n    try:\n        flags_data = json.loads(data)\n    except:\n        siemplify.LOGGER.info(\"Cache file does not represent a JSON. Creating an empty JSON instead\")\n        flags_data = {}\n    \n    country_code = \"us\"\n    \n    \n    if country_code:\n        b64_flag = get_base64_flag_data(country_code, flags_data, siemplify)\n        if b64_flag:\n            siemplify.end(\"Successful\", \"True\")\n    \n\n    siemplify.end(\"Faild\", False, EXECUTION_STATE_FAILED)\n    \n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "CountryFlags",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Yoav",
+  "IsEnabled": false,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 14.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1596711960171,
+  "ModificationTimeUnixTimeInMs": 1596711960171
+}

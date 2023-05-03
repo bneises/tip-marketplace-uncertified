@@ -1,0 +1,53 @@
+{
+  "Name": "Get Messages",
+  "Description": "Gets messages from a specific chat.\nNote: The messages of a chat will be returned only if the bot is a member of this chat.",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Get Messages\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n    offset_param = siemplify.extract_action_param(\"Offset Param\")\n    allowed_updates = siemplify.extract_action_param(\"Allowed Updates\")\n\n    all_messages = {}\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n\n        all_messages = telegram_manager.get_messages(offset_param, allowed_updates)\n\n    except Exception as e:\n        output_message = f\"Could not get messages. Error: {e}\"\n        return_value = False\n        status = EXECUTION_STATE_FAILED\n    else:\n        return_value = True\n        output_message = \"The messages were pulled successfully.\"\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n    siemplify.result.add_result_json(all_messages)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ok\": true,\r\n\t\"result\": [{\r\n\t\t\"update_id\": 123456,\r\n\t\t\"message\": {\r\n\t\t\t\"message_id\": 51,\r\n\t\t\t\"from\": {\r\n\t\t\t\t\"id\": 11111,\r\n\t\t\t\t\"is_bot\": false,\r\n\t\t\t\t\"first_name\": \"T\",\r\n\t\t\t\t\"language_code\": \"en\"\r\n\t\t\t},\r\n\t\t\t\"chat\": {\r\n\t\t\t\t\"id\": 11111,\r\n\t\t\t\t\"first_name\": \"T\",\r\n\t\t\t\t\"type\": \"private\"\r\n\t\t\t},\r\n\t\t\t\"date\": 1605428770,\r\n\t\t\t\"text\": \"Hello\"\r\n\t\t}\r\n\t}, {\r\n\t\t\"update_id\": 123344,\r\n\t\t\"channel_post\": {\r\n\t\t\t\"message_id\": 23,\r\n\t\t\t\"sender_chat\": {\r\n\t\t\t\t\"id\": -222222,\r\n\t\t\t\t\"title\": \"test_test\",\r\n\t\t\t\t\"username\": \"test_test\",\r\n\t\t\t\t\"type\": \"channel\"\r\n\t\t\t},\r\n\t\t\t\"chat\": {\r\n\t\t\t\t\"id\": -222222,\r\n\t\t\t\t\"title\": \"test_test\",\r\n\t\t\t\t\"username\": \"test_test\",\r\n\t\t\t\t\"type\": \"channel\"\r\n\t\t\t},\r\n\t\t\t\"date\": 1605429685,\r\n\t\t\t\"text\": \"Hello\"\r\n\t\t}\r\n\t}]\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 49.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "123456",
+      "Description": "The ID of the last message from which we will start pulling all the messages",
+      "Name": "Last Message ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "[]",
+      "Description": "A list of the messages types to retrieve.\nFor example ['channel_post', 'poll_answer']\nSee the documentation: https://core.telegram.org/bots/api#update",
+      "Name": "Message Types",
+      "Value": "[]",
+      "Type": 11,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

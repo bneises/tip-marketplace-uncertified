@@ -1,0 +1,55 @@
+{
+  "Name": "Get Country Flag",
+  "Description": "Gets a country's flag from a list of flags and presents it as a base64",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nimport requests, os, json, base64\n\n\nSCRIPT_NAME = \"GetCountryFlag\"\nFLAGS_FILE = \"flags.json\"\nFLAGS_URL = \"https://www.countryflags.io/{}/flat/64.png\"\n\nSHOULD_UPDATE_FILE = False\n\ndef get_base64_flag_data(country_code, flags_data, siemplify):\n    if country_code in flags_data:\n        siemplify.LOGGER.info(\"Country flag found in cache. Country - {}\".format(country_code))\n    else:\n        siemplify.LOGGER.info(\"Country flag not found in cache. Country - {}\".format(country_code))\n        flag_res = requests.get(FLAGS_URL.format(country_code))\n        flag_res.raise_for_status()\n        base64_flag = base64.b64encode(flag_res.content).decode('utf-8')\n        flags_data[country_code] = base64_flag\n        SHOULD_UPDATE_FILE = True\n    \n    return flags_data[country_code]\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    siemplify.LOGGER.info(\"Attempting to open cache file\")\n    try:\n        with open(os.path.join(siemplify.run_folder, FLAGS_FILE), 'r') as f:\n            data = f.read()\n    except:\n        siemplify.LOGGER.info(\"Cache file not found, defaulting to empty cache\")\n        data = {}\n    \n    try:\n        flags_data = json.loads(data)\n    except:\n        siemplify.LOGGER.info(\"Cache file does not represent a JSON. Creating an empty JSON instead\")\n        flags_data = {}\n    \n    country_code = siemplify.parameters.get(\"Country Code Two Digit\")\n    country_code_entities_raw = siemplify.parameters.get(\"Country Code From Entity Field\")\n    \n    result_json = {}\n    \n    for entity in siemplify.target_entities:\n        ent_country_code = None\n        if country_code_entities_raw:\n            country_code_entities = [x.strip() for x in country_code_entities_raw.split(\",\")]\n            for field in country_code_entities:\n                if field in entity.additional_properties:\n                    ent_country_code = entity.additional_properties.get(field)\n                if ent_country_code:\n                    try:\n                        b64_flag = get_base64_flag_data(ent_country_code, flags_data, siemplify)\n                        result_json[entity.identifier] = {\"b64_flag\": b64_flag}\n                        break\n                    except Exception as e:\n                        siemplify.LOGGER.exception(e)\n                        siemplify.LOGGER.error(\"Failed processing entity {} with country code \\\"{}\\\"\".format(entity.identifier, ent_country_code))\n    \n    if country_code:\n        b64_flag = get_base64_flag_data(country_code, flags_data, siemplify)\n        result_json[country_code] = b64_flag\n    \n    if result_json:\n        siemplify.result.add_result_json(convert_dict_to_json_result_dict(result_json))\n    \n    if SHOULD_UPDATE_FILE:\n        siemplify.LOGGER.info(\"Updating flags file with new flag ({})\".format(country_code))\n        with open(os.path.join(siemplify.run_folder, FLAGS_FILE), 'w') as f:\n            f.write(json.dumps(flags_data))\n\n    siemplify.end(\"Fetched flag from countryflags.io for countries\", True, EXECUTION_STATE_COMPLETED)\n    \n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "CountryFlags",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Yoav",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 13.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "Enter the 2 digits of a given country (for example, us)",
+      "Name": "Country Code Two Digit",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1596711977832,
+      "ModificationTimeUnixTimeInMs": 1596711977832
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Insert a given field related to a specific entity that has been enriched by another product that you would like to a extract a base64 for that country",
+      "Name": "Country Code From Entity Field",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1596711977832,
+      "ModificationTimeUnixTimeInMs": 1596711977832
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1596711977823,
+  "ModificationTimeUnixTimeInMs": 1596711977825
+}

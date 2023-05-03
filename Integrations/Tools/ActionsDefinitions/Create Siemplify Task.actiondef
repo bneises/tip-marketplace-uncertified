@@ -1,0 +1,83 @@
+{
+  "Name": "Create Siemplify Task",
+  "Description": "This action will assign a task to a user or a role.  The task will be related to the case the action ran on.",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nimport requests\nimport json\nimport time\nfrom datetime import datetime\n\nTASK_URL = '{}/external/v1/cases/AddOrUpdateCaseTask'\nACTION_NAME = \"CreateNewTask\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ACTION_NAME\n    \n\n    assign_to = siemplify.parameters['Assign To']\n    task_content = siemplify.parameters['Task Content']\n    \n    duration = siemplify.parameters['SLA (in minutes)']\n    \n    time_now = datetime.now()\n    time_now_epoch = int(time.mktime(time_now.timetuple()))*1000\n    client_time = time_now_epoch+(int(duration)*1000*60)\n    \n    case_id = siemplify.case_id\n\n    json_payload = {\"owner\": assign_to, \"name\": task_content, \"dueDate\": \"\", \"dueDateUnixTimeMs\": client_time, \"caseId\":case_id}\n    add_task = siemplify.session.post(TASK_URL.format(siemplify.API_ROOT), json=json_payload)\n    add_task.raise_for_status()\n   \n    output_message = \"A new task has been created for the user: {0}.\\nThis task should be handled in the next {1} mintues\".format(assign_to,duration)\n    siemplify.end(output_message, True)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 5.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "480",
+      "Description": "The amount of time (in minutes) the assigned user/role has to respond to the task.",
+      "Name": "SLA (in minutes)",
+      "Value": "480",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620562,
+      "ModificationTimeUnixTimeInMs": 1614012620562
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "The details of the task.",
+      "Name": "Task Content",
+      "Value": " ",
+      "Type": 11,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620562,
+      "ModificationTimeUnixTimeInMs": 1614012620562
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Admin",
+      "Description": "The user or the role the task will be assigned to.",
+      "Name": "Assign To",
+      "Value": "Admin",
+      "Type": 3,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620562,
+      "ModificationTimeUnixTimeInMs": 1614012620562
+    },
+     {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The title of the task.  Supports Siemplify versions 6.0.0.0 and higher.",
+      "Name": "Task Title",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1622032014842,
+      "ModificationTimeUnixTimeInMs": 1622032014842
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620560,
+  "ModificationTimeUnixTimeInMs": 1614012620560
+}

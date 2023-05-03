@@ -1,0 +1,53 @@
+{
+  "Name": "Send Photo",
+  "Description": "Sends a photo to a  specific chat",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Send Photo\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n\n    chat_id = siemplify.extract_action_param(\"Chat ID\")\n    photo_url = siemplify.extract_action_param(\"Photo URL\")\n    sent_photo = {}\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n        sent_photo = telegram_manager.send_photo(chat_id, photo_url)\n    except Exception as e:\n        return_value = False\n        output_message = f\"Could not send photo. Error: {str(e)}\"\n        status = EXECUTION_STATE_FAILED\n    else:\n        output_message = \"The photo was sent successfully\"\n        return_value = True\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n    siemplify.result.add_result_json(sent_photo)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ok\": true,\r\n\t\"result\": {\r\n\t\t\"message_id\": 5,\r\n\t\t\"from\": {\r\n\t\t\t\"id\": 123456,\r\n\t\t\t\"is_bot\": true,\r\n\t\t\t\"first_name\": \"test_test\",\r\n\t\t\t\"username\": \"test_bot\"\r\n\t\t},\r\n\t\t\"chat\": {\r\n\t\t\t\"id\": -1111111,\r\n\t\t\t\"title\": \"Test\",\r\n\t\t\t\"type\": \"supergroup\"\r\n\t\t},\r\n\t\t\"date\": 1605531666,\r\n\t\t\"photo\": [{\r\n\t\t\t\"file_id\": \"fuewAAABBBB-AgABHgQ\",\r\n\t\t\t\"file_unique_id\": \"AAAAAAAAA\",\r\n\t\t\t\"file_size\": 3074,\r\n\t\t\t\"width\": 120,\r\n\t\t\t\"height\": 120\r\n\t\t}]\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 33.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "https://www.techsmith.com/blog/wp-content/uploads/2020/11/TechSmith-Blog-JPGvsPNG.png",
+      "Description": "The HTTP URL photo\nShould end with type. (png, jpeg, jpg, etc.)",
+      "Name": "Photo URL",
+      "Value": "https://www.techsmith.com/blog/wp-content/uploads/2020/11/TechSmith-Blog-JPGvsPNG.png",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "123456",
+      "Description": "The chat ID which you want the bot to send the photo to.",
+      "Name": "Chat ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

@@ -1,0 +1,63 @@
+{
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Integration": "Telegram",
+  "DocumentationLink": null,
+  "Name": "Telegram Connector",
+  "Description": "Telegram Connector- pulls messages from channels and supergroups that the bot is a member of.\n(Notice- in channels, the bot must be an admin for this to work. In groups, the bot must have access to messages.\nSee how here: https://telegram.org/faq#groups-and-channels)\n\nThis connector can't work simultaneously with an active Webhook through Telegram.\nTo disable any active webhooks, send this request with your bot token:\nhttps://api.telegram.org/bot<bot_token>/setWebhook?url= ",
+  "Creator": "TehilaGourary",
+  "Script": "import json\nimport sys\n\nfrom SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyUtils import dict_to_flat, output_handler\nfrom TelegramManager import TelegramManager\nfrom Utils import LastMessage\n\n# CONSTANTS\nCONNECTOR_NAME = \"Telegram Connector\"\nVENDOR = PRODUCT = \"Telegram\"\nDEFAULT_PRIORITY = 60  # Default is Medium\nRULE_GENERATOR_EXAMPLE = \"Telegram\"\n\n\ndef create_alert(siemplify, alert_id, created_event):\n    \"\"\" \"\"\"\n    siemplify.LOGGER.info(f\"----- Started processing Alert {alert_id}-----\")\n    alert_info = AlertInfo()\n\n    # Initializes the alert_info Characteristics Fields\n    alert_info.ticket_id = str(alert_id)\n    alert_info.display_id = str(alert_id)\n    alert_info.name = f\"Telegram - {alert_id}\"\n    alert_info.rule_generator = RULE_GENERATOR_EXAMPLE\n    alert_info.start_time = created_event[\"start_time\"]\n    alert_info.end_time = created_event[\"end_time\"]\n    # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n    alert_info.priority = DEFAULT_PRIORITY\n    alert_info.device_vendor = VENDOR\n    alert_info.device_product = PRODUCT\n    # ----------------------------- Alert Fields initialization END -----------------------------#\n    try:\n        if created_event is not None:\n            alert_info.events.append(created_event)\n        siemplify.LOGGER.info(f\"Added Event {alert_id} to Alert {alert_id}\")\n\n    # Raise an exception if failed to process the event\n    except Exception as e:\n        siemplify.LOGGER.error(f\"Failed to process event {alert_id}\")\n        siemplify.LOGGER.exception(e)\n\n    return alert_info\n\n\ndef create_event_channel_message(siemplify, alert_id, last_message):\n    \"\"\"\n    Returns the digested data of a single channel message\n    \"\"\"\n    siemplify.LOGGER.info(\n        f\"--- Started processing Event:  alert_id: {alert_id} | event_id: {alert_id}\"\n    )\n    event = {}\n    event = dict_to_flat(last_message)\n    event[\"start_time\"] = last_message[\"date\"]\n    event[\"end_time\"] = last_message[\"date\"]\n    event[\"Name\"] = \"Telegram message - Channel message\"\n    event[\n        \"device_product\"\n    ] = PRODUCT  # ie: describes the product the event originated from.\n\n    siemplify.LOGGER.info(\n        f\"--- Finished processing Event: alert_id: {alert_id} |event_name: Telegram message - channel message\"\n    )\n    return event\n\n\ndef create_event_private_or_group_message(siemplify, alert_id, message):\n    \"\"\"\n    Returns the digested data of a single private or group message\n    \"\"\"\n    siemplify.LOGGER.info(\n        f\"--- Started processing Event:  alert_id: {alert_id} | event_id: {alert_id}\"\n    )\n    event = {}\n    event = dict_to_flat(message)\n    event[\"start_time\"] = message[\"date\"]\n    event[\"end_time\"] = message[\"date\"]\n    event[\"Name\"] = \"Telegram message - Private or group message\"\n    event[\n        \"device_product\"\n    ] = PRODUCT  # ie: describes the product the event originated from.\n\n    siemplify.LOGGER.info(\n        f\"--- Finished processing Event: alert_id: {alert_id} | event_name: Telegram message - private or group message\"\n    )\n    return event\n\n\n@output_handler\ndef main(is_test_run):\n    alerts = []\n    siemplify = SiemplifyConnectorExecution()\n    siemplify.script_name = CONNECTOR_NAME\n\n    # In case of running a test\n    if is_test_run:\n        siemplify.LOGGER.info(\"***** This is a test run ******\")\n\n    # Extracting the connector's params\n    bot_api_token = siemplify.extract_connector_param(param_name=\"API Token\")\n\n    # Creating an instance of Telegram object\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n        # Retrieve the last update id that was saved\n        last_saved_update_id = LastMessage.get(siemplify=siemplify).id\n        # The update id to start retrieve from\n        start_update_id_to_retrieve = (\n            last_saved_update_id + 1 if not is_test_run else 0\n        )\n\n        # Get all the new messages from the last_saved_update_id+1\n        # allowed_updates list will contain all the chat you would like to retrieve data from.\n        all_messages_dict = telegram_manager.get_updates(\n            offset=start_update_id_to_retrieve, allowed_updates=[]\n        )\n        if all_messages_dict[\"result\"]:  # Not empty\n            for message in all_messages_dict[\"result\"]:\n                # Getting the unique id of each update message\n                alert_id = message.get(\"update_id\")\n                created_event = None\n                created_alert = None\n                if \"message\" in message:  # If the update is \"message\" type\n                    message = message.get(\"message\")\n                    # Creating the event by calling create_event() function\n                    created_event = create_event_private_or_group_message(\n                        siemplify, alert_id, message\n                    )\n\n                elif \"channel_post\" in message:  # If the update is \"channel_post\" type\n                    message = message[\"channel_post\"]\n                    # Creating the event by calling create_event() function\n                    created_event = create_event_channel_message(\n                        siemplify, alert_id, message\n                    )\n\n                if created_event is not None:\n                    # Creating the alert by calling create_alert() function\n                    created_alert = create_alert(\n                        siemplify, alert_id, created_event)\n\n                if created_alert is not None:\n                    alerts.append(created_alert)\n                    siemplify.LOGGER.info(\n                        f\"Added Alert {alert_id} to package results\")\n\n        # If the telegram bot has no new messages to pull\n        else:\n            siemplify.LOGGER.info(\"There are no new messages\")\n\n        # Returning all the created alerts to the cases module in Siemplify\n        siemplify.return_package(alerts)\n\n    except Exception as e:\n        if \"webhook\" not in json.loads(str(e)).get(\"description\"):\n            siemplify.LOGGER.error(\n                \"Error occured while running the connector: {}\".format(e)\n            )\n        else:\n            siemplify.LOGGER.error(\n                (\n                    \"Found active webhook for Telegram. Please deactivate it. \",\n                    \"You can do so with the next call: https://api.telegram.org/bot<bot_token>/setWebhook?url=\"\n                )\n            )\n        siemplify.LOGGER.error(e)\n\n    if not is_test_run:\n        try:\n            last_update_id = int(all_messages_dict[\"result\"][-1].get(\"update_id\"))\n            LastMessage(id=last_update_id).save(siemplify=siemplify)\n        except Exception as err:\n            siemplify.LOGGER.error(f\"Can't save the last message id: {err}\")\n    else:\n        siemplify.LOGGER.info(\"*TEST RUN* - New update_id not saved\")\n\n\nif __name__ == \"__main__\":\n    is_test_run = not (len(sys.argv) < 2 or sys.argv[1] == \"True\")\n    main(is_test_run)\n",
+  "Version": 369.0,
+  "MappingRules": [],
+  "ProductToVisualFamilyRecords": [],
+  "SimulationUseCases": {
+    "CasesForUseCase": [],
+    "UseCaseName": null
+  },
+  "Parameters": [
+    {
+      "ConnectorDefinitionId": 23,
+      "IsMandatory": true,
+      "IsAdvanced": false,
+      "DefaultValue": "123",
+      "Name": "API Token",
+      "Type": 3,
+      "Mode": 2,
+      "Description": "API Token"
+    },
+    {
+      "ConnectorDefinitionId": 23,
+      "IsMandatory": true,
+      "IsAdvanced": false,
+      "DefaultValue": "device_product",
+      "Name": "DeviceProductField",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the device product"
+    },
+    {
+      "ConnectorDefinitionId": 23,
+      "IsMandatory": true,
+      "IsAdvanced": false,
+      "DefaultValue": "event_name",
+      "Name": "EventClassId",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the event name (sub-type)"
+    },
+    {
+      "ConnectorDefinitionId": 23,
+      "IsMandatory": true,
+      "IsAdvanced": false,
+      "DefaultValue": "30",
+      "Name": "PythonProcessTimeout",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The timeout limit (in seconds) for the python process running current script"
+    }
+  ],
+  "Rules": [],
+  "IsConnectorRulesSupported": true,
+  "IsSystem": false,
+  "PythonVersion": "None"
+}

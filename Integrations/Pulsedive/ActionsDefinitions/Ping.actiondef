@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TIPCommon import extract_configuration_param\nfrom PulsediveManager import PulsediveManager\nfrom constants import PROVIDER_NAME, INTEGRATION_NAME, PING_SCRIPT_NAME\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = PING_SCRIPT_NAME\n    \n    api_root = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=\"API Root\")\n    api_key = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=\"API Key\")\n    verify_ssl = extract_configuration_param(siemplify, provider_name=INTEGRATION_NAME, param_name=\"Verify SSL\",\n                                             default_value=True, input_type=bool)\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    output_message = \"Successfully connected to the {} server with the provided connection parameters!\"\\\n        .format(PROVIDER_NAME)\n    result_value = True\n    status = EXECUTION_STATE_COMPLETED\n\n    try:\n        manager = PulsediveManager(api_root=api_root, api_key=api_key, verify_ssl=verify_ssl)\n        manager.test_connectivity()\n\n    except Exception as err:\n        output_message = \"Failed to connect to the {} server! Error is {}\".format(PROVIDER_NAME, err)\n        result_value = False\n        status = EXECUTION_STATE_FAILED\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(err)\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n    siemplify.LOGGER.info(\n        \"\\n  status: {}\\n  is_success: {}\\n  output_message: {}\".format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "IntegrationIdentifier": "Pulsedive",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 3.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610046911127,
+  "ModificationTimeUnixTimeInMs": 1614032395394
+}

@@ -1,0 +1,58 @@
+{
+  "Name": "Decode Base64",
+  "Description": "The action decodes base64 input string and returns the json object.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nimport json\nimport base64\n\n\n    \ndef main():\n    siemplify = SiemplifyAction()\n    base64_input = siemplify.parameters.get(\"Base64 Input\")\n    encoding = 'ascii'#siemplify.parameters.get(\"Encoding\")\n    \n\n    decoded_content = str(base64.b64decode(base64_input), encoding)\n    result = {'decoded_content':decoded_content}\n    \n    siemplify.result.add_result_json(json.dumps(result))\n\n\n    siemplify.end('Content was succesfully decoded from base 64 to string with encoding ' + encoding, True)\n\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n    \"decoded_content\":\"Example output data\"\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 13.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "Base64 Input string you would like to decode",
+      "Name": "Base64 Input",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236970,
+      "ModificationTimeUnixTimeInMs": 1610399236970
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "UTF-8",
+      "Description": "Choose the encoding option from the list",
+      "Name": "Encoding",
+      "Value": "UTF-8",
+      "Type": 15,
+      "OptionalValues": [
+        "UTF-8",
+        "ASCII"
+      ],
+      "OptionalValuesJson": "[\"UTF-8\",\"ASCII\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236970,
+      "ModificationTimeUnixTimeInMs": 1610399236970
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236965,
+  "ModificationTimeUnixTimeInMs": 1610399236965
+}

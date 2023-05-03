@@ -1,0 +1,45 @@
+{
+  "Name": "DNS Lookup",
+  "Description": "",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler, convert_dict_to_json_result_dict\nfrom SiemplifyDataModel import EntityTypes\nimport dns.resolver, dns.reversename\nfrom dns.resolver import Resolver\n\n\nSCRIPT_NAME = \"QueryDNS\"\n\n@output_handler\n\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n#    record_type = siemplify.parameters.get(\"Record Type\")\n    dns_servers = siemplify.parameters.get(\"DNS Servers\")\n#    dns_servers = '10.10.10.90', '1.1.1.1'\n#    domain_suffix = siemplify.parameters.get(\"FQDN suffix\")\n    \n    output_message = \"No address or hostname found\"\n    server_list = dns_servers.split(',')\n    \n    \n    json_results = {}\n    res = dns.resolver.Resolver(configure=False)\n#    res.timeout = 20.0\n#    res.nameservers = [dns_servers]\n#    res.nameservers = ['10.10.10.90']\n    for entity in siemplify.target_entities:\n        if entity.entity_type == EntityTypes.ADDRESS:\n#            addr = dns.reversename.from_address(entity.identifier)\n#            siemplify.LOGGER.info(\"Reverse name is: \" + str(addr))\n            for server in server_list:\n                server = server.strip()\n                res.nameservers = [server]\n                try:\n                    siemplify.LOGGER.info(\"--- Checking {} for a reverse DNS entry for IP {} ---\".format(server, entity.identifier))\n                    answer = res.resolve_address(entity.identifier)\n                    \n                    entityidentifier = entity.identifier\n#                answer = res.query(addr, record_type)\n#                siemplify.LOGGER.info(\"A reverse name PTR record for \" + entity.identifier + \" was found on server \" + server +)\n\n                    if answer:\n                        siemplify.LOGGER.info(\"A reverse name PTR record for {} was found on DNS server {}\".format(entity.identifier, server))\n                        ptr_record = \"PTR\"\n                        #json_results[entity.identifier] = {ptr_record: {server: str([x for x in answer])}}\n                        #json_results[entity.identifier] = {server: {'Type': ptr_record, 'Response': answer.rrset[0], 'DNS Server': server}}\n                        if entityidentifier not in json_results:\n                            json_results[entityidentifier] = []\n                        json_results[entityidentifier].append(\n                            {'Type': ptr_record, 'Response': answer.rrset[0], 'DNS Server': server})\n                            \n                        output_message = \"Results Found\"\n#            except dns.resolver.NoAnswer as err:\n#                siemplify.LOGGER.error(err)\n#                siemplify.LOGGER.error(\"########\")\n#                output_message = \"No answer section\"\n#            except dns.exception.Timeout as err:\n#                siemplify.LOGGER.error(err)\n#                siemplify.LOGGER.error(\"--------\")\n#                output_message = \"Query timed out\"\n                except Exception as err:\n                    siemplify.LOGGER.exception(err)\n#                siemplify.LOGGER.error(\"********\")\n                \n                \n                \n        elif entity.entity_type == EntityTypes.HOSTNAME:\n            try:\n#                answer = res.resolve(entity.identifier)\n                entityidentifier = entity.identifier\n                outbound_query = dns.message.make_query(entity.identifier,dns.rdatatype.ANY)\n                \n                \n                for server in server_list:\n                    try: \n                        server = server.strip()\n                        siemplify.LOGGER.info(\"--- Checking {} for entity {} ---\".format(server, entity.identifier))\n\n#                        print(\"--- Checking with server \" + server + \" ---\")\n                \n                        answer = dns.query.udp(outbound_query, server)\n                    \n                        if answer.answer:\n                            \n                            for i in range(len(answer.answer)):\n                                print(\n                                    \"A record of type {} was found on DNS server {} with a response of {} for entity {}\".format(\n                                        dns.rdatatype.to_text(answer.answer[i].rdtype), server, answer.answer[i][0],\n                                        entity.identifier))\n\n#                            for a in answer.answer:\n#                                print(a)\n#                print(answer.answer)\n                            \n#                print(answer.answer[0].rdtype)\n#                print(dns.rdataclass.to_text(answer.answer[0].rdtype))\n#                            i=0\n#                            while(i<len(answer.answer)):\n#                                siemplify.LOGGER.info(\"A record of type {} was found on DNS server {} with a response of {} for entity {}\".format(dns.rdatatype.to_text(answer.answer[i].rdtype), server, answer.answer[i][0], entity.identifier))\n#                                print(dns.rdatatype.to_text(answer.answer[i].rdtype))\n#                                print(answer.answer[i][0])\n#                                i += 1\n#                print(dns.rdataset.Rdataset.to_text(answer.answer[0]))\n#                print(dns.rrset.RRset.to_text(answer.answer[0]))\n#                print(answer.answer[0].response)\n                \n#                        i=0\n#                        while(i<len(answer.answer)):\n#                            print(answer.answer[i])\n#                            i+=1\n\n                                hn_record = dns.rdatatype.to_text(answer.answer[i].rdtype)\n                                record_response = str(answer.answer[i][0]).strip('\"')\n                                #print(record_response)\n                        #hn_record = '1'\n#                siemplify.LOGGER.info(\"Found a record of type '\" + hn_record + \"' for \" + entity.identifier)\n#                            json_results[entity.identifier] = {hn_record:[x for x in answer.answer]}\n                                #json_results[entity.identifier] = {server: {hn_record: {'Type': hn_record, 'Response': record_response, 'DNS Server': server }}}\n                                if entityidentifier not in json_results:\n                                    json_results[entityidentifier] = []\n                                                                    \n                                \n                                json_results[entityidentifier].append({'Type': hn_record, 'Response': record_response, 'DNS Server': server })\n                                \n                            output_message = \"Results Found\"\n                        else:\n                            siemplify.LOGGER.info(\"No record found\")\n                            \n                    except Exception as err:\n                        siemplify.LOGGER.error(err)\n            except Exception as err:\n                siemplify.LOGGER.error(err)\n#                siemplify.LOGGER.error(\"@@@@@@@@@\")\n\n    if json_results:\n        siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_results))\n        siemplify.end(output_message, 'true')\n    else:\n        siemplify.end(output_message, 'false')\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"Entity\":\"BMAUS.BADOO.APP\",\"EntityResult\":[{\"Type\":\"A\",\"Response\":\"31.222.75.227\",\"DNS Server\":\"8.8.8.8\"}]}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 78.0,
+  "TimeoutSeconds": 20,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1.1.1.1",
+      "Description": "Single or multiple comma separated servers.",
+      "Name": "DNS Servers",
+      "Value": "1.1.1.1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624028495422,
+      "ModificationTimeUnixTimeInMs": 1624028495422
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1624028452401,
+  "ModificationTimeUnixTimeInMs": 1624028495413
+}

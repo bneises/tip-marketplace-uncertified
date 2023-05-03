@@ -1,0 +1,30 @@
+{
+  "Name": "Get Jobs",
+  "Description": "Retrieves Arcanna.AI available jobs  and saves the results",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\n\nfrom arcanna_client import *\nfrom constants import GET_JOBS_SCRIPT_NAME\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = GET_JOBS_SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n\n    arcanna_url = siemplify.extract_configuration_param('Integration', \"Url\", is_mandatory=True)\n    api_key = siemplify.extract_configuration_param('Integration', \"Api Key\", is_mandatory=True)\n    \n    status = EXECUTION_STATE_COMPLETED\n    output_message = \"Get jobs message: \"\n    result_value = True\n\n    try:\n        client = ArcannaClient(api_key=api_key, base_url=arcanna_url, verify=False, proxy=False)\n        response_json = client.list_jobs()\n        output_message = output_message + f\"response: {response_json}\"\n        siemplify.result.add_result_json(response_json)\n    except Exception as e:\n        output_message = f'Error executing {GET_JOBS_SCRIPT_NAME}. Reason {e}'\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = False\n\n    siemplify.end(output_message, result_value, status)\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "ArcannaAI",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"job_id\":1262,\"data_type\":\"aaaa\",\"title\":\"ext\",\"status\":\"STARTED\",\"labels\":[\"drop_alert\",\"escalate_alert\"],\"features\":[]}]\n",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 19.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1665043750818,
+  "ModificationTimeUnixTimeInMs": 1665043750819
+}

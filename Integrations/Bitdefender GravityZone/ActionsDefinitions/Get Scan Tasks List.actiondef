@@ -1,0 +1,64 @@
+{
+  "Name": "Get Scan Tasks List",
+  "Description": "This method returns the list of scan tasks.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n    task_name = siemplify.extract_action_param(\"Use JSON Filter\", print_value=True)\n    task_status = siemplify.extract_action_param(\"Filter\", print_value=True)\n    \n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n        \n        tasks_data = mtm.task_scan_list(access_url, task_name, task_status)\n        \n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"success\"\n        result_value = \"success\"\n        siemplify.result.add_result_json(tasks_data)\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n        siemplify.end(output_message, result_value, status)\n    except Exception as e:\n        siemplify.LOGGER.error(\"An error occurred: {0}\".format(e))\n        siemplify.LOGGER.exception(e)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n    \"result\": [\r\n        {\r\n            \"id\" : \"21a295eeb1a43d8b497b23b7\",\r\n            \"name\" : \"task 1\",\r\n            \"status\": 1,\r\n            \"startDate\": \"2015-08-21T23:48:16\"\r\n        },\r\n        {\r\n            \"id\" : \"21a295eeb1a43d8b497b23b8\",\r\n            \"name\" : \"task 2\",\r\n            \"status\": 1,\r\n            \"startDate\": \"2015-08-21T10:21:15\"\r\n        }\r\n    ]\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 47.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "All",
+      "Description": "The status of the task.",
+      "Name": "Task Status",
+      "Value": "All",
+      "Type": 15,
+      "OptionalValues": [
+        "All",
+        "Pending",
+        "In-progress",
+        "Finished"
+      ],
+      "OptionalValuesJson": "[\"All\",\"Pending\",\"In-progress\",\"Finished\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071191236,
+      "ModificationTimeUnixTimeInMs": 1616071191236
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Use an asterisk in front to search its appearance anywhere in the name. If omitted, only returns results where the name starts with the keyword",
+      "Name": "Task Name",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071191236,
+      "ModificationTimeUnixTimeInMs": 1616071191236
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071191225,
+  "ModificationTimeUnixTimeInMs": 1616071191231
+}

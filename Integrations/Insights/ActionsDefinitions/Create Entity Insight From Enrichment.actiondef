@@ -1,0 +1,55 @@
+{
+  "Name": "Create Entity Insight From Enrichment",
+  "Description": "The action creates an entity insight from an Enrichment action",
+  "Script": "from SiemplifyUtils import output_handler\nimport json\nfrom SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom ToolsCommon import parse_raw_message\n\n# CONSTS\nOPEN_PH_PARENTHASIS = \"{\"\nCLOSE_PH_PARENTHASIS = \"}\"\nPIPE = \"|\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    output_message = \"No insight created\"\n    result_value = False\n    \n    raw_message = siemplify.parameters.get(\"Message\")\n    \n    try:\n        successful_entities = []\n        for entity in siemplify.target_entities:\n            message = parse_raw_message(entity, raw_message)\n            if message:# and found_anything:\n                output_message = message\n                siemplify.add_entity_insight(entity, message, triggered_by=siemplify.parameters.get(\"Triggered By\", \"Siemplify\"))\n                successful_entities.append(entity)\n        \n        if successful_entities:\n            result_value = True\n            output_message = \"Insights added for:\\n{}\".format(\"\\n\".join([x.identifier for x in successful_entities]))\n        \n        siemplify.end(output_message, result_value, EXECUTION_STATE_COMPLETED)\n        \n    except Exception as e:\n        raise\n        siemplify.end(\"Errors found: {}\".format(e), 'Failed', EXECUTION_STATE_FAILED)\n\n\nif __name__ == '__main__':\n    main()\n    ",
+  "IntegrationIdentifier": "Insights",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 60.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "Formatted string that incorporates entity enrichment. For example:\nHi {AD_name}, please review.",
+      "Name": "Message",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599654251749,
+      "ModificationTimeUnixTimeInMs": 1599654251749
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "Siemplify",
+      "Description": "What integration should be associated with the insight",
+      "Name": "Triggered By",
+      "Value": "Siemplify",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1599654251749,
+      "ModificationTimeUnixTimeInMs": 1599654251749
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1599654251746,
+  "ModificationTimeUnixTimeInMs": 1599654251746
+}

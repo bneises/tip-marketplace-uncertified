@@ -1,0 +1,30 @@
+{
+  "Name": "Enrich Entities",
+  "Description": "Enrich entities with Zoom properties\n",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyUtils import construct_csv, add_prefix_to_dict, convert_dict_to_json_result_dict,output_handler\nfrom ZoomManager import ZoomManager, dict_to_flat\n\nINTEGRATION_NAME = u\"Zoom\"\n\n#This action does not need to change any data at the third party, but instead enriching the entity data in siemplify\n#Adding additional_properties to the entity in siemplify. \n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    jwt_token = conf.get(\"JWT Token\")\n    account_id = conf.get(\"Account ID\")\n    client_id = conf.get(\"Client ID\")\n    client_secret = conf.get(\"Client Secret\")\n\n    #declaring an empty array  for the new data\n    enriched_entities = []\n\n    zoom_manager = ZoomManager(jwt_token, account_id, client_id, client_secret)\n\n    #declaring an empty dictionary of the json_result\n    json_result = {}\n\n# Itirate over all the entities data and does:\n# checks the entity type.\n # Searching for the relevant data for the specific user\n\n    for entity in siemplify.target_entities:\n        try:\n            # checks the entity type.\n            if entity.entity_type == EntityTypes.USER:\n\n                # Searching for the relevant data for the specific user\n                search_results = zoom_manager.get_user_details(entity.identifier)\n\n                if search_results:\n                    user_info = search_results \n                    # if the dictionary that contains the data has an hierarchy we need getting it flat so we use this data\n                    flat_user_data = dict_to_flat(user_info)\n\n                    #adding the zoom prefix to each entity detail to enable the analysis of the entity data\n                    flat_user_data = add_prefix_to_dict(flat_user_data, \"Zoom\")\n                    #updating the additional_properties of the specific entity.\n                    entity.additional_properties.update(flat_user_data)\n\n                    # adding the relevant identifier and assign the user_info into the array,\n                    # if using this function we need to use siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_result))\n                    json_result[entity.identifier] = user_info\n                    #adding the enriched_entities to the dictionary\n                    enriched_entities.append(entity)\n\n                    entity.is_enriched = True\n\n\n        except Exception as e:\n        # An error occurred - skip entity and continue\n            siemplify.LOGGER.error(\"An error occurred on entity: {}.\\n{}.\".format(entity.identifier, str(e)))\n            siemplify.LOGGER.exception(e)\n\n    if enriched_entities:\n        entities_names = [entity.identifier for entity in enriched_entities]\n\n        output_message = 'The following entities were enriched:\\n' + '\\n'.join(entities_names)\n        return_value = 'True'\n  \n        siemplify.update_entities(enriched_entities)\n\n    else:\n        output_message = 'No entities were enriched.'\n        return_value = 'False'\n\n    siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_result))\n\n    siemplify.end(output_message, return_value)\n\n\nif __name__ == '__main__':\n    main()",
+  "IntegrationIdentifier": "Zoom",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"created_at\": \"2018-11-15T01:10:08Z\",\r\n\t\"custom_attributes\": [{\r\n\t\t\"key\": \"cb3674544gexq\",\r\n\t\t\"name\": \"Country of Citizenship\",\r\n\t\t\"value\": \"Nepal\"\r\n\t}],\r\n\t\"id\": \"z8dsdsdsdsdCfp8uQ\",\r\n\t\"first_name\": \"Harry\",\r\n\t\"last_name\": \"Grande\",\r\n\t\"email\": \"harryg@dfkjdslfjkdsfjkdsf.fsdfdfd\",\r\n\t\"type\": 2,\r\n\t\"role_name\": \"Owner\",\r\n\t\"pmi\": \"000000000\",\r\n\t\"use_pmi\": false,\r\n\t\"personal_meeting_url\": \"https://zoom.us/j/6352635623323434343443\",\r\n\t\"timezone\": \"America/Los_Angeles\",\r\n\t\"verified\": 1,\r\n\t\"dept\": \"\",\r\n\t\"last_login_time\": \"2019-09-13T21:08:52Z\",\r\n\t\"last_client_version\": \"4.4.55383.0716(android)\",\r\n\t\"pic_url\": \"https://lh4.googleusercontent.com/-hsgfhdgsfghdsfghfd-photo.jpg\",\r\n\t\"host_key\": \"0000\",\r\n\t\"jid\": \"hghghfghdfghdfhgh@xmpp.zoom.us\",\r\n\t\"group_ids\": [],\r\n\t\"im_group_ids\": [\r\n\t\t\"CcSAAAAAAABBBVoQ\"\r\n\t],\r\n\t\"account_id\": \"EAAAAAbbbbbCCCCHMA\",\r\n\t\"language\": \"en-US\",\r\n\t\"phone_country\": \"USA\",\r\n\t\"phone_number\": \"00000000\",\r\n\t\"status\": \"active\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 21,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

@@ -1,0 +1,55 @@
+{
+  "Name": "Get User MFA",
+  "Description": "Search for given user and return MFA stats. Queries a given User Email field including any valid email entities. JSON result will always return your User Email input first at index zero.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom MicrosoftGraphSecurityManager import MicrosoftGraphSecurityManager\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    client_id = siemplify.extract_configuration_param('Integration',\"Client ID\")\n    secret_id = siemplify.extract_configuration_param('Integration',\"Secret ID\")\n    tenant_id = siemplify.extract_configuration_param('Integration',\"Tenant ID\")\n    create_insight = siemplify.extract_action_param(\"Create Insight\", input_type=bool)\n    certificate_password = siemplify.extract_configuration_param('Integration',\"Certificate Password\")\n    certificate_path = siemplify.extract_configuration_param('Integration',\"Certificate Path\")\n    user_email = siemplify.extract_action_param(\"User Email\", print_value=True)\n    \n    siemplify.LOGGER.info(\"Connecting to Microsoft Graph Security.\")\n    mtm = MicrosoftGraphSecurityManager(client_id, secret_id, certificate_path, certificate_password, tenant_id)\n    siemplify.LOGGER.info(\"Connected successfully.\")\n    \n    mfa_stats = []\n    \n    mfa_stats.append(mtm.get_user_mfa_stats(user_email))\n    \n    # Create given parameter user insight\n    if create_insight:\n        create_case_insight(siemplify, mfa_stats[0])\n    \n    for entity in siemplify.target_entities:\n        if \"@\" in entity.identifier:\n            print(entity.identifier)\n            mfa_record = mtm.get_user_mfa_stats(entity.identifier)\n            if mfa_record:\n                mfa_stats.append(mfa_record)\n                # Create remaining insights\n                if create_insight:\n                    create_case_insight(siemplify, mfa_record)\n                \n    \n    \n    status = EXECUTION_STATE_COMPLETED\n    output_message = \"success\"\n    result_value = \"success\"\n    siemplify.result.add_result_json(mfa_stats)\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\ndef create_case_insight(siemplify, mfa_record):\n    severity=0\n    entity_identifier = mfa_record['userPrincipalName']\n    insight_type=1\n    triggered_by = \"Microsoft 365 MFA\"\n    title=\"\"+mfa_record['userPrincipalName']\n    content = \"\"\" \n        <b>userPrincipalName:</b> {}\n        <b>userDisplayName:</b> {}\n        <b>isRegistered:</b> {}\n        <b>isEnabled:</b> {}\n        <b>isCapable:</b> {}\n        <b>isMfaRegistered:</b> {}\n        <b>authMethods:</b> {}\n    \"\"\".format(mfa_record['userPrincipalName'],\n        mfa_record['userDisplayName'],\n        mfa_record['isRegistered'],\n        mfa_record['isEnabled'],\n        mfa_record['isCapable'],\n        mfa_record['isMfaRegistered'],\n        mfa_record['authMethods'])\n    \n    siemplify.create_case_insight(triggered_by, title, content, entity_identifier, severity, insight_type)\n    \nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"id\": \"75as5323-a3b6-1234-f86b-30dc4bfb56e1\", \"userPrincipalName\": \"john.smith@email.com\", \"userDisplayName\": \"John Smith\", \"isRegistered\": \"True\", \"isEnabled\": \"False\", \"isCapable\": \"False\", \"isMfaRegistered\": \"True\", \"authMethods\": [\"mobilePhone\", \"appNotification\", \"appCode\"]}, {\"id\": \"d14f12cc-f123-1234-f3c3-a574926bad3c\", \"userPrincipalName\": \"Jack.Smith@email.com\", \"userDisplayName\": \"Jack Smith\", \"isRegistered\": \"True\", \"isEnabled\": \"False\", \"isCapable\": \"False\", \"isMfaRegistered\": \"True\", \"authMethods\": [\"mobilePhone\", \"appNotification\", \"appCode\"]}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 69.0,
+  "TimeoutSeconds": 60,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Create an insight for each email checked with MFA stats.",
+      "Name": "Create Insight",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1607348698635,
+      "ModificationTimeUnixTimeInMs": 1607348698635
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "user@email.com",
+      "Description": "Users email address to search for (userPrincipalName). Valid target entities (emails) will also be checked.",
+      "Name": "User Email",
+      "Value": "user@email.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1607348698635,
+      "ModificationTimeUnixTimeInMs": 1607348698635
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1607348698616,
+  "ModificationTimeUnixTimeInMs": 1607348698630
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "Get Pod Metric",
+  "Description": "Gets a Pod metric (CPU, Memory and processes).\nFor more information about Metrics: https://docs.datadoghq.com/api/latest/metrics/#query-timeseries-points\nFor more information about Kubernetes metrics: https://docs.datadoghq.com/agent/kubernetes/data_collected/",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = [\"\"]\n    json_result = {}\n    pod_metric ={}\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    pod_namespaces_list = siemplify.extract_action_param( \"Pod Name\")\n    start_time = siemplify.extract_action_param(\"Start Time\")\n    end_time = siemplify.extract_action_param(\"End Time\")\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n    \n    #Converting the pod_namespace into a list\n    if pod_namespaces_list is not None:\n        pod_namespaces_list = pod_namespaces_list.split(',')\n        \n    for pod in pod_namespaces_list:\n        pod = pod.strip()\n        pod_cpu = datadog_manager.get_timeseries_point_metrics_cpu_pod(pod, start_time, end_time)\n        if pod_cpu.get('status')=='ok' and len(pod_cpu.get('series')) > 0:\n            siemplify.LOGGER.info(f\"The CPU of the Pod '{pod}'  was fetched successfully.\")\n            pod_metric[\"pod_CPU\"] = pod_cpu\n            result_value = True\n            output_message.append(f\"The CPU of the Pod '{pod}' was fetched successfully.\")\n        else:\n            siemplify.LOGGER.info(f\"The CPU of the Pod '{pod}' wasn't found.\")\n            output_message.append(f\"The CPU of the Pod '{pod}' wasn't found.\")\n\n        pod_memory = datadog_manager.get_timeseries_point_metrics_memory_pod(pod, start_time, end_time)\n        if pod_memory.get('status')=='ok' and len(pod_memory.get('series')) > 0 :\n            siemplify.LOGGER.info(f\"The memory of the Pod '{pod}' was fetched successfully.\")\n            pod_metric[\"pod_memory\"] = pod_memory\n            result_value = True\n            output_message.append(f\"The memory of the Pod:'{pod}' was fetched successfully.\")\n\n        else:\n            siemplify.LOGGER.info(f\"The memory of the Pod '{pod}' wasn't fetched.\")\n            output_message.append(f\"The memory of the Pod '{pod}' wasn't fetched.\")\n        \n        pod_processes = datadog_manager.get_processes_by_tags(f\"pod_name:{pod}\")\n        pod_metric[\"pod_processes\"]=pod_processes\n        if bool(pod_processes):\n            siemplify.LOGGER.info(f\"The processes of the pod '{pod}' were retrieved successfully\")\n            output_message.append(f\"The processes of the pod '{pod}' were retrieved successfully\")\n        \n        else:\n            siemplify.LOGGER.info(f\"The processes of the Pod '{pod}' wasn't fetched.\")\n            output_message.append(f\"The processes of the Pod '{pod}' wasn't fetched.\")\n\n\n        json_result[f\"pod_name_{pod}\"] = pod_metric\n    siemplify.result.add_result_json(json_result)\n\n    siemplify.end(\"\\n\".join(output_message), result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"pod_name_X\": {\r\n\t\t\"pod_CPU\": {\r\n\t\t\t\"status\": \"ok\",\r\n\t\t\t\"res_type\": \"time_series\",\r\n\t\t\t\"from_date\": 1507040000000,\r\n\t\t\t\"series\": [{\r\n\t\t\t\t\"end\": 1610668799000,\r\n\t\t\t\t\"attributes\": {},\r\n\t\t\t\t\"metric\": \"kubernetes.cpu.system.total\",\r\n\t\t\t\t\"interval\": 604800,\r\n\t\t\t\t\"tag_set\": [\"kube_namespace:y\", \"pod_name:x\"],\r\n\t\t\t\t\"start\": 1602201600000,\r\n\t\t\t\t\"length\": 14,\r\n\t\t\t\t\"query_index\": 0,\r\n\t\t\t\t\"aggr\": \"avg\",\r\n\t\t\t\t\"scope\": \"kube_namespace:y,pod_name:x\",\r\n\t\t\t\t\"pointlist\": [\r\n\t\t\t\t\t[1602201600000.0, 0.0003853833283493937],\r\n\t\t\t\t\t[1602806400000.0, 0.00036236030051059264],\r\n\t\t\t\t\t[1603411200000.0, 0.0004022896314672298],\r\n\t\t\t\t\t[1604016000000.0, 0.00036836003994138866],\r\n\t\t\t\t\t[1604620800000.0, 0.00039237702930315773]\r\n\t\t\t\t],\r\n\t\t\t\t\"expression\": \"avg:kubernetes.cpu.system.total{kube_namespace:y,pod_name:x}\",\r\n\t\t\t\t\"unit\": [{\r\n\t\t\t\t\t\"family\": \"cpu\",\r\n\t\t\t\t\t\"scale_factor\": 1.0,\r\n\t\t\t\t\t\"name\": \"core\",\r\n\t\t\t\t\t\"short_name\": null,\r\n\t\t\t\t\t\"plural\": \"cores\",\r\n\t\t\t\t\t\"id\": 31\r\n\t\t\t\t}, null],\r\n\t\t\t\t\"display_name\": \"kubernetes.cpu.system.total\"\r\n\t\t\t}],\r\n\t\t\t\"to_date\": 1610557457000,\r\n\t\t\t\"resp_version\": 1,\r\n\t\t\t\"query\": \"avg:kubernetes.cpu.system.total{pod_name:x}by{pod_name,kube_namespace}\",\r\n\t\t\t\"message\": \"\",\r\n\t\t\t\"group_by\": [\"kube_namespace\", \"pod_name\"]\r\n\t\t},\r\n\t\t\"pod_memory\": {\r\n\t\t\t\"status\": \"ok\",\r\n\t\t\t\"res_type\": \"time_series\",\r\n\t\t\t\"from_date\": 1507040000000,\r\n\t\t\t\"series\": [{\r\n\t\t\t\t\"end\": 1610668799000,\r\n\t\t\t\t\"attributes\": {},\r\n\t\t\t\t\"metric\": \"kubernetes.memory.usage_pct\",\r\n\t\t\t\t\"interval\": 604800,\r\n\t\t\t\t\"tag_set\": [\"kube_namespace:y\", \"pod_name:x\"],\r\n\t\t\t\t\"start\": 1602201600000,\r\n\t\t\t\t\"length\": 14,\r\n\t\t\t\t\"query_index\": 0,\r\n\t\t\t\t\"aggr\": \"avg\",\r\n\t\t\t\t\"scope\": \"kube_namespace:y,pod_name:x\",\r\n\t\t\t\t\"pointlist\": [\r\n\t\t\t\t\t[1602201600000.0, 0.17388684940859045],\r\n\t\t\t\t\t[1602806400000.0, 0.20004428429430668],\r\n\t\t\t\t\t[1603411200000.0, 0.18134797875370298],\r\n\t\t\t\t\t[1604016000000.0, 0.25646502505858065],\r\n\t\t\t\t\t[1604620800000.0, 0.2630635437274736]\r\n\t\t\t\t],\r\n\t\t\t\t\"expression\": \"avg:kubernetes.memory.usage_pct{kube_namespace:y,pod_name:x}\",\r\n\t\t\t\t\"unit\": [{\r\n\t\t\t\t\t\"family\": \"percentage\",\r\n\t\t\t\t\t\"scale_factor\": 100.0,\r\n\t\t\t\t\t\"name\": \"fraction\",\r\n\t\t\t\t\t\"short_name\": null,\r\n\t\t\t\t\t\"plural\": \"fractions\",\r\n\t\t\t\t\t\"id\": 16\r\n\t\t\t\t}, null],\r\n\t\t\t\t\"display_name\": \"kubernetes.memory.usage_pct\"\r\n\t\t\t}],\r\n\t\t\t\"to_date\": 1610557457000,\r\n\t\t\t\"resp_version\": 1,\r\n\t\t\t\"query\": \"avg:kubernetes.memory.usage_pct{pod_name:x}by{pod_name,kube_namespace}\",\r\n\t\t\t\"message\": \"\",\r\n\t\t\t\"group_by\": [\"kube_namespace\", \"pod_name\"]\r\n\t\t},\r\n\t\t\"pod_processes\": {\r\n\t\t\t\"meta\": {\r\n\t\t\t\t\"page\": {\r\n\t\t\t\t\t\"after\": \"abcdef\",\r\n\t\t\t\t\t\"size\": 6\r\n\t\t\t\t}\r\n\t\t\t},\r\n\t\t\t\"data\": [{\r\n\t\t\t\t\"type\": \"process\",\r\n\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\"attributes\": {\r\n\t\t\t\t\t\"cmdline\": \"\",\r\n\t\t\t\t\t\"timestamp\": \"2021-01-21T13:50:33\",\r\n\t\t\t\t\t\"start\": \"2020-10-24T04:28:57\",\r\n\t\t\t\t\t\"user\": \"root\",\r\n\t\t\t\t\t\"pid\": 1234,\r\n\t\t\t\t\t\"ppid\": 1111,\r\n\t\t\t\t\t\"host\": \"i-12345\",\r\n\t\t\t\t\t\"tags\": [\"\"]\r\n\t\t\t\t}\r\n\t\t\t}, {\r\n\t\t\t\t\"type\": \"process\",\r\n\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\"attributes\": {\r\n\t\t\t\t\t\"cmdline\": \"\",\r\n\t\t\t\t\t\"timestamp\": \"2021-01-21T13:45:03\",\r\n\t\t\t\t\t\"start\": \"2020-12-23T12:35:52\",\r\n\t\t\t\t\t\"user\": \"root\",\r\n\t\t\t\t\t\"pid\": 1234,\r\n\t\t\t\t\t\"ppid\": 1111,\r\n\t\t\t\t\t\"host\": \"i-123456789\",\r\n\t\t\t\t\t\"tags\": [\"\"]\r\n\t\t\t\t}\r\n\t\t\t}, {\r\n\t\t\t\t\"type\": \"process\",\r\n\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\"attributes\": {\r\n\t\t\t\t\t\"cmdline\": \"\",\r\n\t\t\t\t\t\"timestamp\": \"2021-01-21T13:50:33\",\r\n\t\t\t\t\t\"start\": \"2020-12-23T13:23:30\",\r\n\t\t\t\t\t\"user\": \"root\",\r\n\t\t\t\t\t\"pid\": 1234,\r\n\t\t\t\t\t\"ppid\": 1111,\r\n\t\t\t\t\t\"host\": \"i-123456\",\r\n\t\t\t\t\t\"tags\": [\"\"]\r\n\t\t\t\t}\r\n\t\t\t}, {\r\n\t\t\t\t\"type\": \"process\",\r\n\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\"attributes\": {\r\n\t\t\t\t\t\"cmdline\": \"\",\r\n\t\t\t\t\t\"timestamp\": \"2021-01-21T13:42:03\",\r\n\t\t\t\t\t\"start\": \"2020-12-29T15:57:01\",\r\n\t\t\t\t\t\"user\": \"root\",\r\n\t\t\t\t\t\"pid\": 1234,\r\n\t\t\t\t\t\"ppid\": 1111,\r\n\t\t\t\t\t\"host\": \"i-123456\",\r\n\t\t\t\t\t\"tags\": [\"\"]\r\n\t\t\t\t}\r\n\t\t\t}, {\r\n\t\t\t\t\"type\": \"process\",\r\n\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\"attributes\": {\r\n\t\t\t\t\t\"cmdline\": \".log\",\r\n\t\t\t\t\t\"timestamp\": \"2021-01-21T13:44:33\",\r\n\t\t\t\t\t\"start\": \"2020-12-29T18:12:04\",\r\n\t\t\t\t\t\"user\": \"root\",\r\n\t\t\t\t\t\"pid\": 1234,\r\n\t\t\t\t\t\"ppid\": 1111,\r\n\t\t\t\t\t\"host\": \"i-123456\",\r\n\t\t\t\t\t\"tags\": [\"\"]\r\n\t\t\t\t}\r\n\t\t\t}, {\r\n\t\t\t\t\"type\": \"process\",\r\n\t\t\t\t\"id\": \"123456\",\r\n\t\t\t\t\"attributes\": {\r\n\t\t\t\t\t\"cmdline\": \"\",\r\n\t\t\t\t\t\"timestamp\": \"2021-01-21T13:43:03\",\r\n\t\t\t\t\t\"start\": \"2020-12-30T10:57:17\",\r\n\t\t\t\t\t\"user\": \"root\",\r\n\t\t\t\t\t\"pid\": 1234,\r\n\t\t\t\t\t\"ppid\": 1111,\r\n\t\t\t\t\t\"host\": \"i-123456\",\r\n\t\t\t\t\t\"tags\": [\"\"]\r\n\t\t\t\t}\r\n\t\t\t}]\r\n\t\t}\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 129.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "pod_namespace",
+      "Description": "The Pod Namespace",
+      "Name": "Pod Name",
+      "Value": "pod_namespace",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532208,
+      "ModificationTimeUnixTimeInMs": 1615195532208
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1610557457",
+      "Description": "The end time of the Pod metric in Unixtime.",
+      "Name": "End Time",
+      "Value": "1610557457",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532208,
+      "ModificationTimeUnixTimeInMs": 1615195532208
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1507040000",
+      "Description": "The start time of the Pod metric in Unixtime.",
+      "Name": "Start Time",
+      "Value": "1507040000",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532208,
+      "ModificationTimeUnixTimeInMs": 1615195532208
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532203,
+  "ModificationTimeUnixTimeInMs": 1615195532203
+}

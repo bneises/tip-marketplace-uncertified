@@ -1,0 +1,70 @@
+{
+    "Identifier": "ArcannaAI",
+    "PackageName": "ArcannaAI",
+    "DisplayName": "ArcannaAI",
+    "Description": "Arcanna.ai is a platform for delivering decision intelligence. It augments Security Operation Center analysts in dealing with incoming threats by increasing analyst efficiency in decision-making.\n\nArcanna.ai continuously learns from cybersecurity experts by using an innovative method for expert knowledge integration into deep neural nets by combining a continuous human feedback-loop, Natural Language Processing and deep learning.\n\nOur platform enables SOC Analyst decisions to be augmented using AI models obtained by encoding knowledge from the existing processes across the entire security team and uses it to predict future decisions, increasing efficiency in decision-making.\n\nMore information is available at https://arcanna.ai\n",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "ArcannaAI",
+            "PropertyName": "Url",
+            "PropertyDescription": "Server URL of Arcanna.ai Rest Api",
+            "PropertyDisplayName": "Url",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": " ",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1665741880558,
+            "ModificationTimeUnixTimeInMs": 1665741880558
+        },
+        {
+            "IntegrationIdentifier": "ArcannaAI",
+            "PropertyName": "Api Key",
+            "PropertyDescription": "Api Key for Arcanna API",
+            "PropertyDisplayName": "Api Key",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": " ",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1665741880558,
+            "ModificationTimeUnixTimeInMs": 1665741880558
+        }
+    ],
+    "Actions": [
+        "Ping",
+        "Send Case To Arcanna",
+        "Get Jobs",
+        "Await Arcanna Inference",
+        "Send Analyst Feedback to Arcanna",
+        "Get Arcanna Case Response"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "constants",
+        "arcanna_client"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! ArcannaAI"
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1665408805000
+        },
+        {
+            "Items": [
+                "Logo updated"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1665742388000
+        }
+    ]
+}

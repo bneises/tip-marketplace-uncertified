@@ -1,0 +1,59 @@
+{
+  "Name": "Delete All Records",
+  "Description": "Deletes all the records in a given table",
+  "Script": "from SiemplifyAction import *\nfrom airtable import Airtable\nfrom airtable.auth import AirtableAuth\nimport json, sys\nfrom datetime import datetime\nfrom datetime import timedelta\n\nINTEGRATION_NAME = \"AirTable\"\n\n\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Api key\")\n    base_id = siemplify.parameters[\"Base Id\"]\n    table_name = siemplify.parameters[\"Table name\"]\n\n\n\n    airtable = Airtable(base_id, table_name, api_key)\n    results = airtable.get_all()\n    records_ids = []\n    for result in results:\n        record_id = result['id']\n        records_ids.append(record_id)\n        #airtable.delete(record_id)\n    \n    airtable.API_LIMIT = 0.00005\n    airtable.batch_delete(records_ids)\n    \n    records_count = len(records_ids)\n    output_message = '{0} records in table {1} were deleted successfully.'.format(records_count,table_name)\n    siemplify.end(output_message, records_count)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "AirTable",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 3.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<base_id>",
+      "Description": "Base is a database in Airtable in which you store data. The base ID can be found in the URL of the API page of the base.",
+      "Name": "Base Id",
+      "Value": "<base_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603732316169,
+      "ModificationTimeUnixTimeInMs": 1603732316169
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<table_name>",
+      "Description": "Each Base can include multiple tables. The parameter indicates the name of the table within the base.",
+      "Name": "Table name",
+      "Value": "<table_name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603732316169,
+      "ModificationTimeUnixTimeInMs": 1603732316169
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1603732316157,
+  "ModificationTimeUnixTimeInMs": 1603732316159
+}

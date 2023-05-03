@@ -1,0 +1,45 @@
+{
+  "Name": "Update Alert Score",
+  "Description": "This will update the alert score by the amount supplied in the 'Input' parameter. ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n\nALERT_SCORE = 'ALERT_SCORE'\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    _input = siemplify.extract_action_param(\"Input\")\n    current_score = siemplify.get_alert_context_property(ALERT_SCORE).strip('\"')\n    if not current_score:\n        current_score = 0\n\n    new_score = int(current_score) + int(_input)\n    updated_score = siemplify.set_alert_context_property(ALERT_SCORE,new_score)\n    \n    result_value = new_score\n    output_message = f\"The Alert Score has been updated to: {new_score}\"\n\n    siemplify.end(output_message, result_value, EXECUTION_STATE_COMPLETED)\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 3.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0",
+      "Description": "The value to increment or decrement the alert score by.",
+      "Name": "Input",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1620898507080,
+      "ModificationTimeUnixTimeInMs": 1620898507080
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1620898507069,
+  "ModificationTimeUnixTimeInMs": 1620898507073
+}

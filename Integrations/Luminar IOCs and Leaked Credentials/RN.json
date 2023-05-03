@@ -1,0 +1,26 @@
+[
+    {
+        "ChangeDescription": "NEW! Luminar IOCs and Leaked Credentials integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Luminar IOCs and Leaked Credentials",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1673866181
+    },
+    {
+        "ChangeDescription": "Publisher name updated",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Luminar IOCs and Leaked Credentials",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1673866181
+    }
+]

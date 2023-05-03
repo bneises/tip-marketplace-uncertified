@@ -1,0 +1,73 @@
+{
+    "Identifier": "PerimeterX",
+    "PackageName": "PerimeterX",
+    "DisplayName": "PerimeterX",
+    "Description": "Integration of PerimeterX Code Defender alerting with Siemplify",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1609944830310,
+            "Id": 0,
+            "IntegrationIdentifier": "PerimeterX",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1609944830310,
+            "PropertyDescription": "API Key used to connect to Slack",
+            "PropertyDisplayName": "Slack API Key",
+            "PropertyName": "Slack API Key",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1609944830310,
+            "Id": 0,
+            "IntegrationIdentifier": "PerimeterX",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1609944830310,
+            "PropertyDescription": "Enter the slack channel name without the preceding \"#\". If your slack channel name is \"#cd_alerts\", then enter \"cd_alerts\"",
+            "PropertyDisplayName": "Slack Channel",
+            "PropertyName": "Slack Channel",
+            "PropertyType": 2,
+            "Value": "cd_alerts"
+        }
+    ],
+    "Actions": [
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Slack Connector For Code Defender"
+    ],
+    "Managers": [
+        "PerimeterXManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! PerimeterX Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1610026158000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1635784902000
+        },
+        {
+            "Items": [
+                "Updated Integration PNG."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1636273168000
+        }
+    ]
+}

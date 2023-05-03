@@ -1,0 +1,19 @@
+{
+    "Identifier": "EmailUtilities",
+    "PackageName": "EmailUtilities",
+    "DisplayName": "EmailUtilities",
+    "Description": "A set of utility actions to assist with working with emails.  Includes tools to parse EML and MSG files as well as actions to analyze the parsed results.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 20.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

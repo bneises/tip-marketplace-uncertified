@@ -1,0 +1,85 @@
+{
+    "Identifier": "Asana",
+    "PackageName": "Asana",
+    "DisplayName": "Asana",
+    "Description": "Asana is a software-as-a-service designed to improve team collaboration and work management. It helps teams manage projects and tasks in one tool. Teams can create projects, assign work to teammates, specify deadlines, and communicate about tasks directly in Asana.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Asana",
+            "PropertyName": "Token",
+            "PropertyDescription": "The personal access token",
+            "PropertyDisplayName": "Token",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1632127676243,
+            "ModificationTimeUnixTimeInMs": 1632127676243
+        },
+        {
+            "IntegrationIdentifier": "Asana",
+            "PropertyName": "Base URL",
+            "PropertyDescription": "Base URL",
+            "PropertyDisplayName": "Base URL",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "https://app.asana.com/api/1.0",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1632127676243,
+            "ModificationTimeUnixTimeInMs": 1632127676243
+        }
+    ],
+    "Actions": [
+        "Add User To Workspace",
+        "Create Task",
+        "Get Task",
+        "List My Tasks",
+        "List Project Tasks",
+        "Ping",
+        "Remove User From Workspace",
+        "Update Task"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "AsanaManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 4.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Asana Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602500675000
+        },
+        {
+            "Items": [
+                "Fixed integration Manager."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1621338391000
+        },
+        {
+            "Items": [
+                "Fixed integration parameters."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1621530898000
+        },
+        {
+            "Items": [
+                "Fixed integration Manager + Mandatory Params"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1632129695000
+        }
+    ]
+}

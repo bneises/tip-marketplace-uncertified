@@ -1,0 +1,46 @@
+{
+  "Name": "Wait for Playbook to Complete",
+  "Description": "This action will cause a playbook to wait until another playbook or block, that is running on the same alert, completes.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_INPROGRESS\nGET_CASE_FULL_DETAILS = '{}/external/v1/cases/GetCaseFullDetails/{}'\nGET_ALERT_WFS = '{}/external/v1/cases/GetWorkflowInstancesCards?format=camel'\n\n\nWF_STATUS_INPROGRESS = 1\nWF_STATUS_COMPLETED = 2\nWF_STATUS_FAILED = 3\nWF_STATUS_PENDING = 4\nWF_STATUS_TERMINATED = 5\n\n\ndef get_wf_status(siemplify, workflow_name):\n    res = siemplify.session.get(GET_CASE_FULL_DETAILS.format(siemplify.API_ROOT, siemplify.case_id))\n    siemplify.validate_siemplify_error(res)\n    case = res.json()\n    current_alert_index = None\n    alerts = sorted(case[\"alerts\"], key=lambda x: x[\"creationTimeUnixTimeInMs\"], reverse=True)\n    alert_id = None\n    for alert in alerts:\n        if alert[\"identifier\"] == siemplify.alert_id:\n            alert_id = alert['additionalProperties']['alertGroupIdentifier']\n            current_alert_index = case[\"alerts\"].index(alert)\n    payload = {}\n    payload['caseId'] = siemplify.case_id\n    payload['alertIdentifier'] = alert_id\n    alert_wfs_res = siemplify.session.post(GET_ALERT_WFS.format(siemplify.API_ROOT), json=payload)\n    siemplify.validate_siemplify_error(alert_wfs_res)\n    for alert_wf in alert_wfs_res.json():\n        if alert_wf['name'] == workflow_name:\n            return alert_wf['status']\n            \n    \n \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = \"Wait for Playbook to Complete\"\n    playbook_name = siemplify.parameters.get(\"Playbook Name\", None)\n    wf_status = get_wf_status(siemplify, playbook_name)\n    \n    \n    if wf_status == WF_STATUS_COMPLETED:\n        output_message = f\"Alert Id: {siemplify.current_alert.identifier}, Playbook: {playbook_name} Finished. Lock Released. \"\n        result_value = 'true'\n        status = EXECUTION_STATE_COMPLETED\n    elif wf_status == WF_STATUS_FAILED:\n        output_message = f\"Alert Id: {siemplify.current_alert.identifier}, Playbook: {playbook_name} Failed. Lock Released. \"\n        result_value = 'true'\n        status = EXECUTION_STATE_COMPLETED\n    elif wf_status == WF_STATUS_TERMINATED:\n        output_message = f\"Alert Id: {siemplify.current_alert.identifier}, Playbook: {playbook_name} terminated. Lock Released. \"\n        result_value = 'true'\n        status = EXECUTION_STATE_COMPLETED\n    elif wf_status == WF_STATUS_INPROGRESS or wf_status == WF_STATUS_PENDING:\n        \n        output_message = f\"Alert Id: {siemplify.current_alert.identifier}: Playbook {playbook_name} Inprogress. Current playbook locked.\"\n        result_value = 'false'\n        status = EXECUTION_STATE_INPROGRESS\n    else:\n        output_message = f\"Alert Id: {siemplify.current_alert.identifier}: Playbook {playbook_name} not found.\"\n        result_value = 'true'\n        status =         status = EXECUTION_STATE_COMPLETED\n\n\n    siemplify.end(output_message, result_value, status)\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "IsAsync": true,
+  "Version": 3.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The name of the playbook or block.",
+      "Name": "Playbook Name",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635340804117,
+      "ModificationTimeUnixTimeInMs": 1635340804117
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635340804104,
+  "ModificationTimeUnixTimeInMs": 1635340804105
+}

@@ -1,0 +1,69 @@
+{
+  "Name": "Get Metric Timeseries Points",
+  "Description": "Get metrics timeseries points of a given query.\nFor more information: https://docs.datadoghq.com/api/latest/snapshots/",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\n\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = \"\"\n\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    query_to_search = siemplify.extract_action_param( \"Query\")\n    start_time = siemplify.extract_action_param(\"Start Time\")\n    end_time = siemplify.extract_action_param(\"End Time\")\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n\n\n    metrics_timeseries_points = datadog_manager.get_timeseries_point_metrics(query_to_search, start_time, end_time)\n    if metrics_timeseries_points.get('status')=='ok' and len(metrics_timeseries_points.get('series')) > 0:\n        siemplify.LOGGER.info(f\"The timeseries points of the query {query_to_search} were found successfully\")\n        result_value = True\n        output_message = f\"The timeseries points of the query {query_to_search} were found successfully\"\n    \n    else:\n        siemplify.LOGGER.info(f\"The metric for the query {query_to_search} wasn't found.\")\n        output_message = f\"The metrics for the query '{query_to_search}' wasn't found.\"\n    \n    siemplify.result.add_result_json(metrics_timeseries_points)\n\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n  \"from_date\": \"integer\",\r\n  \"group_by\": [],\r\n  \"message\": \"string\",\r\n  \"query\": \"string\",\r\n  \"res_type\": \"time_series\",\r\n  \"series\": [\r\n    {\r\n      \"aggr\": \"avg\",\r\n      \"display_name\": \"system.cpu.idle\",\r\n      \"end\": \"integer\",\r\n      \"expression\": \"system.cpu.idle{host:foo,env:test}\",\r\n      \"interval\": \"integer\",\r\n      \"length\": \"integer\",\r\n      \"metric\": \"system.cpu.idle\",\r\n      \"pointlist\": [\r\n        1575317847,\r\n        0.5\r\n      ],\r\n      \"scope\": \"host:foo,env:test\",\r\n      \"start\": \"integer\",\r\n      \"unit\": [\r\n        {\r\n          \"family\": \"time\",\r\n          \"name\": \"minute\",\r\n          \"plural\": \"minutes\",\r\n          \"scale_factor\": 60,\r\n          \"short_name\": \"min\"\r\n        }\r\n      ]\r\n    }\r\n  ],\r\n  \"status\": \"ok\",\r\n  \"to_date\": \"integer\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 35.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1610557457",
+      "Description": "The end time of the timeseries points in Unixtime.",
+      "Name": "End Time",
+      "Value": "1610557457",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532217,
+      "ModificationTimeUnixTimeInMs": 1615195532217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1400000470",
+      "Description": "The start time of the timeseries points in Unixtime.",
+      "Name": "Start Time",
+      "Value": "1400000470",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532217,
+      "ModificationTimeUnixTimeInMs": 1615195532217
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "avg:aws.rds.dbload{dbinstanceidentifier:db}by{dbinstanceidentifier}",
+      "Description": "The metric query which you want to get the timeseries points.\nFor example: ",
+      "Name": "Query",
+      "Value": "avg:aws.rds.dbload{dbinstanceidentifier:db}by{dbinstanceidentifier}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532217,
+      "ModificationTimeUnixTimeInMs": 1615195532217
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532214,
+  "ModificationTimeUnixTimeInMs": 1615195532214
+}

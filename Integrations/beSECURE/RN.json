@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "Updated the integration's categories.\n",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 8.0,
+        "ItemName": "beSECURE",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1630059393
+    }
+]

@@ -1,0 +1,73 @@
+{
+  "Name": "Upload File From Base64",
+  "Description": "Uploads a Base64 to Google Drive",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleDriveManager import GoogleDriveManager\n\nIDENTIFIER = u'Google Drive'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    base64_string = siemplify.extract_action_param(param_name=u'Base64 String', is_mandatory=True)\n    file_name = siemplify.extract_action_param(param_name=u'File Name', is_mandatory=True)\n    share_to_emails = siemplify.extract_action_param(param_name=u'Share with emails')\n\n    google_drive_manager = GoogleDriveManager(credentials_json)\n    res = google_drive_manager.upload_file_from_base64(file_name,base64_string)\n    file_id = res['id']\n    if share_to_emails:\n        emails = share_to_emails.split(\";\")\n        for email in emails:\n            google_drive_manager.insert_permission(file_id,'writer',email)\n\n    siemplify.result.add_result_json(res)\n\n    siemplify.end('File was uploaded to Google Drive successfully', res['id'], EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Drive",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"kind\": \"drive#file\",\n  \"id\": \"1UK6HruAvkNLHOAZdaO0iDKFdzU6CwazE\",\n  \"name\": \"Hello.txt\",\n  \"mimeType\": \"text/plain\",\n  \"starred\": false,\n  \"trashed\": false,\n  \"explicitlyTrashed\": false,\n  \"parents\": [\n    \"0ADdNAjNcLms6Uk9PVA\"\n  ],\n  \"spaces\": [\n    \"drive\"\n  ],\n  \"version\": \"4\",\n  \"webContentLink\": \"https://drive.google.com/uc?id=1UK6HruAvkNLHOAZdaO0iDKFdzU6CwazE&export=download\",\n  \"webViewLink\": \"https://drive.google.com/file/d/1UK6HruAvkNLHOAZdaO0iDKFdzU6CwazE/view?usp=drivesdk\",\n  \"iconLink\": \"https://drive-thirdparty.googleusercontent.com/16/type/text/plain\",\n  \"hasThumbnail\": true,\n  \"thumbnailLink\": \"https://lh3.googleusercontent.com/f6Gk8Rn7-pu-6xsekHcrKVl5d4Z9EduGvdyJmiUCuZSyCM1JCla6ywYgsDN1qPA3B6CWmYxUpxo=s220\",\n  \"thumbnailVersion\": \"1\",\n  \"viewedByMe\": false,\n  \"createdTime\": \"2020-10-03T12:12:57.070Z\",\n  \"modifiedTime\": \"2020-10-03T12:12:57.984Z\",\n  \"modifiedByMeTime\": \"2020-10-03T12:12:57.984Z\",\n  \"modifiedByMe\": true,\n  \"owners\": [\n    {\n      \"kind\": \"drive#user\",\n      \"displayName\": \"alon-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n      \"me\": true,\n      \"permissionId\": \"02214475487724192531\",\n      \"emailAddress\": \"alon-api@quickstart-1550908020996.iam.gserviceaccount.com\"\n    }\n  ],\n  \"lastModifyingUser\": {\n    \"kind\": \"drive#user\",\n    \"displayName\": \"alon-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n    \"me\": true,\n    \"permissionId\": \"02214475487724192531\",\n    \"emailAddress\": \"alon-api@quickstart-1550908020996.iam.gserviceaccount.com\"\n  },\n  \"shared\": true,\n  \"ownedByMe\": true,\n  \"capabilities\": {\n    \"canAddChildren\": false,\n    \"canAddMyDriveParent\": false,\n    \"canChangeCopyRequiresWriterPermission\": true,\n    \"canChangeViewersCanCopyContent\": true,\n    \"canComment\": true,\n    \"canCopy\": true,\n    \"canDelete\": true,\n    \"canDownload\": true,\n    \"canEdit\": true,\n    \"canListChildren\": false,\n    \"canModifyContent\": true,\n    \"canMoveChildrenWithinDrive\": false,\n    \"canMoveItemIntoTeamDrive\": true,\n    \"canMoveItemOutOfDrive\": true,\n    \"canMoveItemWithinDrive\": true,\n    \"canReadRevisions\": true,\n    \"canRemoveChildren\": false,\n    \"canRemoveMyDriveParent\": true,\n    \"canRename\": true,\n    \"canShare\": true,\n    \"canTrash\": true,\n    \"canUntrash\": true\n  },\n  \"viewersCanCopyContent\": true,\n  \"copyRequiresWriterPermission\": false,\n  \"writersCanShare\": true,\n  \"permissions\": [\n    {\n      \"kind\": \"drive#permission\",\n      \"id\": \"07712505579216618120\",\n      \"type\": \"user\",\n      \"emailAddress\": \"alon@siemplify.co\",\n      \"role\": \"writer\",\n      \"displayName\": \"Alon Cohen\",\n      \"photoLink\": \"https://lh3.googleusercontent.com/a-/AOh14GiMxKieoHd_kj45ZZ1IMl6XDsZMh4gFeXRmRi6LIg=s64\",\n      \"deleted\": false\n    },\n    {\n      \"kind\": \"drive#permission\",\n      \"id\": \"02214475487724192531\",\n      \"type\": \"user\",\n      \"emailAddress\": \"alon-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n      \"role\": \"owner\",\n      \"displayName\": \"alon-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n      \"deleted\": false\n    }\n  ],\n  \"permissionIds\": [\n    \"07712505579216618120\",\n    \"02214475487724192531\"\n  ],\n  \"originalFilename\": \"Hello.txt\",\n  \"fullFileExtension\": \"txt\",\n  \"fileExtension\": \"txt\",\n  \"md5Checksum\": \"65a8e27d8879283831b664bd8b7f0ad4\",\n  \"size\": \"13\",\n  \"quotaBytesUsed\": \"13\",\n  \"headRevisionId\": \"0BzdNAjNcLms6UERwdmFEdUZ4eXNWbTFFQ3pEdlAwZ1ppLzZ3PQ\",\n  \"isAppAuthorized\": true\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 28.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "example.txt",
+      "Description": "The file name you would like to upload in Base64 format.",
+      "Name": "File Name",
+      "Value": "example.txt",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810804,
+      "ModificationTimeUnixTimeInMs": 1614708810804
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email1@gmail.com;email2@gmail.com",
+      "Description": "Email address of the person you would like to add permission to the file. You can add multiple emails by adding \";\" as a separator. ",
+      "Name": "Share with emails",
+      "Value": "email1@gmail.com;email2@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810804,
+      "ModificationTimeUnixTimeInMs": 1614708810804
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "SGVsbG8sIFdvcmxkIQ==",
+      "Description": "The file Base64 String",
+      "Name": "Base64 String",
+      "Value": "SGVsbG8sIFdvcmxkIQ==",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810804,
+      "ModificationTimeUnixTimeInMs": 1614708810804
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1611736073208,
+  "ModificationTimeUnixTimeInMs": 1614708810800
+}

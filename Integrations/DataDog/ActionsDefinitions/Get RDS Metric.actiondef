@@ -1,0 +1,69 @@
+{
+  "Name": "Get RDS Metric",
+  "Description": "Gets AWS RDS metrics for a given Database instance identifier (CPU, memory and storage)\nFor more information about Metrics: https://docs.datadoghq.com/api/latest/metrics/#query-timeseries-points\nFor more information about AWS RDS metrics: https://docs.datadoghq.com/integrations/amazon_rds/?tab=standard",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    result_value = False\n    output_message = \"\"\n    found_db_identifier = {}\n    not_found_db_identifier = []\n\n    rds_metric ={}\n    json_result = {}\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    db_instance_identifier_list = siemplify.extract_action_param(\"Database Instance Identifier\")\n    start_time = siemplify.extract_action_param(\"Start Time\")\n    end_time = siemplify.extract_action_param(\"End Time\")\n    \n    datadog_manager = DataDogManager(api_key, app_key)\n    \n    #Converting the DataBase instance identifier into a list\n    if db_instance_identifier_list is not None:\n        db_instance_identifier_list = db_instance_identifier_list.split(',')\n        \n    for db_identifier in db_instance_identifier_list:\n        db_identifier = db_identifier.strip()\n\n        aws_rds_cpu = datadog_manager.get_aws_rds_metrics_cpu(db_identifier, start_time, end_time)\n        if aws_rds_cpu.get('status') == 'ok' and len(aws_rds_cpu.get('series')) > 0:\n            siemplify.LOGGER.info(f'The CPU of {db_identifier}  was fetched successfully.')\n            rds_metric[\"db_CPU\"] = aws_rds_cpu\n            result_value = True\n        else:\n            siemplify.LOGGER.info(f\"The CPU of {db_identifier} wasn't fetched.\")\n\n        aws_rds_memory = datadog_manager.get_aws_rds_metrics_memory(db_identifier, start_time, end_time)\n        if aws_rds_memory.get('status')=='ok' and len(aws_rds_memory.get('series')) > 0:\n            siemplify.LOGGER.info(f'The memory usage of {db_identifier} was fetched successfully')\n            rds_metric[\"db_memory\"] = aws_rds_memory\n            result_value = True\n\n        else:\n            siemplify.LOGGER.info(f\"The memory of {db_identifier} wasn't fetched\")\n        \n        aws_rds_storage = datadog_manager.get_aws_rds_metrics_storage(db_identifier, start_time, end_time)\n        if aws_rds_storage.get('status') == 'ok'and len(aws_rds_storage.get('series')) > 0:\n            siemplify.LOGGER.info(f'The free storage of {db_identifier} was fetched successfully')\n            rds_metric[\"db_free_storage\"] = aws_rds_storage\n            result_value = True\n\n        else:\n            siemplify.LOGGER.info(f\"The free storage of {db_identifier} wasn't fetched\")\n\n        if bool(rds_metric)==True:\n            found_db_identifier[f\"db_instance_identifier: {db_identifier}\"] = rds_metric\n            output_message = f\"The metric of {db_instance_identifier_list} was found successfully\"\n            result_value = True\n        else:\n            not_found_db_identifier.append(db_identifier)\n            output_message = f\"The metric of {db_identifier} wasn't found\"\n            \n    json_result[\"founded_db_instance_identifier\"] = found_db_identifier\n    json_result[\"not_found_db_instance_identifier\"] = not_found_db_identifier\n    siemplify.result.add_result_json(json_result)\n\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"founded_db_instance_identifier\": {\r\n\t\t\"db_instance_identifier: db_instance\": {\r\n\t\t\t\"db_CPU\": {\r\n\t\t\t\t\"status\": \"ok\",\r\n\t\t\t\t\"res_type\": \"time_series\",\r\n\t\t\t\t\"from_date\": 1507040000000,\r\n\t\t\t\t\"series\": [{\r\n\t\t\t\t\t\"end\": 1587686399000,\r\n\t\t\t\t\t\"attributes\": {},\r\n\t\t\t\t\t\"metric\": \"aws.rds.cpuutilization\",\r\n\t\t\t\t\t\"interval\": 604800,\r\n\t\t\t\t\t\"tag_set\": [\"dbinstanceidentifier:db_instance\"],\r\n\t\t\t\t\t\"start\": 1587081600000,\r\n\t\t\t\t\t\"length\": 1,\r\n\t\t\t\t\t\"query_index\": 0,\r\n\t\t\t\t\t\"aggr\": \"avg\",\r\n\t\t\t\t\t\"scope\": \"dbinstanceidentifier:db_instance\",\r\n\t\t\t\t\t\"pointlist\": [\r\n\t\t\t\t\t\t[1587081600000.0, 2.742857142857143]\r\n\t\t\t\t\t],\r\n\t\t\t\t\t\"expression\": \"avg:aws.rds.cpuutilization{dbinstanceidentifier:db_instance}\",\r\n\t\t\t\t\t\"unit\": [{\r\n\t\t\t\t\t\t\"family\": \"percentage\",\r\n\t\t\t\t\t\t\"scale_factor\": 1.0,\r\n\t\t\t\t\t\t\"name\": \"percent\",\r\n\t\t\t\t\t\t\"short_name\": \"%\",\r\n\t\t\t\t\t\t\"plural\": \"percent\",\r\n\t\t\t\t\t\t\"id\": 17\r\n\t\t\t\t\t}, null],\r\n\t\t\t\t\t\"display_name\": \"aws.rds.cpuutilization\"\r\n\t\t\t\t}],\r\n\t\t\t\t\"to_date\": 1610557457000,\r\n\t\t\t\t\"resp_version\": 1,\r\n\t\t\t\t\"query\": \"avg:aws.rds.cpuutilization{dbinstanceidentifier:db_instance}by{dbinstanceidentifier}\",\r\n\t\t\t\t\"message\": \"\",\r\n\t\t\t\t\"group_by\": [\"dbinstanceidentifier\"]\r\n\t\t\t},\r\n\t\t\t\"db_memory\": {\r\n\t\t\t\t\"status\": \"ok\",\r\n\t\t\t\t\"res_type\": \"time_series\",\r\n\t\t\t\t\"from_date\": 1507040000000,\r\n\t\t\t\t\"series\": [{\r\n\t\t\t\t\t\"end\": 1587686399000,\r\n\t\t\t\t\t\"attributes\": {},\r\n\t\t\t\t\t\"metric\": \"aws.rds.freeable_memory\",\r\n\t\t\t\t\t\"interval\": 604800,\r\n\t\t\t\t\t\"tag_set\": [\"dbinstanceidentifier:db_instance\"],\r\n\t\t\t\t\t\"start\": 1587081600000,\r\n\t\t\t\t\t\"length\": 1,\r\n\t\t\t\t\t\"query_index\": 0,\r\n\t\t\t\t\t\"aggr\": \"avg\",\r\n\t\t\t\t\t\"scope\": \"dbinstanceidentifier:db_instance\",\r\n\t\t\t\t\t\"pointlist\": [\r\n\t\t\t\t\t\t[1587081600000.0, 5265705327.589744]\r\n\t\t\t\t\t],\r\n\t\t\t\t\t\"expression\": \"avg:aws.rds.freeable_memory{dbinstanceidentifier:db_instance}\",\r\n\t\t\t\t\t\"unit\": [{\r\n\t\t\t\t\t\t\"family\": \"bytes\",\r\n\t\t\t\t\t\t\"scale_factor\": 1.0,\r\n\t\t\t\t\t\t\"name\": \"byte\",\r\n\t\t\t\t\t\t\"short_name\": \"B\",\r\n\t\t\t\t\t\t\"plural\": \"bytes\",\r\n\t\t\t\t\t\t\"id\": 2\r\n\t\t\t\t\t}, null],\r\n\t\t\t\t\t\"display_name\": \"aws.rds.freeable_memory\"\r\n\t\t\t\t}],\r\n\t\t\t\t\"to_date\": 1610557457000,\r\n\t\t\t\t\"resp_version\": 1,\r\n\t\t\t\t\"query\": \"avg:aws.rds.freeable_memory{dbinstanceidentifier:db_instance}by{dbinstanceidentifier}\",\r\n\t\t\t\t\"message\": \"\",\r\n\t\t\t\t\"group_by\": [\"dbinstanceidentifier\"]\r\n\t\t\t},\r\n\t\t\t\"db_free_storage\": {\r\n\t\t\t\t\"status\": \"ok\",\r\n\t\t\t\t\"res_type\": \"time_series\",\r\n\t\t\t\t\"from_date\": 1507040000000,\r\n\t\t\t\t\"series\": [{\r\n\t\t\t\t\t\"end\": 1587686399000,\r\n\t\t\t\t\t\"attributes\": {},\r\n\t\t\t\t\t\"metric\": \"aws.rds.free_storage_space\",\r\n\t\t\t\t\t\"interval\": 604800,\r\n\t\t\t\t\t\"tag_set\": [\"dbinstanceidentifier:db_instance\"],\r\n\t\t\t\t\t\"start\": 1587081600000,\r\n\t\t\t\t\t\"length\": 1,\r\n\t\t\t\t\t\"query_index\": 0,\r\n\t\t\t\t\t\"aggr\": \"avg\",\r\n\t\t\t\t\t\"scope\": \"dbinstanceidentifier:db_instance\",\r\n\t\t\t\t\t\"pointlist\": [\r\n\t\t\t\t\t\t[1587081600000.0, 32846995456.0]\r\n\t\t\t\t\t],\r\n\t\t\t\t\t\"expression\": \"avg:aws.rds.free_storage_space{dbinstanceidentifier:db_instance}\",\r\n\t\t\t\t\t\"unit\": [{\r\n\t\t\t\t\t\t\"family\": \"bytes\",\r\n\t\t\t\t\t\t\"scale_factor\": 1.0,\r\n\t\t\t\t\t\t\"name\": \"byte\",\r\n\t\t\t\t\t\t\"short_name\": \"B\",\r\n\t\t\t\t\t\t\"plural\": \"bytes\",\r\n\t\t\t\t\t\t\"id\": 2\r\n\t\t\t\t\t}, null],\r\n\t\t\t\t\t\"display_name\": \"aws.rds.free_storage_space\"\r\n\t\t\t\t}],\r\n\t\t\t\t\"to_date\": 1610557457000,\r\n\t\t\t\t\"resp_version\": 1,\r\n\t\t\t\t\"query\": \"avg:aws.rds.free_storage_space{dbinstanceidentifier:db_instance}by{dbinstanceidentifier}\",\r\n\t\t\t\t\"message\": \"\",\r\n\t\t\t\t\"group_by\": [\"dbinstanceidentifier\"]\r\n\t\t\t}\r\n\t\t}\r\n\t},\r\n\t\"not_found_db_instance_identifier\": []\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 94.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1610557457",
+      "Description": "The end time of the Pod metric in Unixtime.",
+      "Name": "End Time",
+      "Value": "1610557457",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532225,
+      "ModificationTimeUnixTimeInMs": 1615195532225
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1507040000",
+      "Description": "The start time of the RDS metric in Unixtime.",
+      "Name": "Start Time",
+      "Value": "1507040000",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532225,
+      "ModificationTimeUnixTimeInMs": 1615195532225
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "identifier1",
+      "Description": "The identifier of the data base which you want to get the metrics to.\nidentifier1, identifier2",
+      "Name": "Database Instance Identifier",
+      "Value": "identifier1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1615195532225,
+      "ModificationTimeUnixTimeInMs": 1615195532225
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532221,
+  "ModificationTimeUnixTimeInMs": 1615195532221
+}

@@ -1,0 +1,101 @@
+{
+  "Name": "Run Query",
+  "Description": "",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import (add_prefix_to_dict_keys, construct_csv, dict_to_flat)\nfrom FlashpointManager import FlashpointManager\nimport json\n\nADDRESS = EntityTypes.ADDRESS\nSCRIPT_NAME = \"Flashpoint - Run Query\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    conf = siemplify.get_configuration(\"Flashpoint\")\n    api_key = conf[\"API Key\"]\n    \n    query_content = siemplify.extract_action_param(\"Query\")\n    result_count_limit = siemplify.extract_action_param(\"Results count limit\")\n    date_range = siemplify.extract_action_param(\"Date Range\")\n    sort_by = siemplify.extract_action_param(\"Sort By\")\n    tags = siemplify.extract_action_param(\"Tags\")\n\n    flashpoint_manager = FlashpointManager(api_key)\n\n    query_response = flashpoint_manager.run_custom_query(query_content, result_count_limit, date_range, sort_by, tags)\n\n    result_value = True\n    output_message = \"The query was sent successfully\"\n    \n    # add json\n    siemplify.result.add_result_json(query_response)\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Flashpoint",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 57.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "\"+basetypes:+indicator\"",
+      "Description": "Query content, for example:\n+{basetypes}:{the basetypes you want to search for}\nThis query search for blog posts that were posted in the past year",
+      "Name": "Query",
+      "Value": "\"+basetypes:+indicator\"",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560999,
+      "ModificationTimeUnixTimeInMs": 1616671560999
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "100",
+      "Description": "The amount limit of the results.",
+      "Name": "Results count limit",
+      "Value": "100",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560999,
+      "ModificationTimeUnixTimeInMs": 1616671560999
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "\"posted_at:desc,title:as\"",
+      "Description": "Sort by the given fields, for example:\n\"posted_at : desc, title : asc\"",
+      "Name": "Sort By",
+      "Value": "\"posted_at:desc,title:as\"",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560999,
+      "ModificationTimeUnixTimeInMs": 1616671560999
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "+tag_1,+tag2",
+      "Description": "A comma separated  list of tags for filtering, for example:\ntags = +tag_1, +tag_2\nwill return all documents which: \nhave both tag_1 and tag_2 \n",
+      "Name": "Tags",
+      "Value": "+tag_1,+tag2",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560999,
+      "ModificationTimeUnixTimeInMs": 1616671560999
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "[now-1y TO now]",
+      "Description": "The dates range to present the data, for example:\n+nist.updated_at.date-time:​[now-30d TO now]\nNote: see date fields table",
+      "Name": "Date Range",
+      "Value": "[now-1y TO now]",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671560999,
+      "ModificationTimeUnixTimeInMs": 1616671560999
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616671560996,
+  "ModificationTimeUnixTimeInMs": 1617199845697
+}

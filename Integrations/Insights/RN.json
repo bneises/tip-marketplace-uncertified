@@ -1,0 +1,24 @@
+[
+    {
+        "ChangeDescription": "NEW! Insights integration to power up playbook capabilities.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Insights",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx"
+    },
+    {
+        "ChangeDescription": "Update! Create Entity Insight From JSON - Brackets have been removed from output and insights are enabled.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Insights",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx"
+    }
+]

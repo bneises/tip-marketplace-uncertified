@@ -1,0 +1,59 @@
+{
+  "Name": "Ping",
+  "Description": "",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_FAILED\n\nfrom AlertsManager import SixgillEnrichManager, PROVIDER\n\n\n@output_handler\ndef main():\n    try:\n        siemplify = SiemplifyAction()\n        siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n        client_id = siemplify.extract_configuration_param(PROVIDER, \"Client Id\")\n        client_secret = siemplify.extract_configuration_param(PROVIDER, \"Client Secret\")\n        siemplify.LOGGER.info('----------------- Main - Started -----------------')\n        sixgill_manager = SixgillEnrichManager(client_id, client_secret)\n        status, message, result = sixgill_manager.create_sixgill_client()\n    except Exception as e:\n        message = f\"Failed to connect to Cybersixgill... Error is {e}\"\n        siemplify.LOGGER.error(message)\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result = False\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n    siemplify.LOGGER.info(f'\\n  status: {status}\\n  result_value: {result}\\n  output_message: {message}')\n    siemplify.end(message, result, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Cybersixgill Actionable Alerts",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 3.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "clientid",
+      "Description": "Client Id",
+      "Name": "Client Id",
+      "Value": "clientid",
+      "Type": 12,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1675932542984,
+      "ModificationTimeUnixTimeInMs": 1675932542984
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "secretkey",
+      "Description": "Client Secret",
+      "Name": "Client Secret",
+      "Value": "secretkey",
+      "Type": 12,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1675932542984,
+      "ModificationTimeUnixTimeInMs": 1675932542984
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1669820342674,
+  "ModificationTimeUnixTimeInMs": 1675932542976
+}

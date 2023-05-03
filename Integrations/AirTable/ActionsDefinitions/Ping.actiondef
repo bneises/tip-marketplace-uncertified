@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "Test connection to the AirTable product",
+  "Script": "from SiemplifyAction import *\nfrom airtable import Airtable\nfrom airtable.auth import AirtableAuth\nimport json, sys\nfrom datetime import datetime\nfrom datetime import timedelta\n\nINTEGRATION_NAME = \"AirTable\"\n\n\ndef main():\n    siemplify = SiemplifyAction()\n    \n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Api key\")\n    base_id = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Base id\")\n    table_name = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Table name\")\n\n\n    airtable = Airtable(base_id, table_name, api_key)\n    res = airtable.get_all(maxRecords=1)\n    siemplify.end('AirTable is connected', True)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "AirTable",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Alon",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1603730199484,
+  "ModificationTimeUnixTimeInMs": 1603730199484
+}

@@ -1,0 +1,103 @@
+{
+    "Identifier": "DUO",
+    "PackageName": "DUO",
+    "DisplayName": "DUO",
+    "Description": "Cisco's MFA Solution. Duo is engineered to provide a simple, streamlined login experience for every user and application, and as a cloud-based solution, it integrates easily with your existing technology.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "DUO",
+            "PropertyName": "API Hostname",
+            "PropertyDescription": "API hostname for your tenant: api-XXXXXXXX.duosecurity.com.",
+            "PropertyDisplayName": "API Hostname",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "api-XXXXXXXX.duosecurity.com",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1635867539455,
+            "ModificationTimeUnixTimeInMs": 1635867539455
+        },
+        {
+            "IntegrationIdentifier": "DUO",
+            "PropertyName": "Admin Secret Key",
+            "PropertyDescription": "The Duo Admin API provides programmatic access to the administrative functionality of Duo Security's two-factor authentication platform.\nhttps://duo.com/docs/adminapi",
+            "PropertyDisplayName": "Admin Secret Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1635867539455,
+            "ModificationTimeUnixTimeInMs": 1635867539455
+        },
+        {
+            "IntegrationIdentifier": "DUO",
+            "PropertyName": "Admin Integration Key",
+            "PropertyDescription": "The Duo Admin API provides programmatic access to the administrative functionality of Duo Security's two-factor authentication platform.\nhttps://duo.com/docs/adminapi",
+            "PropertyDisplayName": "Admin Integration Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1635867539455,
+            "ModificationTimeUnixTimeInMs": 1635867539455
+        },
+        {
+            "IntegrationIdentifier": "DUO",
+            "PropertyName": "Auth Integration Key",
+            "PropertyDescription": "The Duo Auth API is a low-level, RESTful API for adding strong two-factor authentication to your website or application.\n\nhttps://duo.com/docs/authapi",
+            "PropertyDisplayName": "Auth Integration Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1635867539455,
+            "ModificationTimeUnixTimeInMs": 1635867539455
+        },
+        {
+            "IntegrationIdentifier": "DUO",
+            "PropertyName": "Auth Secret Key",
+            "PropertyDescription": "The Duo Auth API is a low-level, RESTful API for adding strong two-factor authentication to your website or application.\n\nhttps://duo.com/docs/authapi",
+            "PropertyDisplayName": "Auth Secret Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1635867539455,
+            "ModificationTimeUnixTimeInMs": 1635867539455
+        }
+    ],
+    "Actions": [
+        "Get Authentication Logs for User",
+        "Get Trust Monitor Events",
+        "Get Users by Name",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "DUO - Trust Monitor Connector"
+    ],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! DUO integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1631177455000
+        },
+        {
+            "Items": [
+                "Updated action \"Get Authentication Logs for User\" to account for responses from DUO's Authentication Logs that may not be present in all DUO tenants such as \"access_device\" which previously caused the action to fail if the value was missing."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1635933395000
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+  "Name": "Revoke Security Group Egress",
+  "Description": "Revokes the specified outbound IP permissions to a specific security group in a VPC.\nFor more information: \nhttps://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.revoke_security_group_egress",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom EC2Manager import EC2Manager\nimport json\n\n\nIDENTIFIER = \"AWS - EC2\"\nSCRIPT_NAME = \"AWS EC2 - Revoke Security Group Egress\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    output_message = \"\"\n    result_value = False\n    revoked_security_group = {}\n    \n    #Extracting the integration parameterssg-1a2b3c4d\n    access_key_id = siemplify.extract_configuration_param(IDENTIFIER,\"Access Key ID\")\n    secret_access_key = siemplify.extract_configuration_param(IDENTIFIER, \"Secret Access Key\")\n    default_region = siemplify.extract_configuration_param(IDENTIFIER, \"Default Region\")\n    \n    #Extracting the action parameters\n    group_id = siemplify.extract_action_param(\"Group ID\")\n    ip_permisssions = siemplify.extract_action_param(\"IP Permissions\")\n    \n    ip_permisssions_dict = [json.loads(ip_permisssions)]\n\n    #Creating an instance of EC2Manager object\n    ec2_manager = EC2Manager(access_key_id, secret_access_key, default_region)\n    \n    try:\n        revoked_security_group = ec2_manager.revoke_security_group_egress(group_id, ip_permisssions_dict)\n        siemplify.LOGGER.info(f\"The outbound ip permissions of the security group id {group_id} were revoked successfully\" )\n        siemplify.result.add_result_json(revoked_security_group)\n        print(json.dumps(revoked_security_group))\n        \n    except Exception as e:\n        siemplify.LOGGER.error(f\"Error occured when revoking the outbound ip permissions of the secrurity group id {group_id}.\\nError: {e}\")\n    \n    if revoked_security_group:\n        output_message = f\"The outbound ip permissions of the security group id {group_id} were revoked successfully\" \n        result_value = True\n\n    else:\n        output_message = \"An error occured, checks the logs\"\n        result = False\n        \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "AWS - EC2",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"Return\": \"True\",\r\n\t\"UnknownIpPermissions\": [{\r\n\t\t\"FromPort\": 123,\r\n\t\t\"IpProtocol\": \"string\",\r\n\t\t\"IpRanges\": [{\r\n\t\t\t\"CidrIp\": \"string\",\r\n\t\t\t\"Description\": \"string\"\r\n\t\t}],\r\n\t\t\"Ipv6Ranges\": [{\r\n\t\t\t\"CidrIpv6\": \"string\",\r\n\t\t\t\"Description\": \"string\"\r\n\t\t}],\r\n\t\t\"PrefixListIds\": [{\r\n\t\t\t\"Description\": \"string\",\r\n\t\t\t\"PrefixListId\": \"string\"\r\n\t\t}],\r\n\t\t\"ToPort\": 123,\r\n\t\t\"UserIdGroupPairs\": [{\r\n\t\t\t\"Description\": \"string\",\r\n\t\t\t\"GroupId\": \"string\",\r\n\t\t\t\"GroupName\": \"string\",\r\n\t\t\t\"PeeringStatus\": \"string\",\r\n\t\t\t\"UserId\": \"string\",\r\n\t\t\t\"VpcId\": \"string\",\r\n\t\t\t\"VpcPeeringConnectionId\": \"string\"\r\n\t\t}]\r\n\t}]\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 55.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "sg-1a2b3c4d",
+      "Description": "The security group ID which you want to revoke outbound IP permissions in a VPC (Virtual Private Cloud) egress.\n",
+      "Name": "Group ID",
+      "Value": "sg-1a2b3c4d",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172160010,
+      "ModificationTimeUnixTimeInMs": 1609172160010
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "{\"FromPort\": 80,\n\"IpProtocol\": \"tcp\",\n\"IpRanges\": [{\"CidrIp\": \"10.0.0.0/16\"}],\n\"ToPort\": 80}",
+      "Description": "The IP permissions in a JSON format.\nFor example:\n{\"FromPort\": 80,\"IpProtocol\": \"tcp\",\"IpRanges\": [{\"CidrIp\": \"10.0.0.0/16\"}],\"ToPort\": 80}",
+      "Name": "IP Permissions",
+      "Value": "{\"FromPort\": 80,\n\"IpProtocol\": \"tcp\",\n\"IpRanges\": [{\"CidrIp\": \"10.0.0.0/16\"}],\n\"ToPort\": 80}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172160010,
+      "ModificationTimeUnixTimeInMs": 1609172160010
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1609172160007,
+  "ModificationTimeUnixTimeInMs": 1609172160007
+}

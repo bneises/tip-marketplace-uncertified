@@ -1,0 +1,55 @@
+{
+  "Name": "Check List Subset",
+  "Description": "Check if one list is a subset of another list.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED\nimport json\n\ndef get_list_param(smp, param_name):\n    param = smp.extract_action_param(param_name, \" \")\n    try:\n        return set(json.loads(param))\n    except json.decoder.JSONDecodeError:\n        return set(filter(None, [x.strip() if not x.isdigit() else int(x) for x in param.split(',')]))\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    original = get_list_param(siemplify, \"Original\")\n    subset = get_list_param(siemplify, \"Subset\")\n    print(original, subset)\n\n    result_value = subset <= original\n\n    if result_value:\n        output_message = \"All items from the subset list are in the original list\"\n    else:\n        output_message = f\"Found items which are not in the original list: {','.join(sorted(str(x) for x in subset - original))}\"\n\n    siemplify.end(output_message, result_value)\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "List of items to check against. Json list or comma separated.",
+      "Name": "Original",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1645617536000,
+      "ModificationTimeUnixTimeInMs": 1645617536000
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Subset list.  Json list or comma separated.",
+      "Name": "Subset",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1645617536000,
+      "ModificationTimeUnixTimeInMs": 1645617536000
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1645617536000,
+  "ModificationTimeUnixTimeInMs": 1645617536000
+}

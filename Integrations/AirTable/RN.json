@@ -1,0 +1,99 @@
+[
+    {
+        "ChangeDescription": "NEW! Airtable Connector added to the integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 9.0,
+        "ItemName": "AirTable Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1603736324
+    },
+    {
+        "ChangeDescription": "NEW! Delete All Records added to the Airtable integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 9.0,
+        "ItemName": "Delete All Records",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1603736324
+    },
+    {
+        "ChangeDescription": "NEW! Get All Records added to the Airtable integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 9.0,
+        "ItemName": "Get All Records",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1603736324
+    },
+    {
+        "ChangeDescription": "Fixed bug in Airtable Connector",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 10.0,
+        "ItemName": "AirTable Connector",
+        "ItemType": "Connector",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1603895324
+    },
+    {
+        "ChangeDescription": "Added new Action: 'AddOrUpdate'.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 11.0,
+        "ItemName": "AirTable Action",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1625747968
+    },
+    {
+        "ChangeDescription": "Updated Airtable connector - added airtable record fields to event",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 12.0,
+        "ItemName": "Airtable connector",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1626614050
+    },
+    {
+        "ChangeDescription": "Updated the SVG Image",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 13.0,
+        "ItemName": "AirTable",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1626714756
+    },
+    {
+        "ChangeDescription": "Fixed Bug in AddOrUpdate Action",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 14.0,
+        "ItemName": "AirTable",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1628522710
+    }
+
+]

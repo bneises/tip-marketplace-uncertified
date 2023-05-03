@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test Connectivity",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyAction import SiemplifyAction\nimport http.client\nimport json\nimport re\n\nINTEGRATION_NAME = \"SendGrid\"\nSCRIPT_NAME = \"sendgrid_ping\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    siemplify.script_name = SCRIPT_NAME\n    output_message = \"\"\n    \n    configurations = siemplify.get_configuration('SendGrid')\n    api_token = configurations['API Token']\n    \n    result_value = False\n    \n    conn = http.client.HTTPSConnection(\"api.sendgrid.com\")\n    \n    payload = \"{}\"\n    headers = {}\n    headers['authorization'] = \"Bearer {}\".format(api_token)\n    \n    conn.request(\"GET\", \"/v3/scopes\", payload, headers)\n    \n    result_value = False\n\n    try:\n        response = conn.getresponse()\n        data = response.read()\n        \n        val_decoded = data.decode(\"utf-8\")\n        val_json = json.loads(val_decoded)\n        sendgrid_permission = str(val_json[\"scopes\"])\n        \n        match_output = re.search(r\"\\bmail.send\\b\", sendgrid_permission)\n        \n        if (match_output is None ):\n            output_message = \"Error - {}\".format(\"Unable to connect to SendGrid\")\n            result_value = False\n        else:\n            output_message = \"Successfully connected to SendGrid - valid token\"\n            result_value = True\n            \n            \n    except Exception as e:\n        #siemplify.LOGGER.error(e)\n        output_message = \"Error - {}\".format(\"Unable to connect to SendGrid\")\n    \n    print(output_message)\n    siemplify.end(output_message, result_value)\n    \n\nif __name__ == '__main__':\n\tmain()",
+  "IntegrationIdentifier": "SendGrid",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Mike",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 12.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1594891027074,
+  "ModificationTimeUnixTimeInMs": 1594891027077
+}

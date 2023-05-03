@@ -1,0 +1,41 @@
+{
+  "Name": "List Mail Rules",
+  "Description": "Get all the messageRule objects defined for the user's Inbox.\nhttps://docs.microsoft.com/en-us/graph/api/mailfolder-list-messagerules?view=graph-rest-1.0&tabs=http",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom MicrosoftGraphSecurityManager import MicrosoftGraphSecurityManager\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    client_id = siemplify.extract_configuration_param('Integration',\"Client ID\")\n    secret_id = siemplify.extract_configuration_param('Integration',\"Secret ID\")\n    tenant_id = siemplify.extract_configuration_param('Integration',\"Tenant ID\")\n    certificate_password = siemplify.extract_configuration_param('Integration',\"Certificate Password\")\n    certificate_path = siemplify.extract_configuration_param('Integration',\"Certificate Path\")\n    user_email = siemplify.extract_action_param(\"User ID\", print_value=True)\n    \n    siemplify.LOGGER.info(\"Connecting to Microsoft Graph Security.\")\n    mtm = MicrosoftGraphSecurityManager(client_id, secret_id, certificate_path, certificate_password, tenant_id)\n    siemplify.LOGGER.info(\"Connected successfully.\")\n    \n    mail_rules = mtm.get_mail_rules(user_email)\n    \n    status = EXECUTION_STATE_COMPLETED\n    output_message = \"success\"\n    result_value = \"success\"\n    siemplify.result.add_result_json(mail_rules)\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n    \nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\r\n    {\r\n        \"id\": \"BQCBAcc7hg4=\",\r\n        \"displayName\": \"IBM XForce\",\r\n        \"sequence\": 1,\r\n        \"isEnabled\": \"True\",\r\n        \"hasError\": \"False\",\r\n        \"isReadOnly\": \"False\",\r\n        \"conditions\": {\r\n            \"fromAddresses\": [\r\n                {\r\n                    \"emailAddress\": {\r\n                        \"name\": \"no-reply@xforce.ibmcloud.com\",\r\n                        \"address\": \"no-reply@xforce.ibmcloud.com\"\r\n                    }\r\n                }\r\n            ]\r\n        },\r\n        \"actions\": {\r\n            \"moveToFolder\": \"YXNmYWRmd2RzZmZzZmRzYWRmYXNkZmFzZGZhc2RmYXNmYXNmYWZhZ2hmZ2hydGJmZ3ZiZGZzdmZkYWRzZmE=\",\r\n            \"stopProcessingRules\": \"True\"\r\n        }\r\n    },\r\n    {\r\n        \"id\": \"CQAccc7hg8=\",\r\n        \"displayName\": \"Siemplify\",\r\n        \"sequence\": 2,\r\n        \"isEnabled\": \"True\",\r\n        \"hasError\": \"False\",\r\n        \"isReadOnly\": \"False\",\r\n        \"conditions\": {\r\n            \"fromAddresses\": [\r\n                {\r\n                    \"emailAddress\": {\r\n                        \"name\": \"user@siemplify.co\",\r\n                        \"address\": \"user@siemplify.co\"\r\n                    }\r\n                }\r\n            ]\r\n        },\r\n        \"actions\": {\r\n            \"moveToFolder\": \"YXNkZiBhc2RmIGFzZGZhZGZhZGZhc2YgZGFzZnNmIGFoZGZnYXNkIGZnYXNmZGdhZ2RmaHNnZmhhIHNkZ2ZhaHMgZ2ZhaGZnc2YgZ2FzamhkZ2YgYWpzZ2QgZmhnYXNzaGRmZ2E=\",\r\n            \"stopProcessingRules\": \"True\"\r\n        }\r\n    }\r\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 25.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "john.smith@mail.com",
+      "Description": "User ID/userPrincipalName (email)",
+      "Name": "User ID",
+      "Value": "john.smith@mail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1607348707062,
+      "ModificationTimeUnixTimeInMs": 1607348707062
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1607348707056,
+  "ModificationTimeUnixTimeInMs": 1607348707059
+}

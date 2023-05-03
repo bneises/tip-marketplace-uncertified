@@ -1,0 +1,53 @@
+{
+  "Name": "Trigger Azure Build",
+  "Description": "Trigger a pipeline for a given build definition ID and variables",
+  "Script": "import json\nimport random\nimport string\nimport sys\nimport traceback\n\nimport requests\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_FAILED, EXECUTION_STATE_COMPLETED, EXECUTION_STATE_INPROGRESS\n\nSCRIPT_NAME = 'Trigger Azure Build'\n\nINTEGRATION = \"Azure DevOps\"\n\nINVALID_BUILD_ID = -1\n\n# Build statuses\nBUILD_STATUS_ALL = 'all'\nBUILD_STATUS_CANCELLING = 'cancelling'\nBUILD_STATUS_COMPLETED = 'completed'\nBUILD_STATUS_IN_PROGRESS = 'inProgress'\nBUILD_STATUS_NONE = 'none'\nBUILD_STATUS_NOT_STARTED = 'notStarted'\nBUILD_STATUS_POSTPONED = 'postponed'\n\n# Build results\nBUILD_RESULT_CANCELED = 'canceled'\nBUILD_RESULT_FAILED = 'failed'\nBUILD_RESULT_NONE = 'none'\nBUILD_RESULT_PARTIALLY_SUCCEEDED = 'partiallySucceeded'\nBUILD_RESULT_SUCCEEDED = 'succeeded'\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info('================= Main - Param Init =================')\n\n    build_id = INVALID_BUILD_ID\n    status = EXECUTION_STATE_INPROGRESS\n    output_message = ''\n    \n    # Integration Params\n    project_name = siemplify.extract_configuration_param(INTEGRATION,\"Project\")\n    organization = siemplify.extract_configuration_param(INTEGRATION,\"Organization\")\n    personal_access_token = siemplify.extract_configuration_param(INTEGRATION, \"Personal Access Token\")\n    base_url = siemplify.extract_configuration_param(INTEGRATION, \"Base URL\")\n    \n    #Action Params\n    definition_id = siemplify.extract_action_param(param_name='Build Definition Id')\n    build_variables = siemplify.extract_action_param(param_name='Build Variables')\n\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n\n    try:\n        url = '{base_url}/{organization}/{project}/_apis/build/builds?api-version=5.1'.format(\n            base_url = base_url,\n            organization=organization,\n            project=project_name)\n        headers = {'Content-Type': 'application/json'}\n        data = {\n            'definition': {\n                'id': definition_id\n            },\n            'parameters': build_variables\n        }\n        resp = requests.post(url, timeout=5.0, headers=headers, data=json.dumps(data), auth=('', personal_access_token))\n        resp.raise_for_status()\n        resp_json = resp.json()\n        build_id = resp_json.get('id')\n        output_message = 'A new Azure DevOps build <{build_id}> was triggered'.format(build_id=build_id)\n        siemplify.LOGGER.info(output_message)\n    except Exception as ex:\n        siemplify.LOGGER.error('General error performing action {}'.format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(ex)\n        status = EXECUTION_STATE_FAILED\n        output_message += '\\nException occurred:\\n{}'.format(traceback.format_exc())\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n    siemplify.LOGGER.info('\\n  status: {}\\n  result_value: {}\\n  output_message: {}'.format(status, build_id, output_message))\n    siemplify.end(output_message, json.dumps({'build_id': build_id}), status)\n\n\ndef query_job():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    build_status = BUILD_STATUS_NONE\n    build_result = BUILD_RESULT_NONE\n    \n    # Integration Params\n    project_name = siemplify.extract_configuration_param(INTEGRATION,\"Project\")\n    organization = siemplify.extract_configuration_param(INTEGRATION,\"Organization\")\n    personal_access_token = siemplify.extract_configuration_param(INTEGRATION, \"Personal Access Token\")\n    base_url = siemplify.extract_configuration_param(INTEGRATION, \"Base URL\")\n\n    additional_data = siemplify.parameters['additional_data']\n    additional_data_json = json.loads(additional_data)\n    build_id = additional_data_json.get('build_id') or INVALID_BUILD_ID\n    \n    if build_id == INVALID_BUILD_ID:\n        output_message = 'Invalid build id found'\n        siemplify.end(output_message, BUILD_RESULT_FAILED, EXECUTION_STATE_FAILED)\n        return\n\n    siemplify.LOGGER.info('Checking status of Azure DevOps build <{build_id}>'.format(build_id=build_id))\n    url = '{base_url}/{organization}/{project}/_apis/build/builds/{build_id}?api-version=5.1'.format(\n        base_url=base_url,\n        organization=organization,\n        project=project_name,\n        build_id=build_id)\n    headers = {'Content-Type': 'application/json'}\n    try:\n        resp = requests.get(url, timeout=5.0, headers=headers, auth=('siemplify', personal_access_token))\n        resp.raise_for_status()\n        resp_json = resp.json()\n        build_status = resp_json.get('status')\n        build_result = resp_json.get('result')\n    except Exception as ex:\n        siemplify.LOGGER.error('General error performing action {}'.format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(ex)\n        siemplify.result.add_result_json({'build_status': build_status, 'build_result': build_result, 'build_id': build_id})\n        output_message = 'Error occurred on checking status of Azure DevOps build <{build_id}>:\\n{ex}'.format(build_id=build_id, ex=ex)\n        siemplify.end(output_message, additional_data, EXECUTION_STATE_INPROGRESS)\n    else:\n        siemplify.result.add_result_json({'build_status': build_status, 'build_result': build_result, 'build_id': build_id})\n        if not build_result or build_result == BUILD_RESULT_NONE:\n            output_message = 'Waiting for the build result of Azure DevOps build <{build_id}>'.format(build_id=build_id)\n            siemplify.end(output_message, additional_data, EXECUTION_STATE_INPROGRESS)\n        else:\n            output_message = 'Azure DevOps build <{build_id}> is finished with <{build_status}> status and <{build_result}> result'.format(\n                build_id=build_id, build_status=build_status, build_result=build_result)\n            if build_result in (BUILD_RESULT_SUCCEEDED, BUILD_RESULT_PARTIALLY_SUCCEEDED):\n                siemplify.end(output_message, build_result, EXECUTION_STATE_COMPLETED)\n            else:\n                siemplify.end(output_message, build_result, EXECUTION_STATE_FAILED)\n\n\nif __name__ == '__main__':\n    if len(sys.argv) < 3 or sys.argv[2] == 'True':\n        main()\n    else:\n        query_job()\n",
+  "IntegrationIdentifier": "Azure DevOps",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\"build_status\":\"success\",\"build_result\":\"result\",\"cloud_customer_id\":\"customerA\",\"build_id\":\"351\"}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "community-automation",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 115.0,
+  "TimeoutSeconds": 600,
+  "IsAsync": true,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "111",
+      "Description": "The build definition ID of the pipeline you want to trigger.",
+      "Name": "Build Definition Id",
+      "Value": "111",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\n\t\"CUSTOMER\": \"testprod\",\n\t\"DB_IDENTIFIER\": \"testprod\",\n\t\"DNS_NAME\": \"test.com\",\n\t\"ENV\": \"test\"\n}",
+      "Description": "The variables to pass for the given pipeline.",
+      "Name": "Build Variables",
+      "Value": "{\n\t\"CUSTOMER\": \"testprod\",\n\t\"DB_IDENTIFIER\": \"testprod\",\n\t\"DNS_NAME\": \"test.com\",\n\t\"ENV\": \"test\"\n}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

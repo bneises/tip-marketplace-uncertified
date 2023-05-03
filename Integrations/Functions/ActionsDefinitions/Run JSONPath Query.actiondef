@@ -1,0 +1,53 @@
+{
+  "Parameters": [
+    {
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CustomActionId": 0,
+      "CreationTimeUnixTimeInMs": 1610733102498,
+      "ModificationTimeUnixTimeInMs": 1610733102498,
+      "DefaultValue": "{}",
+      "Description": "Json input",
+      "IsMandatory": true,
+      "Name": "Json",
+      "Type": 16
+    },
+    {
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CustomActionId": 0,
+      "CreationTimeUnixTimeInMs": 1621513123694,
+      "ModificationTimeUnixTimeInMs": 1621513123694,
+      "DefaultValue": "",
+      "Description": "JSONPath expressions always refers to a JSON structure in the same way as XPath expressions are used in combination with an XML document.",
+      "IsMandatory": true,
+      "Name": "JSONPath Expression",
+      "Type": 0
+    }
+  ],
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "TimeoutSeconds": 600,
+  "DefaultResultValue": "",
+  "Name": "Run JSONPath Query",
+  "Description": "The action runs an JSONPath Query on a given json and extracts values according to the expression.\nView https://github.com/h2non/jsonpath-ng for more information on JSONPath",
+  "CreationTimeUnixTimeInMs": 1610733102494,
+  "ModificationTimeUnixTimeInMs": 1610733102494,
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\n\nfrom jsonpath_ng import jsonpath\nfrom jsonpath_ng.ext import parse\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    \n    json_string = siemplify.extract_action_param(\"Json\", print_value=False)\n    xpath = siemplify.extract_action_param(\"XPath Expression\", print_value=False)\n    json_result = {}\n    json_result['matches'] = []\n    try:\n        \n        json_data = json.loads(json_string)\n        json_expression = parse(xpath)\n        \n        match = json_expression.find(json_data)\n        for m in match:\n            json_result['matches'].append(m.value)\n        \n        \n    except Exception as e:\n        raise\n        \n\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    \n    siemplify.result.add_result_json(json_result)\n    siemplify.result.add_json(\"Json\", json_result)\n\n\n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 14,
+  "PythonVersion": "None",
+  "Id": 0
+}

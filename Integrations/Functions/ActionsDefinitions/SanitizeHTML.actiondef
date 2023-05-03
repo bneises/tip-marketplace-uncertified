@@ -1,0 +1,101 @@
+{
+  "Name": "SanitizeHTML",
+  "Description": "Given a fragment of HTML, SantizeHTML will parse it according to the HTML5 parsing algorithm and sanitize any disallowed tags or attributes. This algorithm also takes care of things like unclosed and (some) misnested tags.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport bleach\n\n\ndef allow_attrs(tag, name, value):\n    return True\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    tags = list(filter(None, [x.strip() for x in\n                         siemplify.extract_action_param(\"Tags\", \" \").split(',')]))\n    attributes = list(filter(None, [x.strip() for x in\n                         siemplify.extract_action_param(\"Attributes\", \" \").split(',')]))\n    styles = list(filter(None, [x.strip() for x in\n                         siemplify.extract_action_param(\"Styles\", \" \").split(',')]))                         \n    input = siemplify.parameters.get(\"Input HTML\")\n    allow_all_tags = str(siemplify.extract_action_param(param_name=\"Allow All Tags\",\n                                                   is_mandatory=False,\n                                                   print_value=False,\n                                                   default_value='false')).lower() == 'true'\n    allow_all_attrs = str(siemplify.extract_action_param(param_name=\"Allow All Attributes\",\n                                                   is_mandatory=False,\n                                                   print_value=False,\n                                                   default_value='false')).lower() == 'true'\n    allow_all_styles = str(siemplify.extract_action_param(param_name=\"Allow All Styles\",\n                                                   is_mandatory=False,\n                                                   print_value=False,\n                                                   default_value='false')).lower() == 'true'\n                                                   \n    sanitized = \"\"    \n\n   \n    if tags and styles and attributes:\n        sanatized = bleach.clean(input, tags=tags, styles=styles, attributes=attributes)\n    elif tags and styles and allow_all_attrs:\n        sanatized = bleach.clean(input, tags=tags, styles=styles, attributes=allow_attrs)\n    elif tags and attributes and not styles:\n        sanatized = bleach.clean(input, tags=tags, attributes=attributes)\n    elif tags and allow_all_attrs and not styles:\n        sanatized = bleach.clean(input, tags=tags, attributes=allow_attrs)\n    elif tags and not styles and not attributes:\n        sanatized = bleach.clean(input, tags=tags)\n    elif styles and attributes and not tags:\n        sanatized = bleach.clean(input, styles=styles, attributes=attributes)\n    elif styles and allow_all_attrs and tags:\n        sanatized = bleach.clean(input, styles=styles, attributes=allow_attrs)\n    elif styles and not tags and not attributes and not allow_all_attrs:\n        sanatized = bleach.clean(input, styles=styles)\n    elif attributes and tags and not styles:\n        sanatized = bleach.clean(input, tags=tags, attributes=attributes)\n    elif attributes and styles and not tags and not allow_all_attrs:\n        sanatized = bleach.clean(input,  attributes=attributes, styles=styles)\n    elif attributes and not styles and not tags and not allow_all_attrs:\n        sanatized = bleach.clean(input, attributes=attributes)\n    elif allow_all_attrs and not tags and not styles:\n        sanatized = bleach.clean(input, attributes=allow_attrs)\n    else:\n        sanatized = bleach.clean(input)\n    result = sanatized\n    output_message = \"{0} successfully sanitized to: {1}\".format(input, result)\n    siemplify.end(output_message, result, EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 12.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "a,abbr,acronym,b,blockquote,code,em,i,li,ol,strong,ul,table,tr,td,th,h1,h2,h3,body,tbody,thead,div,footer,head,header,html,img,option,p,section,span,strong,svg",
+      "Description": "Tags is the allowed set of HTML tags. Comma separated list. HTML tags not in this list will be escaped or stripped. ",
+      "Name": "Tags",
+      "Value": "a,abbr,acronym,b,blockquote,code,em,i,li,ol,strong,ul,table,tr,td,th,h1,h2,h3,body,tbody,thead,div,footer,head,header,html,img,option,p,section,span,strong,svg",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1626179036847,
+      "ModificationTimeUnixTimeInMs": 1626179036847
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "Attributes lets you specify which attributes are allowed. Value should be a comma separated list.\nDefault  {'a': ['href', 'title'], 'abbr': ['title'],",
+      "Name": "Attributes",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1626179036847,
+      "ModificationTimeUnixTimeInMs": 1626179036847
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "If you allow the style attribute, specify the allowed styles set, for example color and background-color. Value should be comma separated list.",
+      "Name": "Styles",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1626179036847,
+      "ModificationTimeUnixTimeInMs": 1626179036847
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Set to True to allow all attributes.",
+      "Name": "Allow All Attributes",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1626179036847,
+      "ModificationTimeUnixTimeInMs": 1626179036847
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The HTML fragment that will be sanitized.",
+      "Name": "Input HTML",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1626179036847,
+      "ModificationTimeUnixTimeInMs": 1626179036847
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1626179036841,
+  "ModificationTimeUnixTimeInMs": 1626179036843
+}

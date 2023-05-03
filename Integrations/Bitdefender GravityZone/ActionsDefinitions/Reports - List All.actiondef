@@ -1,0 +1,86 @@
+{
+  "Name": "Reports - List All",
+  "Description": "This method returns the list of scheduled reports, according to the parameters received.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom BitdefenderGravityZoneManager import BitdefenderGravityZoneManager\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    api_key = siemplify.extract_configuration_param('Integration',\"API Key\")\n    access_url = siemplify.extract_configuration_param('Integration',\"Access URL\")\n    verify_ssl = siemplify.extract_configuration_param('Integration',\"Verify SSL\", input_type=bool)\n    report_name = siemplify.extract_action_param(\"Report Name\", print_value=True,\n                                                    default_value=None, input_type=str)\n    report_type = siemplify.extract_action_param(\"Report Type\", print_value=True,\n                                                    default_value=None, input_type=str)\n    \n    try:\n        siemplify.LOGGER.info(\"Connecting to Bitdefender GravityZone Control Center.\")\n        mtm = BitdefenderGravityZoneManager(api_key, verify_ssl)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n        \n        policies_data = mtm.report_list(access_url, report_name, report_type)\n        \n        status = EXECUTION_STATE_COMPLETED\n        output_message = \"success\"\n        result_value = \"success\"\n        siemplify.result.add_result_json(policies_data)\n        siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n        siemplify.end(output_message, result_value, status)\n    except Exception as e:\n        siemplify.LOGGER.error(\"An error occurred: {0}\".format(e))\n        siemplify.LOGGER.exception(e)\n    \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Bitdefender GravityZone",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n    \"items\": [\r\n        {\r\n            \"id\": \"5638cdceb1a43d46137b23c6\",\r\n            \"name\": \"My report 1\",\r\n            \"occurrence\": 2,\r\n            \"type\": 2\r\n        },\r\n        {\r\n            \"id\": \"5638d7f8b1a43d49137b23c9\",\r\n            \"name\": \"My report 2\",\r\n            \"occurrence\": 4,\r\n            \"type\": 2\r\n        },\r\n        {\r\n            \"id\": \"563b271bb1a43d21077b23c8\",\r\n            \"name\": \"My report 3\",\r\n            \"occurrence\": 4,\r\n            \"type\": 2\r\n        },\r\n        {\r\n            \"id\": \"563a289eb1a43d2f617b23c6\",\r\n            \"name\": \"My report 4\",\r\n            \"occurrence\": 2,\r\n            \"type\": 2\r\n        }\r\n\r\n    ]\r\n\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 64.0,
+  "TimeoutSeconds": 180,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The name of the report.",
+      "Name": "Report Name",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071239767,
+      "ModificationTimeUnixTimeInMs": 1616071239767
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "The report type.",
+      "Name": "Report Type",
+      "Value": "",
+      "Type": 15,
+      "OptionalValues": [
+        "Antiphishing Activity",
+        "Blocked Applications",
+        "Blocked Websites",
+        "Data Protection",
+        "Device Control Activity",
+        "Endpoint Modules Status",
+        "Endpoint Protection Status",
+        "Firewall Activity",
+        "Malware Status",
+        "Monthly License Usage",
+        "Network Status",
+        "On demand scanning",
+        "Policy Compliance",
+        "Security Audit",
+        "Security Server Status",
+        "Top 10 Detected Malware",
+        "Top 10 Infected Endpoints",
+        "Update Status",
+        "Upgrade Status",
+        "AWS Monthly Usage",
+        "Endpoint Encryption Status",
+        "HyperDetect Activity",
+        "Network Patch Status",
+        "Sandbox Analyzer Failed Submissions",
+        "Network Incidents",
+        "Email Security Usage"
+      ],
+      "OptionalValuesJson": "[\"Antiphishing Activity\",\"Blocked Applications\",\"Blocked Websites\",\"Data Protection\",\"Device Control Activity\",\"Endpoint Modules Status\",\"Endpoint Protection Status\",\"Firewall Activity\",\"Malware Status\",\"Monthly License Usage\",\"Network Status\",\"On demand scanning\",\"Policy Compliance\",\"Security Audit\",\"Security Server Status\",\"Top 10 Detected Malware\",\"Top 10 Infected Endpoints\",\"Update Status\",\"Upgrade Status\",\"AWS Monthly Usage\",\"Endpoint Encryption Status\",\"HyperDetect Activity\",\"Network Patch Status\",\"Sandbox Analyzer Failed Submissions\",\"Network Incidents\",\"Email Security Usage\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616071239767,
+      "ModificationTimeUnixTimeInMs": 1616071239767
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616071239757,
+  "ModificationTimeUnixTimeInMs": 1616071239763
+}

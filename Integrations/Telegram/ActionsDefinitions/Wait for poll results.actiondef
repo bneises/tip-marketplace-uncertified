@@ -1,0 +1,75 @@
+{
+  "Name": "Wait for poll results",
+  "Description": "Waits and retrieves a given poll's answers.",
+  "Script": "import json\nimport sys\nimport time\n\nfrom ScriptResult import (EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,\n                          EXECUTION_STATE_INPROGRESS)\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nPOLL = \"poll\"\n\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Send Question And Wait\"\n\n\n@output_handler\ndef main(is_first_run):\n    siemplify = SiemplifyAction()\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n\n    poll_id = siemplify.extract_action_param(\"Poll ID\", print_value=True).strip()\n    vote_threshold = int(\n        siemplify.extract_action_param(\n            \"Answer Votes Threshold\", print_value=True\n        ).strip()\n    )\n    custom_timeframe = float(\n        siemplify.extract_action_param(\"Waiting Timeframe\", print_value=True).strip()\n    )\n    limit = int(\n        siemplify.extract_action_param(\"Scan back Limit\", print_value=True).strip()\n    )\n\n    status = EXECUTION_STATE_FAILED\n    output_message = f\"Could not fetch poll_results for poll <{poll_id}>. \"\n    result_value = False\n    last_irrelevant_update_id = (\n        None  # update_id of the last scanned update which is not related to our poll.\n    )\n\n    # Creating an instance of Telegram object\n    telegram_manager = TelegramManager(bot_api_token)\n\n    siemplify.LOGGER.info(\"================= Main - Started ====================\")\n\n    poll_results = {}\n\n    # Checking for votes:\n    try:\n        if is_first_run:\n            seconds_in_minute = 60\n            timeframe = custom_timeframe * seconds_in_minute\n            start_time = time.time()\n        else:\n            # Fetch info regarding time passed and updates:\n            runs_params_json = json.loads(siemplify.parameters[\"additional_data\"])\n            start_time = runs_params_json.get(\"start_time\")\n            timeframe = float(runs_params_json.get(\"timeframe\"))\n            if \"last_update\" in runs_params_json:  # get offset to scan updates from:\n                last_irrelevant_update_id = (\n                    int(runs_params_json.get(\"last_update\"))\n                    if runs_params_json.get(\"last_update\") is not None\n                    else None\n                )\n        curr_time = time.time()\n        duration = curr_time - start_time  # overall action runtime\n        poll_results = telegram_manager.get_updates(\n            limit, last_irrelevant_update_id, POLL\n        )\n        if not poll_results[\"ok\"]:  # Error fetching updates\n            raise Exception(poll_results[\"description\"])\n        if len(poll_results[\"result\"]) > 0:  # found (some) answers\n            if is_first_run:  # don't re-scan irrelevant updates next run:\n                past_irrelevant_results = [\n                    x\n                    for x in poll_results[\"result\"]\n                    if \"poll\" in x and x.get(\"poll\").get(\"id\") != poll_id\n                ]\n                if past_irrelevant_results:\n                    last_irrelevant_update_id = max(\n                        [update[\"update_id\"] for update in past_irrelevant_results]\n                    )  # to scan less updates next run\n            # Keep only our poll:\n            poll_results[\"result\"] = [\n                x\n                for x in poll_results[\"result\"]\n                if \"poll\" in x and x.get(\"poll\").get(\"id\") == poll_id\n            ]\n        if len(poll_results[\"result\"]) > 0:  # found our answers:\n            # check threshold satisfaction:\n            for result in poll_results.get(\"result\"):\n                for option in result.get(\"poll\").get(\"options\"):\n                    if (\n                        option.get(\"voter_count\") >= vote_threshold\n                    ):  # threshold satisfied.\n                        output_message = f\"answers threshold met for poll <{poll_id}> after <{duration}s>\"\n                        status = EXECUTION_STATE_COMPLETED\n                        result_value = True\n                        break\n            if not result_value:\n                if duration >= timeframe:  # Timeframe reached.\n                    output_message = (\n                            f\"Custom timeframe was reached for poll <{poll_id}>, \"\n                            f\"threshold was not met, \\nbut some answers were fecthed\"\n                    )\n                    status = EXECUTION_STATE_COMPLETED\n                    result_value = False\n                else:\n                    output_message = (\n                            f\"Votes threashold for poll <{poll_id}> not yet met, though some answers were found. \\n \"\n                            f\"Still waiting. \\n Time passed:<{duration}>s\"\n                    )\n                    status = EXECUTION_STATE_INPROGRESS\n                    result_value = json.dumps(\n                        {\n                            \"timeframe\": timeframe,\n                            \"start_time\": start_time,\n                            \"last_update\": last_irrelevant_update_id,\n                        }\n                    )\n        else:  # wanted poll not yet answered\n            if duration >= timeframe:  # Timeframe reached.\n                output_message = f\"Custom timeframe was reached for poll <{poll_id}>. No answers found.\"\n                status = EXECUTION_STATE_COMPLETED\n                result_value = False\n            else:\n                output_message = (\n                        f\"Still waiting for answers to meet requirements for poll {poll_id}. \\n \"\n                        f\"Time passed:<{duration}s>\"\n                )\n                status = EXECUTION_STATE_INPROGRESS\n                result_value = json.dumps(\n                    {\n                        \"timeframe\": timeframe,\n                        \"start_time\": start_time,\n                        \"last_update\": last_irrelevant_update_id,\n                    }\n                )\n    except Exception as e:\n        siemplify.LOGGER.error(\"ERROR: \" + str(e))\n        output_message += f\"Error: {str(e)}\"\n    finally:\n        fin_results = {}\n        fin_results[\"raw\"] = poll_results\n        if poll_results.get(\"ok\") is True and len(poll_results.get(\"result\")) > 0:\n            fin_results[\"answers\"] = (\n                poll_results.get(\"result\")[len(poll_results.get(\"result\")) - 1]\n                .get(\"poll\")\n                .get(\"options\")\n            )\n        siemplify.LOGGER.info(\n            \"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(\n                status, result_value, output_message\n            )\n        )\n\n        siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n        siemplify.result.add_result_json(fin_results)\n        siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    is_first_run = len(sys.argv) < 3 or sys.argv[2] == \"True\"\n    main(is_first_run)\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\"raw\": {\"ok\": true, \"result\": [{\"update_id\": 115324421, \"poll\": {\"id\": \"5958708562703155223\", \"question\": \"BISMILLAH no?\", \"options\": [{\"text\": \"NO\", \"voter_count\": 0}, {\"text\": \"YES\", \"voter_count\": 1}], \"total_voter_count\": 1, \"is_closed\": false, \"is_anonymous\": true, \"type\": \"regular\", \"allows_multiple_answers\": false}}, {\"update_id\": 115324422, \"poll\": {\"id\": \"5958708562703155223\", \"question\": \"BISMILLAH no?\", \"options\": [{\"text\": \"NO\", \"voter_count\": 0}, {\"text\": \"YES\", \"voter_count\": 2}], \"total_voter_count\": 2, \"is_closed\": false, \"is_anonymous\": true, \"type\": \"regular\", \"allows_multiple_answers\": false}}]}, \"answers\": [{\"text\": \"NO\", \"voter_count\": 0}, {\"text\": \"YES\", \"voter_count\": 2}]}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "community",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 145.0,
+  "TimeoutSeconds": 600,
+  "IsAsync": true,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "300",
+      "Description": "Top amount of polls' answers to be scanned. \n(Only for polls sent by this bot)",
+      "Name": "Scan back Limit",
+      "Value": "300",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0",
+      "Description": "The amount of time (in minutes) to wait for votes.\n(After which, action will stop even if threshold wasn't met)",
+      "Name": "Waiting Timeframe",
+      "Value": "0",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "The number of votes to some answer that suffices\n(After an option gets this many votes, action will stop waiting)",
+      "Name": "Answer Votes Threshold",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "The ID of the poll to fetch answers to.",
+      "Name": "Poll ID",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

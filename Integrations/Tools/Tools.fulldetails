@@ -1,0 +1,360 @@
+{
+    "IntegrationProperties": [],
+    "DisplayName": "Tools",
+    "Description": "A set of utility actions and jobs for data manipulation created to power up playbook capabilities. ",
+    "CustomFamilies": [],
+    "Managers": [
+        "ToolsCommon"
+    ],
+    "PackageName": "Tools",
+    "IsCustom": false,
+    "Actions": [
+        "Ping",
+        "Get Case Data",
+        "Get Integration Instances",
+        "Create Entity Relationships",
+        "Get Original Alert Json",
+        "Update Case Description",
+        "Lock Playbook",
+        "Add Comment to Entity Log",
+        "Normalize Entity Enrichment",
+        "Add Or Update Alert Additional Data",
+        "Buffer",
+        "Create Siemplify Task",
+        "Change Case Name",
+        "Assign Case to User",
+        "Create Entities with Separator",
+        "Extract URL Domain",
+        "Check Entities Fields In Text",
+        "Get Context Value",
+        "Delay Playbook",
+        "Get Siemplify Users",
+        "Find First Alert",
+        "Get Current Time",
+        "Get Email Templates",
+        "Re-Attach Playbook",
+        "Set Context Value",
+        "Get Certificate Details",
+        "Delay Playbook V2",
+        "Check List Subset",
+        "Attach Playbook to All Case Alerts"
+    ],
+    "Jobs": [
+        "Close Cases Based On Search"
+    ],
+    "ExampleUseCases": [],
+    "Connectors": [],
+    "Version": 42.0,
+    "MappingRules": [],
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "Identifier": "Tools",
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 0,
+            "Items": [
+                "NEW! Tools integration to power up playbook capabilities."
+            ],
+            "Version": 1.0
+        },
+        {
+            "PublishTimeUnixTime": 1604583800000,
+            "Items": [
+                "New! Update Case description action.",
+                "New! Get Siemplify users action."
+            ],
+            "Version": 2.0
+        },
+        {
+            "PublishTimeUnixTime": 1605807315000,
+            "Items": [
+                "New! Create Entities with Separator action."
+            ],
+            "Version": 3.0
+        },
+        {
+            "PublishTimeUnixTime": 1605807315000,
+            "Items": [
+                "Bug fixed in Create Entities with Separator."
+            ],
+            "Version": 4.0
+        },
+        {
+            "PublishTimeUnixTime": 1605807556000,
+            "Items": [
+                "Bug fixed in Create Entities with Separator."
+            ],
+            "Version": 5.0
+        },
+        {
+            "PublishTimeUnixTime": 1612351856000,
+            "Items": [
+                "New! Lock Playbook action that will cause the playbook to pause until all playbooks from the previous alert are complete."
+            ],
+            "Version": 6.0
+        },
+        {
+            "PublishTimeUnixTime": 1613591043000,
+            "Items": [
+                "New! Create Entity with Relationships action."
+            ],
+            "Version": 7.0
+        },
+        {
+            "PublishTimeUnixTime": 1613932063000,
+            "Items": [
+                "Bug fix in the Create Entity with Relationships action."
+            ],
+            "Version": 8.0
+        },
+        {
+            "PublishTimeUnixTime": 1614013096000,
+            "Items": [
+                "Bug fix in Get Case Data Action - Fixes issue in 5.5.3 / 5.6 where insights are truncated at 2k characters."
+            ],
+            "Version": 9.0
+        },
+        {
+            "PublishTimeUnixTime": 1617032612000,
+            "Items": [
+                "Bug fix in Lock Playbook Action."
+            ],
+            "Version": 10.0
+        },
+        {
+            "PublishTimeUnixTime": 1617879595000,
+            "Items": [
+                "Bug fix in Create Entity Relationships.",
+                "New! Close Case Based on Search job."
+            ],
+            "Version": 11.0
+        },
+        {
+            "PublishTimeUnixTime": 1620099743000,
+            "Items": [
+                "New! Get Email Templates action. Returns all of the email templates from the system.",
+                "New! Get Integration Instances. Gets all the defined integrations for an environment."
+            ],
+            "Version": 12.0
+        },
+        {
+            "PublishTimeUnixTime": 1621169453000,
+            "Items": [
+                "New! Update Alert Score action. Used to keep track of the score of the alert."
+            ],
+            "Version": 13.0
+        },
+        {
+            "PublishTimeUnixTime": 1622033338000,
+            "Items": [
+                "New! Update - Create Siemplify Task to support Siemplify 6.0"
+            ],
+            "Version": 14.0
+        },
+        {
+            "PublishTimeUnixTime": 1622033338000,
+            "Items": [
+                "New Action - Get Certificate Details"
+            ],
+            "Version": 15.0
+        },
+        {
+            "PublishTimeUnixTime": 1626275458000,
+            "Items": [
+                "New! DNS Lookup - Will perform DNS lookups on IPs and hostnames."
+            ],
+            "Version": 16.0
+        },
+        {
+            "PublishTimeUnixTime": 1626364800000,
+            "Items": [
+                "Fixed Action - Get Certificate Details"
+            ],
+            "Version": 17.0
+        },
+        {
+            "PublishTimeUnixTime": 1626628918979,
+            "Items": [
+                "Added Dependency 'pyOpenSSL' to Tool"
+            ],
+            "Version": 18.0
+        },
+        {
+            "PublishTimeUnixTime": 1633693738000,
+            "Items": [
+                "Bug Fix - Create Entities with Separator."
+            ],
+            "Version": 19.0
+        },
+        {
+            "PublishTimeUnixTime": 1634147311000,
+            "Items": [
+                "New - Delay Playbook V2"
+            ],
+            "Version": 20.0
+        },
+        {
+            "PublishTimeUnixTime": 1635342368000,
+            "Items": [
+                "New - Delay Playbook V2",
+                "New - Wait for Playbook to Complete"
+            ],
+            "Version": 21.0
+        },
+        {
+            "PublishTimeUnixTime": 1635449334000,
+            "Items": [
+                "Update - Extract URL Domain"
+            ],
+            "Version": 22.0
+        },
+        {
+            "PublishTimeUnixTime": 1635509497000,
+            "Items": [
+                "Update - Extract URL Domain"
+            ],
+            "Version": 23.0
+        },
+        {
+            "PublishTimeUnixTime": 1635856903000,
+            "Items": [
+                "Update - Create Entity Relationships"
+            ],
+            "Version": 24.0
+        },
+        {
+            "PublishTimeUnixTime": 1635856903000,
+            "Items": [
+                "Update - Update Alert Score"
+            ],
+            "Version": 25.0
+        },
+        {
+            "PublishTimeUnixTime": 1639492632000,
+            "Items": [
+                "Update - Set Context Value - Support Global context values.",
+                "Update - Get Context Value - Support Global context values."
+            ],
+            "Version": 26.0
+        },
+        {
+            "PublishTimeUnixTime": 1640192214000,
+            "Items": [
+                "Update - Set Context Value - Fix for missing keys."
+            ],
+            "Version": 27.0
+        },
+        {
+            "PublishTimeUnixTime": 1642166554000,
+            "Items": [
+                "Update! Find First Alert - Support now for Siemplify 6.x"
+            ],
+            "Version": 28.0
+        },
+        {
+            "PublishTimeUnixTime": 1642994307000,
+            "Items": [
+                "Update! Get Original Alert Json - Now supports 5.6.4+"
+            ],
+            "Version": 29.0
+        },
+        {
+            "PublishTimeUnixTime": 1643142392000,
+            "Items": [
+                "Update Action! Create Entity Relationships - Added a new parameter 'Separator' for separating multiple Entity Identifiers and Target Entity Identifiers.",
+                "New Action! Look-A-Like Domains - Compare domain entities against the list of domains defined for the environment.",
+                "New Action! Spell Check String - Checks the spelling of all words in a string and returns the accuracy."
+            ],
+            "Version": 30.0
+        },
+        {
+            "PublishTimeUnixTime": 1643983819000,
+            "Items": [
+                "New Action! Add Alert Scoring Information - This action will add an entry to the alert scoring database. The scores can be used to determine overall severity of an alert. Optional tag added to case.",
+                "New Action! Search Text - Search for the 'Search For' parameter in the input text or loop through the 'Search For Regex' list and find matches in the input text.",
+                "FIX! Spell Check String - Fix to fail cleanly when input string is empty."
+            ],
+            "Version": 31.0
+        },
+        {
+            "PublishTimeUnixTime": 1645616185000,
+            "Items": [
+                "FIX! Update Alert Score - Fix to work properly with an alert with existing score."
+            ],
+            "Version": 32.0
+        },
+        {
+            "PublishTimeUnixTime": 1645617536000,
+            "Items": [
+                "New Action! Check List Subset - Check if one list is a subset of another list."
+            ],
+            "Version": 33.0
+        },
+        {
+            "PublishTimeUnixTime": 1657469100000,
+            "Items": [
+                "Allign Async actions to Siemplify 6.1"
+            ],
+            "Version": 34.0
+        },
+        {
+            "PublishTimeUnixTime": 1663946338000,
+            "Items": [
+                "Update! Close Cases Based On Search - Support for SaaS."
+            ],
+            "Version": 35.0
+        },
+        {
+            "PublishTimeUnixTime": 1665767929000,
+            "Items": [
+                "New Action - Append to Context Value."
+            ],
+            "Version": 36.0
+        },
+        {
+            "PublishTimeUnixTime": 1666960486000,
+            "Items": [
+                "Update! Delay Playbook support for Chronicle SOAR 6.1.45+",
+                "Update! Delay Playbook V2 support for Chronicle SOAR 6.1.45+"
+            ],
+            "Version": 37.0
+        },
+        {
+            "PublishTimeUnixTime": 1667999661000,
+            "Items": [
+                "Update! Delay Playbook support for Chronicle SOAR 6.1.46+",
+                "Update! Delay Playbook V2 support for Chronicle SOAR 6.1.46+"
+            ],
+            "Version": 38.0
+        },
+        {
+            "PublishTimeUnixTime": 1673865543000,
+            "Items": [
+                "New Action! Attach a playbook to all alerts in the case."
+            ],
+            "Version": 39.0
+        },
+	    {
+            "PublishTimeUnixTime": 1675776882000,
+            "Items": [
+                "Fix! Append to Context Value - fixed bug when Scope was set to 'Global'."
+            ],
+            "Version": 40.0
+        },
+	    {
+            "PublishTimeUnixTime": 1676039603,
+            "Items": [
+                "Fix! Change Case Name - Would run on last alert if 'Only if First Alert' selected.  Fix to run correctly on first alert."
+            ],
+            "Version": 41.0
+        },
+	    {
+            "PublishTimeUnixTime": 1682003260,
+            "Items": [
+                "Fix! Newer API for Close cases based on search"
+            ],
+            "Version": 42.0
+        }
+    ],
+    "DocumentationLink": null
+}

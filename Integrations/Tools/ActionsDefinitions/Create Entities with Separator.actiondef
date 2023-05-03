@@ -1,0 +1,111 @@
+{
+  "Name": "Create Entities with Separator",
+  "Description": "Creates entities and adds them to the requested alert.",
+  "Script": "from SiemplifyUtils import output_handler, add_prefix_to_dict, dict_to_flat\nfrom SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_FAILED, EXECUTION_STATE_COMPLETED\nimport json\nimport time\nimport ipaddress\ndef check_if_entity_exists(target_entities, entity_identifier):\n    \"\"\"\n    Verify if entity with such identifier already exists within the case.\n\n    :param target_entities: enumeration of case entities (e.g. siemplify.target_entities)\n    :param entity_identifier: identifier of entity, which we're checking\n    :return: True if entity with such identier exists already within case; False - otherwise\n    \"\"\"\n    for entity in target_entities:\n        if entity.identifier.strip() == entity_identifier:\n            return True\n    return False\n\ndef get_alert_entities(siemplify):\n    return [entity for alert in siemplify.case.alerts for entity in alert.entities]\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = \"Create Entities\"\n    siemplify.LOGGER.info(\"-----------Action started--------------\")\n    entities_identifiers = siemplify.parameters[\"Entities Identifiers\"]\n    entity_type = siemplify.parameters[\"Entity Type\"]\n    json_data = siemplify.parameters.get(\"Enrichment JSON\", None)\n    if json_data == '// Enter some code here':\n        json_data = None\n    enrichment_json = {}\n    properties = enrichment_json.copy()\n    #print(json_data)\n    if json_data:\n        enrichment_json = json.loads(json_data)  \n        enrichment_prefix = siemplify.parameters.get(\"PrefixForEnrichment\", None)\n        if enrichment_prefix:\n            properties = add_prefix_to_dict(enrichment_json, enrichment_prefix)\n        else:\n            properties = enrichment_json.copy()\n    is_internal = siemplify.parameters.get(\"Is Internal\", 'false').lower() == 'true'\n    is_suspicious = siemplify.parameters.get(\"Is Suspicious\", 'false').lower() == 'true'\n    is_enriched = True\n    is_vulnerable = False\n    result_value = 'true'\n    status = EXECUTION_STATE_COMPLETED\n    \n    \n\n    separator = siemplify.parameters.get(\"Entities Separator\", \",\") or \",\"\n    siemplify.LOGGER.info(\"Splitting entities by {}\".format(separator))\n    entities_identifiers_list = entities_identifiers.split(\",\")\n    alert_entities = get_alert_entities(siemplify)\n    error_messages = []\n    warning_messages = []\n    entities_to_enrich = []\n    success_entities = []\n    updated_entities = []\n    json_result = {}\n    json_result['created'] = []\n    json_result['enriched'] = []\n    json_result['failed'] = []\n    output_message = \"\"\n    for entity_identifier in entities_identifiers_list:\n        entity_identifier = str(entity_identifier.strip()).upper()\n        if entity_identifier:\n            try:\n                if check_if_entity_exists(alert_entities, entity_identifier):\n                    #if json_data:\n                    #    entities_to_enrich.append(entity_identifier)\n                    json_result['failed'].append(entity_identifier)\n                else:\n                    properties['is_new_entity'] = True\n                    if entity_type == \"ADDRESS\":\n                        try:\n                            test_ip = ipaddress.ip_address(entity_identifier)\n                            siemplify.add_entity_to_case(entity_identifier, entity_type, is_internal, is_suspicious,\n                                                 is_enriched, is_vulnerable, properties)\n                            success_entities.append(entity_identifier)\n                            json_result['created'].append(entity_identifier)\n                            if len(properties) > 1:\n                                json_result['enriched'].append(entity_identifier)                                                \n                        except Exception as e:\n                            message = \"Entity {0} Creation failed. Not a valid IP Address: {1}\".format(entity_identifier, e)\n                            siemplify.LOGGER.error(message)\n                            error_messages.append(message)\n                            pass\n                    else:\n                        siemplify.add_entity_to_case(entity_identifier, entity_type, is_internal, is_suspicious,\n                                                 is_enriched, is_vulnerable, properties)\n                    \n                        success_entities.append(entity_identifier)\n                        json_result['created'].append(entity_identifier)\n                        if len(properties) > 1:\n                            json_result['enriched'].append(entity_identifier)  \n                        \n            except Exception as e:\n                error_message = \"Entity {0} Creation failed. error: {1}\".format(entity_identifier, e)\n                siemplify.LOGGER.error(error_message)\n                siemplify.LOGGER.exception(e)\n                error_messages.append(error_message)\n                json_result['failed'].append(entity_identifier)\n\n    \n    if entities_to_enrich:\n        for entity in alert_entities:\n            for enrich_entity in entities_to_enrich:\n                if enrich_entity.upper() == entity.identifier.upper():\n                    entity.additional_properties.update(properties)\n                    updated_entities.append(entity)\n                    output_message += \"Entity {} Already Exists, but enrichment still added.\\n\".format(entity.identifier)\n                    json_result['enriched'].append(entity.identifier)   \n        siemplify.update_entities(updated_entities)\n    \n    siemplify.result.add_result_json(json_result)\n    if success_entities:\n        output_message += '{0} created successfully.'.format(\",\".join(success_entities))\n    else:\n        output_message += 'No entities were created.'\n\n    if warning_messages:\n        output_message += \"{0} \\n WARNINGS: \\n {1}\".format(output_message, \"\\n\".join(warning_messages))\n\n    if error_messages:\n        output_message = \"{0} \\n ERRORS: \\n {1}\".format(output_message, \"\\n\".join(error_messages))\n        status = EXECUTION_STATE_FAILED\n        result_value = 'false'\n\n    siemplify.LOGGER.info(\"-----------Action done--------------\")\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 13.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<insert string>",
+      "Description": "The entity or entities to be added to the alert.",
+      "Name": "Entities Identifiers",
+      "Value": "<insert string>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620371,
+      "ModificationTimeUnixTimeInMs": 1614012620371
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "HOSTNAME",
+      "Description": "Siemplify entity type. Example: HOSTNAME / USERNAME / etc.",
+      "Name": "Entity Type",
+      "Value": "HOSTNAME",
+      "Type": 13,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620371,
+      "ModificationTimeUnixTimeInMs": 1614012620371
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Mark if entities are part of an internal network.",
+      "Name": "Is Internal",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620371,
+      "ModificationTimeUnixTimeInMs": 1614012620371
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": ",",
+      "Description": "The character to split the Entities Identifiers field by.",
+      "Name": "Entities Separator",
+      "Value": ",",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620371,
+      "ModificationTimeUnixTimeInMs": 1614012620371
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "Enrichment JSOn data",
+      "Name": "Enrichment JSON",
+      "Value": "",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620371,
+      "ModificationTimeUnixTimeInMs": 1614012620371
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The prefix to be added to the enrichment data.",
+      "Name": "PrefixForEnrichment",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620371,
+      "ModificationTimeUnixTimeInMs": 1614012620371
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620369,
+  "ModificationTimeUnixTimeInMs": 1614012620369
+}

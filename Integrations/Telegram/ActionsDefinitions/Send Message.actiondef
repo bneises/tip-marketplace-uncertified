@@ -1,0 +1,53 @@
+{
+  "Name": "Send Message",
+  "Description": "Sends a message to a specific chat by the configured Bot.",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Send Message\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n\n    json_result = {}\n\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n    message_content = siemplify.extract_action_param(\"Message\")\n    chat_id = siemplify.extract_action_param(\"Chat ID\")\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n\n        sent_message = telegram_manager.telegram_bot_sendmessage(\n            chat_id, message_content\n        )\n\n        json_result = sent_message\n\n    except Exception as e:\n        output_message = f\"Could not send message. Error: {e}\"\n        return_value = False\n        status = EXECUTION_STATE_FAILED\n    else:\n        output_message = \"The message was sent successfully\"\n        return_value = True\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.result.add_result_json(json_result)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ok\": true,\r\n\t\"result\": {\r\n\t\t\"message_id\": 24,\r\n\t\t\"sender_chat\": {\r\n\t\t\t\"id\": -1111111,\r\n\t\t\t\"title\": \"test_test\",\r\n\t\t\t\"username\": \"test_test\",\r\n\t\t\t\"type\": \"channel\"\r\n\t\t},\r\n\t\t\"chat\": {\r\n\t\t\t\"id\": -1111111,\r\n\t\t\t\"title\": \"test_test\",\r\n\t\t\t\"username\": \"test_test\",\r\n\t\t\t\"type\": \"channel\"\r\n\t\t},\r\n\t\t\"date\": 1605431597,\r\n\t\t\"text\": \"TryToday\"\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 77.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "123456",
+      "Description": "The chat ID which you want the bot to send the message to.",
+      "Name": "Chat ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "The message content you would like to send.",
+      "Name": "Message",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

@@ -1,0 +1,27 @@
+{
+  "Name": "Lock Playbook",
+  "Description": "This action will cause the current playbook to pause until all playbooks from the previous alert complete.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_INPROGRESS\nGET_CASE_FULL_DETAILS = '{}/external/v1/cases/GetCaseFullDetails/{}'\nWF_STATUS_INPROGRESS = 1\nWF_STATUS_COMPLETED = 2\nWF_STATUS_FAILED = 3\nWF_STATUS_PENDING = 4\nWF_STATUS_TERMINATED = 5\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    res = siemplify.session.get(GET_CASE_FULL_DETAILS.format(siemplify.API_ROOT, siemplify.case_id))\n    siemplify.validate_siemplify_error(res)\n    case = res.json()\n    current_alert_index = None\n    alerts = sorted(case[\"alerts\"], key=lambda x: x[\"creationTimeUnixTimeInMs\"], reverse=True)\n    \n    for alert in alerts:\n        if alert[\"identifier\"] == siemplify.alert_id:\n            current_alert_index = case[\"alerts\"].index(alert)\n            break\n    if current_alert_index != None:\n        if siemplify.current_alert.identifier == siemplify.case.alerts[-1].identifier:\n            output_message = f\"Alert Index: {current_alert_index}. Alert Id: {siemplify.current_alert.identifier}: First alert - continuing playbook.\"\n            result_value = 'true'\n            status = EXECUTION_STATE_COMPLETED\n        elif case[\"alerts\"][current_alert_index - 1][\"workflowsStatus\"] == WF_STATUS_INPROGRESS:\n            prev_case= case[\"alerts\"][current_alert_index - 1][\"identifier\"]\n            output_message = f\"Alert Index: {current_alert_index}. Alert Id: {siemplify.current_alert.identifier}: Playbook Locked. Waiting for alert # {prev_case} playbook to finish.\"\n            result_value = 'false'\n            status = EXECUTION_STATE_INPROGRESS\n        else:\n            output_message = f\"Alert Index: {current_alert_index}. Alert Id: {siemplify.current_alert.identifier}: Lock Released. \"\n            result_value = 'true'\n            status = EXECUTION_STATE_COMPLETED\n    else:\n        status = EXECUTION_STATE_FAILED\n        output_message = \"Couldn't find current alert\"\n        result_value = 'false'\n    siemplify.end(output_message, result_value, status)\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "IsAsync": true,
+  "Version": 20.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620375,
+  "ModificationTimeUnixTimeInMs": 1614012620375
+}

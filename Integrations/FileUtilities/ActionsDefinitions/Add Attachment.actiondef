@@ -1,0 +1,97 @@
+{
+  "Name": "Add Attachment",
+  "Description": "The action adds an attachment to the case wall (similar to attach evidence)",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nimport json\nimport requests\nimport base64\n\n\n    \ndef main():\n    siemplify = SiemplifyAction()\n    \n    description = siemplify.parameters.get(\"Description\")\n    name = siemplify.parameters.get(\"Name\")\n    file_type = siemplify.parameters.get(\"Type\")\n    base64_blob = siemplify.parameters.get(\"Base64 Blob\")\n    isFavorite = bool(siemplify.parameters.get(\"isFavorite\"))\n    headers = {'AppKey': siemplify.api_key,\"Content-Type\":\"application/json\"}\n    case_id = int(siemplify.case.identifier)\n    \n    body = {\n        \"CaseIdentifier\": case_id,\n        \"Base64Blob\": base64_blob,\n        \"Name\": name,\n        \"Description\": description,\n        \"Type\":file_type,\n        \"IsImportant\": isFavorite\n    }\n    response = requests.post(f'{siemplify.API_ROOT}/external/v1/cases/AddEvidence/',headers=headers, data = json.dumps(body), verify=False)\n    json_response = response.json()\n\n    print (json.dumps(json_response))\n    \n    siemplify.result.add_result_json(json.dumps(json_response))\n\n\n    siemplify.end('Max number , Min Number', True)\n\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"evidenceName\": \"Description\",\n  \"description\": \"Name\",\n  \"evidenceThumbnailBase64\": \"\",\n  \"evidenceId\": 30,\n  \"fileType\": \".txt\",\n  \"creatorUserId\": \"No user context\",\n  \"id\": 30,\n  \"type\": 4,\n  \"caseId\": 25,\n  \"isFavorite\": false,\n  \"modificationTimeUnixTimeInMs\": 1593151675450,\n  \"creationTimeUnixTimeInMs\": 1593151675450,\n  \"alertIdentifier\": null\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 40.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Name",
+      "Description": "The name of the attachment",
+      "Name": "Name",
+      "Value": "Name",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236987,
+      "ModificationTimeUnixTimeInMs": 1610399236987
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Is the attachment marked as favorite in the case wall ",
+      "Name": "IsFavorite",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236987,
+      "ModificationTimeUnixTimeInMs": 1610399236987
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Base64 here>",
+      "Description": "The attachment's content in Base64",
+      "Name": "Base64 Blob",
+      "Value": "<Base64 here>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236987,
+      "ModificationTimeUnixTimeInMs": 1610399236987
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": ".txt",
+      "Description": "Attachment Type",
+      "Name": "Type",
+      "Value": ".txt",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236987,
+      "ModificationTimeUnixTimeInMs": 1610399236987
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Description",
+      "Description": "The description of the attachment ",
+      "Name": "Description",
+      "Value": "Description",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236987,
+      "ModificationTimeUnixTimeInMs": 1610399236987
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236984,
+  "ModificationTimeUnixTimeInMs": 1610399236984
+}

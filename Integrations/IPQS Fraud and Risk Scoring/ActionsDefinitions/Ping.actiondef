@@ -1,0 +1,28 @@
+{
+	"Name": "Ping",
+	"Description": "This action will test the connectivity to the IPQS server.",
+	"Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom IPQSManager import IPQSManager, PROVIDER\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(PROVIDER,\"API Key\")\n    data_json = {}\n    data_json['email'] = 'support@ipqualityscore.com'\n    ipqs_manager = IPQSManager(siemplify, api_key, data_json)\n    ipqs_status, ipqs_response = ipqs_manager.query_ipqs('email')\n    status = EXECUTION_STATE_COMPLETED\n    result = True\n    output_message = \"Successfully Connected to IPQualityScore\"  # human readable message, showed in UI as the action result\n    if not ipqs_status: # used to flag back to siemplify system, the action final status\n        status = EXECUTION_STATE_FAILED\n        result = False\n        output_message = f'Error in connecting to IPQualityScore. Reason: {ipqs_response[\"message\"]}'\n        \n    result_value = result  # Set a simple result value, used for playbook if\\else and placeholders.\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+	"IntegrationIdentifier": "IPQS Fraud and Risk Scoring",
+	"ScriptResultName": "ScriptResult",
+	"DynamicResultsMetadata": [{
+		"ResultName": "JsonResult",
+		"ResultExample": "{}",
+		"ShowResult": true
+	}],
+	"Creator": "IPQS",
+	"IsEnabled": true,
+	"IsCustom": false,
+	"IsSystem": false,
+	"Version": 13.0,
+	"TimeoutSeconds": 300,
+	"IsAsync": null,
+	"AsyncPollingIntervalInSeconds": 3600,
+	"TotalIntervalTimeoutForAsyncInSeconds": 86400,
+	"Parameters": [],
+	"DefaultResultValue": "",
+	"PythonVersion": "None",
+	"SimulationData": {
+		"Entities": null
+	},
+	"SimulationDataJson": null
+}

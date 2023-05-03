@@ -1,0 +1,65 @@
+{
+    "Identifier": "Hibob",
+    "PackageName": "Hibob",
+    "DisplayName": "Hibob",
+    "Description": "Hibob integration facilitates the centralized management and synchronization of the company's employees information stored in the HR system called Hibob.\nBob is a cloud-based human resources (HR) management and benefits administration platform for HR teams, CEOs, and accountants.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1600336236971,
+            "Id": 0,
+            "IntegrationIdentifier": "Hibob",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1600336236971,
+            "PropertyDescription": "API Token",
+            "PropertyDisplayName": "API Token",
+            "PropertyName": "API Token",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [
+        "Enrich Entities",
+        "Get User Image",
+        "Ping",
+        "Revoke Access",
+        "Search User",
+        "Send Invitation",
+        "Upload User Image"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "HibobManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Hibob integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1598798081000
+        },
+        {
+            "Items": [
+                "Fixed description for action parameters"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1598798081000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1635784683000
+        }
+    ]
+}

@@ -1,0 +1,98 @@
+{
+  "IsEnabled": true,
+  "IsCustom": true,
+  "Integration": "Cybersixgill DVE Feed",
+  "DocumentationLink": null,
+  "Name": "Cybersixgill - DVE Connector",
+  "Description": "The Cybersixgill Dynamic Vulnerability Exploit (DVE) Score is based on the most comprehensive collection of vulnerability-related threat intelligence and is the only solution that provides users total context and predicts the immediate risks of a vulnerability based on threat actors’ intent. With seamless integration, Siemplify customers can track threats stemming from CVEs that most others define as irrelevant and have a higher probability of being exploited - directly from the Siemplify dashboard.",
+  "Creator": "Admin",
+  "Script": "from SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyUtils import output_handler, unix_now\n\nfrom sixgill.sixgill_constants import FeedStream\nfrom sixgill.sixgill_feed_client import SixgillFeedClient\nfrom sixgill.sixgill_utils import is_indicator\n\nimport json\nimport sys\n\n# ==============================================================================\n# This is a Connector Template + mock generator. This file objective is to demonstrate how to build a connector, and exmplain the objective of each field.\n# All the data generated here, is MOCK data. Enjoy.\n# ==============================================================================\n\nCONNECTOR_NAME = \"Cybersixgill DVE Feed\"\nVENDOR = \"Cybersixgill\"\nPRODUCT = \"Cybersixgill DVE Feed\"\nRULE_GENERATOR_EXAMPLE = \"Cybersixgill Darkfeed\"\nSIXGILL_CHANNEL_ID = \"1f4fdd520d3a721799fc0d044283d364\"\n\nsiemplify = SiemplifyConnectorExecution()  # Siemplify main SDK wrapper\nsiemplify.script_name = CONNECTOR_NAME\n\n\n@output_handler\ndef main(is_test_run):\n    alerts = []  # The main output of each connector run\n\n    if (is_test_run):\n        siemplify.LOGGER.info(\"***** This is an \\\"IDE Play Button\\\"\\\\\\\"Run Connector once\\\" test run ******\")\n\n    siemplify.LOGGER.info(\"==================== Main - Param Init ====================\")\n\n    client_id = siemplify.extract_connector_param(\"Client Id\", default_value=None, input_type=str,\n                                                  is_mandatory=True,\n                                                  print_value=True)\n    client_secret = siemplify.extract_connector_param(\"Client Secret\", default_value=None, input_type=str,\n                                                      is_mandatory=True, print_value=True)\n    bulk_size = siemplify.extract_connector_param(\"Alerts Limit\", default_value=None, input_type=int,\n                                                        is_mandatory=True, print_value=True)\n\n    siemplify.LOGGER.info(\"------------------- Main - Started -------------------\")\n    sixgill_client = create_sixgill_client_obj(client_id, client_secret, SIXGILL_CHANNEL_ID, bulk_size)\n    dve_data = query_sixgill(sixgill_client)\n    siemplify.LOGGER.info(True)\n    if dve_data:\n        for rec in dve_data:\n            try:\n                alert_data = fetch_alert(siemplify, rec)\n                if alert_data:\n                    siemplify.LOGGER.info(\"\\n\\n\\n\")\n                    siemplify.LOGGER.info(alert_data)\n                    siemplify.LOGGER.info(\"\\n\\n\\n\")\n                    alerts.append(alert_data)\n            except Exception as e:\n                siemplify.LOGGER.exception(e)\n    sixgill_client.commit_indicators()\n    siemplify.LOGGER.info(\"------------------- Main - Finished -------------------\")\n    siemplify.return_package(alerts)\n\n\ndef fetch_alert(siemplify, record_data):\n    \"\"\"Returns an alert, which is an aggregation of basic events. (ie: Arcsight's correlation, QRadar's Offense)\"\"\"\n\n    alert_info = AlertInfo()\n\n    # ----------------------------- Alert Fields initilization START -----------------------------\n    # ... Replace this DUMMY VALUES !!! ...\n\n    # Each alert_info has a unique key composed of alert_info.name+alert_info.display_id. This key is used to validate data is digested only once by the Siemplify System - to avoid duplicates.\n    # If an alert_info has a uniqe_key that has already been digested, it will be ignored.\n    # The uniqueness must be persistent, even after server restart\\ refetching of the same alert, multiple runs of the same API queries, etc.\n    alert_info.display_id = record_data.get(\"id\")\n    alert_info.ticket_id = record_data.get(\n        \"id\")  # In default, ticket_id = display_id. But, if for some reason the external alert id, is different then the composite's key display_id, you can save the original external alert id in this \"ticket_id\" field.\n    for obj in record_data.get(\"external_references\", []):\n        alert_info.name = obj.get(\"external_id\")\n    alert_info.rule_generator = RULE_GENERATOR_EXAMPLE  # Describes the name of the siem's rule, that caused the aggregation of the alert.\n    alert_info.start_time = unix_now()  # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n    alert_info.end_time = unix_now()  # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n    alert_info.priority = 60  # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n    alert_info.device_vendor = VENDOR  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source vendor of the data. (ie: Microsoft, Mcafee)\n    alert_info.device_product = PRODUCT  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source product of the data. (ie: ActiveDirectory, AntiVirus)\n    event_info = fetch_event(siemplify, record_data)\n    alert_info.events.append(event_info)\n    return alert_info\n\n\ndef query_sixgill(sixgill_client):\n    records_object = None\n    try:\n        raw_response = sixgill_client.get_bundle()\n        records_object = list(filter(is_indicator, raw_response.get(\"objects\", [])))\n    except Exception as err:\n        siemplify.LOGGER.error(err)\n        siemplify.LOGGER.error(traceback.format_exc())\n    return records_object\n\n\ndef fetch_event(siemplify, record_data):\n    event = {}\n    x_sixgill_info = record_data.get(\"x_sixgill_info\", {})\n    sixgill_event = x_sixgill_info.get(\"event\", {})\n    sixgill_nvd = sixgill_event.get(\"nvd\", {})\n    # ----------- Mandatory Fields ---------------\n    # A valid event must have a \"Start Time\", \"End Time\", \"Name\", and \"Device Product\". Their name is not important (What ever it is, it will be mapped).\n    # ie: \"Start Time\" may be called \"Start Time\", \"StartTime\", \"start_time\", \"johnDoeStartTime\"\n    event[\n        \"StartTime\"] = unix_now()  # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n    event[\n        \"EndTime\"] = unix_now()  # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n    for event_obj in record_data.get(\"external_references\", []):\n        event[\"name\"] = event_obj.get(\"external_id\")\n        event[\"ExternalID\"] = event_obj.get(\"external_id\")\n    event[\"device_product\"] = PRODUCT\n\n    event[\"Sixgill_RawJson\"] = json.dumps(record_data)\n    event[\"CreationDate\"] = record_data.get(\"created\")\n    event[\"ModifiedDate\"] = record_data.get(\"modified\")\n    event[\"SixgillDVEScoreCurrent\"] = x_sixgill_info.get(\"score\", {}).get(\"current\")\n    event[\"SixgillDVEHighestScore\"] = x_sixgill_info.get(\"score\", {}).get(\"highest\", {}).get(\"value\")\n    event[\"SixgillDVEHighestDate\"] = x_sixgill_info.get(\"score\", {}).get(\"highest\", {}).get(\"date\")\n    event[\"SixgillPreviouslyExploited\"] = record_data.get(\"x_sixgill_info\", {}).get(\"score\", {}).get(\n        \"previouslyExploited\")\n    event[\"EventName\"] = sixgill_event.get(\"name\")\n    event[\"EventType\"] = sixgill_event.get(\"type\")\n    event[\"EventAction\"] = sixgill_event.get(\"action\")\n    event[\"PreviousLevel\"] = sixgill_event.get(\"prev_level\")\n    event[\"EventDescription\"] = sixgill_event.get(\"description\")\n    event[\"EventDateTime\"] = sixgill_event.get(\"event_datetime\")\n    event[\"CVSS3_1Score\"] = sixgill_nvd.get(\"base_score_v3\")\n    event[\"CVSS3_1Severity\"] = sixgill_nvd.get(\"base_severity_v3\")\n    event[\"NVDLink\"] = sixgill_nvd.get(\"link\")\n    event[\"NVDLastModified\"] = sixgill_nvd.get(\"modified\")\n    event[\"NVDPublicationDate\"] = sixgill_nvd.get(\"published\")\n    event[\"CVSS2_0Score\"] = sixgill_nvd.get(\"score_2_0\")\n    event[\"CVSS2_0Severity\"] = sixgill_nvd.get(\"severity_2_0\")\n    event[\"NVDVector2_0\"] = sixgill_nvd.get(\"vector_v2\")\n    event[\"NVDVector3_1\"] = sixgill_nvd.get(\"vector_v3\")\n    return event\n\n\ndef create_sixgill_client_obj(client_id, client_secret, channel_id, bulk_size):\n    \"\"\"This create a sixgill client object\n\n    Returns:\n        sixgill.sixgill_feed_client.SixgillFeedClient -- Sixgill Client object\n    \"\"\"\n    sixgill_darkfeed_client = None\n    try:\n        sixgill_dvefeed_client = SixgillFeedClient(\n            client_id, client_secret, channel_id, feed_stream=FeedStream.DVEFEED, bulk_size=bulk_size, verify=True)\n    except Exception as err:\n        siemplify.LOGGER.error(\"create_sixgill_client_obj - Error - \" + str(err))\n        siemplify.LOGGER.info(traceback.format_exc())\n    return sixgill_dvefeed_client\n\n\nif __name__ == \"__main__\":\n    # Connectors are run in iterations. The interval is configurable from the ConnectorsScreen UI.\n    is_test_run = not (len(sys.argv) < 2 or sys.argv[1] == 'True')\n    main(is_test_run)",
+  "Version": 45,
+  "MappingRules": [],
+  "ProductToVisualFamilyRecords": [],
+  "SimulationUseCases": {
+    "CasesForUseCase": [],
+    "UseCaseName": null
+  },
+  "Parameters": [
+    {
+      "ConnectorDefinitionId": 16,
+      "IsMandatory": true,
+      "DefaultValue": "30",
+      "Name": "PythonProcessTimeout",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The timeout limit (in seconds) for the python process running current script",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621857392552,
+      "ModificationTimeUnixTimeInMs": 1621857392552
+    },
+    {
+      "ConnectorDefinitionId": 16,
+      "IsMandatory": true,
+      "DefaultValue": "Cybersixgill DVE Feed",
+      "Name": "EventClassId",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the event name (sub-type)",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621857392552,
+      "ModificationTimeUnixTimeInMs": 1621857392552
+    },
+    {
+      "ConnectorDefinitionId": 16,
+      "IsMandatory": true,
+      "DefaultValue": "Cybersixgill DVE Feed",
+      "Name": "DeviceProductField",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the device product",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621857392552,
+      "ModificationTimeUnixTimeInMs": 1621857392552
+    },
+    {
+      "ConnectorDefinitionId": 16,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Client Secret",
+      "Type": 3,
+      "Mode": 2,
+      "Description": "Secret Key",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621857392552,
+      "ModificationTimeUnixTimeInMs": 1621857392552
+    },
+    {
+      "ConnectorDefinitionId": 16,
+      "IsMandatory": true,
+      "DefaultValue": "Client_ID",
+      "Name": "Client Id",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "Client Id",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621857392552,
+      "ModificationTimeUnixTimeInMs": 1621857392552
+    },
+    {
+      "ConnectorDefinitionId": 16,
+      "IsMandatory": true,
+      "DefaultValue": "20",
+      "Name": "Alerts Limit",
+      "Type": 1,
+      "Mode": 2,
+      "Description": "Number of alerts to be ingested into the platform.",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621857392552,
+      "ModificationTimeUnixTimeInMs": 1621857392552
+    }
+  ],
+  "Rules": [],
+  "IsConnectorRulesSupported": true,
+  "IsSystem": false,
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1621517290588,
+  "ModificationTimeUnixTimeInMs": 1621857392544
+}

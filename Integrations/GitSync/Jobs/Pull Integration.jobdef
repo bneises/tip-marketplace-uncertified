@@ -1,0 +1,51 @@
+{
+  "Name": "Pull Integration",
+  "Integration": "GitSync",
+  "Script": "from base64 import b64encode\n\nfrom GitSyncManager import GitSyncManager\nfrom SiemplifyJob import SiemplifyJob\nfrom SiemplifyUtils import output_handler\n\nSCRIPT_NAME = \"Pull Integration\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyJob()\n    siemplify.script_name = SCRIPT_NAME\n\n    pull_whitelist = siemplify.extract_job_param(\"Install Whitelist\").split(',')\n\n    try:\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\n\n        installed_integrations = gitsync.api.get_ide_cards()\n        marketplace_integrations = None\n        for integration in pull_whitelist:\n            integration = gitsync.pull_integration(integration)\n            if integration.isCustom:\n                gitsync.api.import_package(integration.identifier,\n                                           b64encode(integration.zip_buffer.getvalue()).decode('utf-8'))\n            else:\n                if integration.identifier not in [x[\"identifier\"] for x in installed_integrations]:\n                    if not marketplace_integrations:\n                        marketplace_integrations = gitsync.api.get_store_data()\n                    try:\n                        store_integration = next(\n                            x for x in marketplace_integrations if x[\"identifier\"] == integration.identifier)\n                    except StopIteration:\n                        siemplify.LOGGER.warn(\n                            f\"Integration {integration.identifier} not found in marketplace. Skipping.\")\n                        continue\n                    gitsync.api.install_integration(integration.identifier, store_integration[\"version\"],\n                                                    store_integration[\"isCertified\"])\n                    installed_integrations = gitsync.api.get_ide_cards()\n                integration_cards = \\\n                    next(x for x in installed_integrations if x[\"identifier\"] == integration.identifier)['cards']\n                for script in integration.actions + integration.jobs + integration.connectors + integration.managers:\n                    item_card = next((x for x in integration_cards if x[\"name\"] == script[\"name\"]), None)\n                    if item_card:\n                        script[\"id\"] = item_card[\"id\"]\n                    gitsync.api.update_ide_item(script)\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n    siemplify.end_script()\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "Creator": "Admin",
+  "RunIntervalInSeconds": 900,
+  "Description": "Install an integration or update an installed one.",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Version": 1,
+  "IsSystem": false,
+  "Parameters": [
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Test",
+      "Name": "Install Whitelist",
+      "Description": "List of integrations, seperated by a comma, to pull from the repo",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145618,
+      "ModificationTimeUnixTimeInMs": 1624368145618
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Repo URL",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145618,
+      "ModificationTimeUnixTimeInMs": 1624368145618
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Branch",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145618,
+      "ModificationTimeUnixTimeInMs": 1624368145618
+    }
+  ],
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1622215730974,
+  "ModificationTimeUnixTimeInMs": 1624368145613
+}

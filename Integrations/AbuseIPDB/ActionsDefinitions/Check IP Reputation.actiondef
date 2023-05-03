@@ -1,0 +1,87 @@
+{
+  "Name": "Check IP Reputation",
+  "Description": "Checks the reputation of all address entities associated with an alert. Includes pre-formatted insight creation. Excludes internal entities by default.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyDataModel import EntityTypes\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, add_prefix_to_dict, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom AbuseIPDB import AbuseIPDBManager, AbuseIPDBInvalidAPIKeyManagerError, AbuseIPDBLimitManagerError\nimport json\n\nSCRIPT_NAME = \"Check IP Reputation\"\nIDENTIFIER = u'AbuseIPDB'\nABUSEIPDB_PREFIX = u'AbuseIPDB_'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    # INIT INTEGRATION CONFIGURATION:\n    api_key = siemplify.extract_configuration_param(siemplify, param_name=u\"Api Key\")\n    verify_ssl = siemplify.extract_configuration_param(siemplify, param_name=u\"Verify SSL\",\n                                             default_value=False, input_type=bool)\n    max_days = siemplify.extract_action_param(\"Max Age in Days\",\n                                             is_mandatory=True, print_value=True, input_type=int)\n    exclude_internal = siemplify.extract_action_param(\"Exclude Internal Addresses\", print_value=True, input_type=bool)\n    create_insight = siemplify.extract_action_param(\"Create Insight\", print_value=True, input_type=bool)\n    sus_threshold = siemplify.extract_action_param(\"Suspicious Threshold\", is_mandatory=True, print_value=True)\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    json_results = {}\n    enriched_entities = []\n    limit_entities = []\n    failed_entities = []\n    missing_entities = []\n    \n    try:\n        status = EXECUTION_STATE_COMPLETED \n        output_message = \"output message:\\n \" \n        result_value = None\n        failed_entities = [] \n        successfull_entities = []\n        \n        abuse_ipdb = AbuseIPDBManager(api_key, verify_ssl)\n        max_days = abuse_ipdb.validate_max_days(max_days)\n        \n        if exclude_internal:\n            address_entities = [entity for entity in siemplify.target_entities if entity.entity_type == EntityTypes.ADDRESS\n                            and not entity.is_internal]\n        else:\n            address_entities = [entity for entity in siemplify.target_entities if entity.entity_type == EntityTypes.ADDRESS]\n        \n        if not address_entities:\n            info_message = u\"No ADDRESS entities were found in current scope.\\n\"\n            siemplify.LOGGER.info(info_message)\n            output_message += info_message\n\n        for entity in address_entities:\n            siemplify.LOGGER.info(\"Started processing entity: {}\".format(entity.identifier))\n            if unix_now() >= siemplify.execution_deadline_unix_time_ms:\n                siemplify.LOGGER.error(\"Timed out. execution deadline ({}) has passed\".format(convert_unixtime_to_datetime(siemplify.execution_deadline_unix_time_ms)))\n                status = EXECUTION_STATE_TIMEDOUT\n                break\n            try:\n                # Look up address in AbuseIPDB\n                address_report = abuse_ipdb.check_ip(entity.identifier, max_days)\n                \n                if not address_report:\n                     # If report is none, and error not raised - probably entity can't be found.\n                    info_message = u'Entity {} was not found in AbuseIPDB'.format(entity.identifier)\n                    siemplify.LOGGER.info(u\"\\n {}\".format(info_message))\n                    missing_entities.append(entity.identifier)\n                    continue\n                \n                json_results[entity.identifier] = address_report.to_json()\n                \n                for attrib in dir(address_report):\n                    if not attrib.startswith('__') and not \"_\" in attrib:\n                        attrib_val = getattr(address_report, attrib, \"The attribute named {} does not exist\".format(attrib))\n                        entity.additional_properties[\"{}{}\".format(ABUSEIPDB_PREFIX, attrib)] = str(attrib_val)\n                \n                if int(sus_threshold) > 0 and (int(address_report.abuseConfidenceScore) >= int(sus_threshold)):\n                    entity.is_suspicious = True\n               \n                \n                \n                if create_insight:\n                    severity = 0\n                    entity_identifier = entity.identifier\n                    insight_type = 1\n                    triggered_by = \"AbuseIPDB\"\n                    title = str(entity.identifier)\n                    content = \"\"\" \n                        <b>Confidence Score:</b> {}\n                        <b>Last Reported:</b> No Reports Found.\n                        <b>Country Code:</b> {}\n                        <b>Domain:</b> {}\n                        <b>Whitelisted:</b> {}\n                        <b>ISP:</b> {}\n                        <b>Usage Type:</b> {}\n                    \"\"\".format(address_report.abuseConfidenceScore,\n                        address_report.countryCode,\n                        address_report.domain,\n                        address_report.isWhitelisted,\n                        address_report.isp,\n                        address_report.usageType)\n                    # If reports are found, add the additional fields.\n                    if address_report.lastReportedAt is not None:\n                        content = \"\"\" \n                            <b>Confidence Score:</b> {}\n                            <b>Last Reported:</b> {}\n                            <b>Total Reports:</b> {}\n                            <b>Country Code:</b> {}\n                            <b>Domain:</b> {}\n                            <b>Whitelisted:</b> {}\n                            <b>ISP:</b> {}\n                            <b>Usage Type:</b> {}\n                            \n                        \"\"\".format(address_report.abuseConfidenceScore,\n                            address_report.lastReportedAt,\n                            address_report.totalReports,\n                            address_report.countryCode,\n                            address_report.domain,\n                            address_report.isWhitelisted,\n                            address_report.isp,\n                            address_report.usageType)\n                            \n                            \n                    siemplify.add_entity_insight(entity, content)\n                \n                \n                entity.is_enriched = True\n                enriched_entities.append(entity)\n                \n                siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_results))\n                info_message = u'Entity {} was submitted and analyzed in AbuseIPDB'.format(entity.identifier)\n                siemplify.LOGGER.info(u\"\\n {}\".format(info_message))\n                output_message += info_message\n                \n                \n            except Exception as e:\n                failed_entities.append(entity.identifier)\n                siemplify.LOGGER.error(\"An error occurred on entity {0}\".format(entity.identifier))\n                siemplify.LOGGER.exception(e)\n\n        result_value = len(successfull_entities)\n\n        if failed_entities:\n            output_message += \"\\n Failed processing entities:\\n   {}\".format(\"\\n   \".join(failed_entities))\n            status = EXECUTION_STATE_FAILED\n            \n        if missing_entities:\n            output_message += u'\\n\\nThe following IPs were not found in AbuseIPDB: \\n'\\\n                                   + u'{}'.format(u'\\n'.join(missing_entities))\n                                   \n        if limit_entities:\n            output_message += u'\\n\\nThe following IPS were not analyzed due to reaching API request limitation: \\n'\\\n                                   + u'{}'.format(u'\\n'.join([entity.identifier for entity in limit_entities]))\n\n        if enriched_entities:\n            print(\"Updating entities\")\n            siemplify.update_entities(enriched_entities)\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n    \n        status = EXECUTION_STATE_FAILED\n        result_value = \"Failed\"\n        output_message += \"\\n unknown failure\"\n\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "AbuseIPDB",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"Entity\": \"10.0.0.28\", \"EntityResult\": {\"ipAddress\": \"10.0.0.28\", \"isPublic\": false, \"ipVersion\": 4, \"isWhitelisted\": null, \"abuseConfidenceScore\": 0, \"countryCode\": null, \"usageType\": \"Reserved\", \"isp\": \"Private IP Address LAN\", \"domain\": null, \"hostnames\": [], \"totalReports\": 0, \"numDistinctUsers\": 0, \"lastReportedAt\": null}}, {\"Entity\": \"104.131.182.103\", \"EntityResult\": {\"ipAddress\": \"104.131.182.103\", \"isPublic\": true, \"ipVersion\": 4, \"isWhitelisted\": false, \"abuseConfidenceScore\": 0, \"countryCode\": \"US\", \"usageType\": \"Data Center/Web Hosting/Transit\", \"isp\": \"DigitalOcean LLC\", \"domain\": \"digitalocean.com\", \"hostnames\": [], \"totalReports\": 0, \"numDistinctUsers\": 0, \"lastReportedAt\": null}}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 137.0,
+  "TimeoutSeconds": 60,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "If true, excludes any address entities that you've marked as internal, saving your API allowance on wasted IP checks against your own infrastructure.",
+      "Name": "Exclude Internal Addresses",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1623221012354,
+      "ModificationTimeUnixTimeInMs": 1623221012354
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "100",
+      "Description": "An abuse confidence score equal to, or above this threshold will mark the entity as supicious. Set to 0 to disable.",
+      "Name": "Suspicious Threshold",
+      "Value": "100",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1623221012354,
+      "ModificationTimeUnixTimeInMs": 1623221012354
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "Create an insight for each IP",
+      "Name": "Create Insight",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1623221012354,
+      "ModificationTimeUnixTimeInMs": 1623221012354
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "90",
+      "Description": "Max report age to check",
+      "Name": "Max Age in Days",
+      "Value": "90",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1623221012354,
+      "ModificationTimeUnixTimeInMs": 1623221012354
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1623221012342,
+  "ModificationTimeUnixTimeInMs": 1623221012346
+}

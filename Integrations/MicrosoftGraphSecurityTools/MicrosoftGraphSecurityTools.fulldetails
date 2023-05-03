@@ -1,0 +1,80 @@
+{
+    "Identifier": "MicrosoftGraphSecurityTools",
+    "PackageName": "MicrosoftGraphSecurityTools",
+    "DisplayName": "MicrosoftGraphSecurityTools",
+    "Description": "Expands on the MicrosoftGraphSecurity integration by providing additional alerting functionality for SOC, along with entity enrichment and remediation actions.\nAdditional documentation: https://github.com/snags141/SiemplifyIntegration_MicrosoftGraphSecurityTools",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1607348845258,
+            "Id": 0,
+            "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1607348845258,
+            "PropertyDescription": "Optional, if certificate is password-protected, specify the password to open the certificate file.",
+            "PropertyDisplayName": "Certificate Password",
+            "PropertyName": "Certificate Password",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1607348845258,
+            "Id": 0,
+            "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1607348845258,
+            "PropertyDescription": "Client ID from Azure",
+            "PropertyDisplayName": "Client ID",
+            "PropertyName": "Client ID",
+            "PropertyType": 2,
+            "Value": "clientIdhere"
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1607348845258,
+            "Id": 0,
+            "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1607348845258,
+            "PropertyDescription": "Secret ID from Azure",
+            "PropertyDisplayName": "Secret ID",
+            "PropertyName": "Secret ID",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1607348845258,
+            "Id": 0,
+            "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1607348845258,
+            "PropertyDescription": "Tenant ID from Azure here",
+            "PropertyDisplayName": "Tenant ID",
+            "PropertyName": "Tenant ID",
+            "PropertyType": 2,
+            "Value": "tenantidhere"
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1607348845258,
+            "Id": 0,
+            "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1607348845258,
+            "PropertyDescription": "If authentication based on certificates is  used instead of client secret, specify path to the certificate on Siemplify server",
+            "PropertyDisplayName": "Certificate Path",
+            "PropertyName": "Certificate Path",
+            "PropertyType": 2,
+            "Value": null
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 18.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

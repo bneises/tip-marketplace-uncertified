@@ -1,0 +1,59 @@
+{
+  "Name": "logzio-get-logs-by-event-id",
+  "Description": "Fetches the logs that triggered a security event. The logs are returned as a paginated list in JSON format.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\n\nimport concurrent.futures\nimport datetime\nimport json\nimport math\nimport requests\n\n\"\"\"\nIf this action succeeds, it will return a json in the following format, to match the json-adapter format:\n{\n    \"results\": [\n        # logs\n    ]\n}\n\"\"\"\n\nBASE_URL = \"https://api.logz.io/\"\nSEARCH_LOGS_API_SUFFIX = \"v2/security/rules/events/logs/search\"\nDEFAULT_PAGE_SIZE = 25\nMIN_PAGE_SIZE = 1\nMAX_PAGE_SIZE = 1000\nGENERAL_INSIGHT_TYPE = 0\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    status = EXECUTION_STATE_FAILED # default. will be changed only if logs retrieved and parsed to json successfully.\n    num_logs = 0\n    logzio_token = siemplify.extract_configuration_param('Logzio',\"logzio_security_token\", default_value=\"-\", is_mandatory=True)\n    if logzio_token == \"-\" or logzio_token == \"\":\n        siemplify.LOGGER.error(\"Error occurred: no Logzio API token! Exiting.\")\n        raise ValueError\n    logzio_region = siemplify.extract_configuration_param('Logzio',\"logzio_region\", default_value=\"\")\n    url = get_logzio_api_endpoint(siemplify, logzio_region)\n    logs_response = execute_logzio_api(siemplify, logzio_token, url)\n    if logs_response is not None:\n        logs_json, num_logs = create_json_result(siemplify, logs_response, logzio_token, url)\n        if logs_json is not None:\n            siemplify.result.add_result_json(logs_json)\n            status = EXECUTION_STATE_COMPLETED\n            add_insights(siemplify, logs_json)\n            \n    \n    output_message = get_output_msg(status, num_logs)\n    is_success = status == EXECUTION_STATE_COMPLETED\n    siemplify.end(output_message, is_success, status)\n    \n    \n    \ndef execute_logzio_api(siemplify, api_token, url, page_number=1):\n    \"\"\" Sends request to Logz.io and returnes the response, if applicable \"\"\"\n    alert_event_id = siemplify.extract_action_param(\"alert_event_id\", default_value=\"\", is_mandatory=True, print_value=True)\n    if alert_event_id == \"\":\n        siemplify.LOGGER.error(\"Error occurred: no alert_event_id! Exiting.\")\n        raise ValueError\n    try:\n        siemplify.LOGGER.info(\"Fetching page number {}\".format(page_number))\n        new_request = create_request_body_obj(siemplify, alert_event_id, page_number)\n        new_logs = fetch_logs_by_event_id(api_token, new_request, url, siemplify, alert_event_id)\n        return new_logs\n    except Exception as e:\n        siemplify.LOGGER.error(\"Error occurred while fetching logs from page {}: {}\".format(page_number, e))\n        return None\n\n\ndef create_request_body_obj(siemplify, alert_event_id, page_number=1):\n    \"\"\" Creates request to send to Logz.io API \"\"\"\n    request_body = {}\n    page_size = siemplify.extract_action_param(\"page_size\", is_mandatory=False, default_value=DEFAULT_PAGE_SIZE, input_type=int)\n    if page_size < MIN_PAGE_SIZE or page_size > MAX_PAGE_SIZE:\n        siemplify.LOGGER.warn(\"Invalid page size. Should be betwwen {} and {}. Reverting to default page size: {}\".format(MIN_PAGE_SIZE, MAX_PAGE_SIZE, DEFAULT_PAGE_SIZE))\n        page_size = DEFAULT_PAGE_SIZE\n    request_body[\"filter\"] = {}\n    request_body[\"filter\"][\"alertEventId\"] = alert_event_id\n    request_body[\"pagination\"] = dict(pageNumber=page_number, pageSize=page_size)\n    return request_body\n    \n    \ndef fetch_logs_by_event_id(api_token, req_body, url, siemplify, alert_event_id):\n    \"\"\"\n    Returnes from Logz.io all the logs that triggered the event.\n    If error occured or no results found, returnes None\n    \"\"\"\n    headers = {\n        'Content-Type': 'application/json',\n        'X-API-TOKEN': api_token\n    }\n\n    siemplify.LOGGER.info(\"api url: {}\".format(url))\n    try:\n        body = json.dumps(req_body)\n        siemplify.LOGGER.info(\"Fetching logs that triggered event {} from Logz.io\".format(alert_event_id))\n        response = requests.post(url, headers=headers, data=body, timeout=5)\n        siemplify.LOGGER.info(\"Status code from Logz.io: {}\".format(response.status_code))\n        if response.status_code == 200:\n            logs_response = json.loads(response.content)\n            if logs_response[\"total\"] >= 0:\n                return logs_response\n            siemplify.LOGGER.warn(\"No resultes found to match your request\")\n            return None\n        else:\n            siemplify.LOGGER.error(\"API request returned {}\".format(response.status_code))\n    except Exception as e:\n        siemplify.LOGGER.error(\"Error occurred while fetching logs that triggered event {} from Logz.io:\\n{}\".format(alert_event_id, e))\n        return None\n        \n\ndef get_base_api_url(region):\n    \"\"\" Returnes API url, in accordance to user's input \"\"\"\n    if region == \"us\" or region == \"\" or region == \"-\":\n        return BASE_URL\n    else:\n        return BASE_URL.replace(\"api.\", \"api-{}.\".format(region))\n\n\ndef create_json_result(siemplify, logs_response, logzio_token, url):\n    \"\"\"\n    This function collects all the logs that are related to the event,\n    Returns the logs in json format, and the number of logs collected\n    \"\"\"\n    collected_logs = collect_all_logs(siemplify, logs_response, logzio_token, url)\n    if collected_logs is not None and len(collected_logs) >= 0:\n        return json.dumps({\"results\": collected_logs}), len(collected_logs)\n    return None\n\n\ndef collect_all_logs(siemplify, logs_response, api_token, url):\n    \"\"\"\n    If there are more results than those who the first response returned,\n    retrieveing the remaining logs.\n    \"\"\"\n    collected_logs = logs_response[\"results\"]\n    num_collected_logs = len(collected_logs)\n    total_results_available = int(logs_response[\"total\"])\n    current_page = int(logs_response[\"pagination\"][\"pageNumber\"])\n    num_pages = math.ceil(total_results_available/int(logs_response[\"pagination\"][\"pageSize\"]))\n    siemplify.LOGGER.info(\"Request retrieved {} logs from Logz.io\".format(num_collected_logs))\n    siemplify.LOGGER.info(\"There are {} logs in your Logz.io account that match your alert-event-id\".format(total_results_available))\n    with concurrent.futures.ThreadPoolExecutor(max_workers=num_pages) as executor:\n        futures = []\n        while num_pages > current_page:\n            current_page += 1\n            print(\"fetching page: {}\".format(current_page))\n            futures.append(executor.submit(execute_logzio_api, siemplify, api_token, url, current_page))\n        for future in concurrent.futures.as_completed(futures):\n            new_log = future.result()\n            if new_log is not None:\n                collected_logs += new_log[\"results\"]\n                num_collected_logs += len(new_log[\"results\"])\n                siemplify.LOGGER.info(\"Fetched {} logs\".format(len(new_log[\"results\"])))\n        \n        if total_results_available != num_collected_logs:\n            siemplify.LOGGER.warn(\"Retrieved {} logs out of {} available logs. Only the retrieved logs will be injected to Siemplify\".format(num_collected_events, total_results_available))\n    siemplify.LOGGER.info(\"Total collected: {}\".format(len(collected_logs)))\n    return collected_logs\n\n\ndef get_output_msg(status, num_logs):\n    \"\"\" Returnes the output message in accordance to the script status \"\"\"\n    if status == EXECUTION_STATE_COMPLETED:\n        return \"Retrieved successfully {} logs that triggered the alert\".format(num_logs)\n    else:\n        return \"Failed to retrieve logs. Please check the script's logs to see what went wrong...\"\n\n\ndef add_insights(siemplify, logs_json):\n    try:\n        logs = json.loads(logs_json)\n        if len(logs[\"results\"]) > 3:\n            add_insight(siemplify, logs[\"results\"])\n        else:\n            for log in logs[\"results\"]:\n                add_insight(siemplify, log)\n    except Exceptions as e:\n        siemplify.LOGGER.error(\"Error occured while trying to create insights:\\n{}\".format(e))\n\n\ndef add_insight(siemplify, log):\n    try:\n        alert_event_id = siemplify.extract_action_param(\"alert_event_id\")\n        severity = 0\n        entity_id = ''.join([alert_event_id, datetime.datetime.now().strftime(\"%m%d%Y%H%M%S%f\")])\n        log_json = json.dumps(log)\n        triggered_by = \"Logzio\" # Name of the integration\n        title = \"Logs that triggered the event\"\n        msg = log[\"message\"]\n        is_created = siemplify.create_case_insight(triggered_by, title, log_json, entity_id, severity, GENERAL_INSIGHT_TYPE)\n        siemplify.LOGGER.info(\"returned value from create_case_insight: {}\".format(is_created))\n        return is_created\n    except Exception as e:\n        siemplify.LOGGER.error(\"Error occurred while trying to create a case insight: {}\".format(e))\n        return False\n\n\ndef get_logzio_api_endpoint(siemplify, region):\n    \"\"\"\n    Returns the endpoint of Logz.io API.\n    Prioritizing a custom endoint, if entered.\n    If not, falling back to the regaular enspoints, based on the logzio_region (defaults to us).\n    \"\"\"\n    custom_endpoint = siemplify.extract_configuration_param(\"Logzio\", \"logzio_custom_endpoint\", is_mandatory=False, default_value=\"\")\n    if custom_endpoint is not None and custom_endpoint != \"\":\n        siemplify.LOGGER.info(\"Using custom endpoint: {}\".format(custom_endpoint))\n        return custom_endpoint + SEARCH_LOGS_API_SUFFIX\n    return get_base_api_url(region) + SEARCH_LOGS_API_SUFFIX\n\n    \nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Logzio",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 58.0,
+  "TimeoutSeconds": 30,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Unique GUID of the security event in your Logz.io security account. This is the ID of the event you want to investigate.",
+      "Name": "alert_event_id",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614763328676,
+      "ModificationTimeUnixTimeInMs": 1614763328676
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "25",
+      "Description": "Controls the number of results per page. Valid inputs are 1 to 1000. Defaults to 25.",
+      "Name": "page_size",
+      "Value": "25",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614763328676,
+      "ModificationTimeUnixTimeInMs": 1614763328676
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614763328669,
+  "ModificationTimeUnixTimeInMs": 1614763328672
+}

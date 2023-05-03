@@ -1,0 +1,87 @@
+{
+    "Identifier": "Cybersixgill Actionable Alerts",
+    "PackageName": "Cybersixgill Actionable Alerts",
+    "DisplayName": "Cybersixgill Actionable Alerts",
+    "Description": "By integrating Cybersixgill actionable alerts, Siemplify customers gain a premium,\nautomated threat intelligence solution based on the most comprehensive data sources from the deep, dark and surface web. It is customizable, enabling users to define key assets relevant to their brand, industry, and geolocation. Users can covertly monitor critical assets such as IP addresses, domains, vulnerabilities, and VIPs for activity on the underground and closed sources - and prioritize, as well as respond to threats directly from the Siemplify dashboard.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Cybersixgill Actionable Alerts",
+            "PropertyName": "Client Id",
+            "PropertyDescription": "Client Id provided by Cybersixgill",
+            "PropertyDisplayName": "Client Id",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1675932542943,
+            "ModificationTimeUnixTimeInMs": 1675932542943
+        },
+        {
+            "IntegrationIdentifier": "Cybersixgill Actionable Alerts",
+            "PropertyName": "Client Secret",
+            "PropertyDescription": "credential provided by cybersixgill",
+            "PropertyDisplayName": "Client Secret",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1675932542943,
+            "ModificationTimeUnixTimeInMs": 1675932542943
+        }
+    ],
+    "Actions": [
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Cybersixgill Actionable Alerts"
+    ],
+    "Managers": [
+        "AlertsManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 5.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Cybersixgill Actionable Alerts."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1661949863000
+        },
+        {
+            "Items": [
+                "IsCustom set to false"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1662381670000
+        },
+        {
+            "Items": [
+                "The latest edition includes the ability to consume alerts for MSSPs and multi-tenant organizations."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1668427212000
+        },
+        {
+            "Items": [
+                "Connector updated, dependencies bumped to the last versions, minor code refactoring"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1673866181000
+        },
+        {
+            "Items": [
+                "Updated an internal pip version of sixgill client, allowing passing organization id to the integration"
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1677595898000
+        }
+    ]
+}

@@ -1,0 +1,38 @@
+[
+    {
+        "ChangeDescription": "New Actions - Marketo Integrations",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 13.0,
+        "ItemName": "Marketo",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1628170080
+    },
+    {
+        "ChangeDescription": "Bug fix - Marketo Integrations",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 14.0,
+        "ItemName": "Marketo",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1628170080
+    },
+    {
+        "ChangeDescription": "Bug fix - Request Campaign Action",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 15.0,
+        "ItemName": "Marketo",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1629629262
+    }
+]

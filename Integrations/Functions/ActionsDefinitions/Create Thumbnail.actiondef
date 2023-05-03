@@ -1,0 +1,87 @@
+{
+  "Name": "Create Thumbnail",
+  "Description": "Creates a Base64 Thumbnail of an image.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom PIL import Image\nimport io\nimport base64\nimport json\nMISSING_VAL = \"NotFound\"\ndef find_key_path_in_json(key_path, json_data):\n    \"\"\"\n    Finds the relevant key_path in a json object. \n    If list encountered, if its of len 1, its value is used. Otherwise, it exits with default value (MULTIPLE VALUES FOUND)\n    \"\"\"\n    return find_key_path_recursive(key_path, json_data)\n    \ndef find_key_path_recursive(key_list, current_json):\n    if key_list:\n        if isinstance(current_json, list):\n            if key_list:\n                if len(current_json) == 1:\n                    return find_key_path_recursive(key_list, current_json[0])\n                else:\n                    return MULTIPLE_VALUES\n            return \", \".join(current_json)\n        if isinstance(current_json, dict):\n            if key_list[0] in current_json:\n                return find_key_path_recursive(key_list[1:], current_json[key_list[0]])\n            # raise Exception(\"Key: {}, json: {}\".format(key_list, current_json))\n            return MISSING_VAL\n    else:\n        if isinstance(current_json, dict):\n            raise Exception(\"Not a simple value.  Unable to enrich. Key: {}, json: {}\".format(key_list, current_json))\n        if isinstance(current_json, list):\n            return u\",\".join(current_json)\n        \n        return u\"{}\".format(current_json) # Found val, return it. Format to make everything into string\n\ndef create_thumbnail(base64_str, thumb_size):\n    buffer = io.BytesIO()\n    \n    imgdata = base64.b64decode(base64_str)\n    img = Image.open(io.BytesIO(imgdata))\n    new_img = img.resize((int(thumb_size[0]), int(thumb_size[1])))  # x, y\n    new_img.save(buffer, format=\"PNG\")\n    img_b64 = base64.b64encode(buffer.getvalue())\n    return str(img_b64)[2:-1]\n        \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n    \n    base64_str = siemplify.extract_action_param(\"Base64 Image\", print_value=False)\n    thumb_size = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"Thumbnail Size\").split(',')]))\n    input_json = siemplify.extract_action_param(\"Input JSON\", print_value=False)\n    image_key_path = list(filter(None, [x.strip() for x in siemplify.parameters.get(\"Image Key Path\").split('.')]))\n    \n    json_result = {}\n    \n    if input_json != None:\n        in_json = json.loads(input_json)\n        for entity_json in in_json:\n            base64_str = find_key_path_in_json(image_key_path, entity_json)\n            data = {}\n            data['thumbnail'] = create_thumbnail(base64_str,thumb_size)\n            json_result[entity_json['Entity']] = data\n            json_result = convert_dict_to_json_result_dict(json_result)\n    else:            \n        data = {}\n        data['thumbnail'] = create_thumbnail(base64_str, thumb_size)\n        json_result = data\n    \n    siemplify.result.add_result_json(json_result)\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Functions",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 16.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "The Base64 string of the image.",
+      "Name": "Base64 Image",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621011363251,
+      "ModificationTimeUnixTimeInMs": 1621011363251
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "250,250",
+      "Description": "Comma separated.  Pixels.   X , Y",
+      "Name": "Thumbnail Size",
+      "Value": "250,250",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621011363251,
+      "ModificationTimeUnixTimeInMs": 1621011363251
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "Input JSON",
+      "Name": "Input JSON",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621011363251,
+      "ModificationTimeUnixTimeInMs": 1621011363251
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "If using Input JSON, the keypath for the image field.",
+      "Name": "Image Key Path",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1621011363251,
+      "ModificationTimeUnixTimeInMs": 1621011363251
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1621011363238,
+  "ModificationTimeUnixTimeInMs": 1621011363243
+}

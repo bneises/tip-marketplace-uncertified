@@ -1,0 +1,152 @@
+{
+  "Name": "Set User Permissions",
+  "Description": "Adds or revokes user permissions in a supergroup or a channel. \nNote:  The bot must be an administrator in the chat for this to work and must have the appropriate admin permissions.",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Set User Permissions\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n\n    chat_id = siemplify.extract_action_param(\"Chat ID\")\n    user_id = siemplify.extract_action_param(\"User ID\")\n    is_anonymous = siemplify.extract_action_param(\"Is Anonymous\")\n    can_edit_the_info = siemplify.extract_action_param(\"Can Edit The Info\")\n    can_post_messages = siemplify.extract_action_param(\"Can Post Messages\")\n    can_edit_messages = siemplify.extract_action_param(\"Can Edit Messages\")\n    can_delete_messages = siemplify.extract_action_param(\"Can Delete Messages\")\n    can_invite_user = siemplify.extract_action_param(\"Can Invite Users\")\n    can_restrict_users = siemplify.extract_action_param(\"Can Restrict Members\")\n    can_promote_members = siemplify.extract_action_param(\"Can Promote Members\")\n    can_pin_messages = siemplify.extract_action_param(\"Can Pin Messages\")\n\n    user_permissions = {}\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n\n        user_permissions = telegram_manager.set_user_permissions(\n            chat_id,\n            user_id,\n            is_anonymous,\n            can_edit_the_info,\n            can_post_messages,\n            can_edit_messages,\n            can_delete_messages,\n            can_invite_user,\n            can_restrict_users,\n            can_pin_messages,\n            can_promote_members,\n        )\n\n    except Exception as e:\n        output_message = f\"Could not set user permissions. Error: {e}\"\n        return_value = False\n        status = EXECUTION_STATE_FAILED\n    else:\n        output_message = f\"The permissions of the user {user_id} were set successfully\"\n        return_value = True\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.result.add_result_json(user_permissions)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ok\": true,\r\n\t\"result\": {\r\n\t\t\"message_id\": 5,\r\n\t\t\"from\": {\r\n\t\t\t\"id\": 123456,\r\n\t\t\t\"is_bot\": true,\r\n\t\t\t\"first_name\": \"test_test\",\r\n\t\t\t\"username\": \"test_bot\"\r\n\t\t},\r\n\t\t\"chat\": {\r\n\t\t\t\"id\": -1111111,\r\n\t\t\t\"title\": \"Test\",\r\n\t\t\t\"type\": \"supergroup\"\r\n\t\t},\r\n\t\t\"date\": 1605531666,\r\n\t\t\"photo\": [{\r\n\t\t\t\"file_id\": \"fuewAAABBBB-AgABHgQ\",\r\n\t\t\t\"file_unique_id\": \"AAAAAAAAA\",\r\n\t\t\t\"file_size\": 3074,\r\n\t\t\t\"width\": 120,\r\n\t\t\t\"height\": 120\r\n\t\t}]\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 63.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can pin messages.\n(Relevant for supergroups only)",
+      "Name": "Can Pin Messages",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can add new administrators or revoke them.",
+      "Name": "Can Promote Members",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can restrict, ban or unban chat members",
+      "Name": "Can Restrict Members",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can post messages.\n(Relevant for channel chats only)",
+      "Name": "Can Post Messages",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can edit chat title, photo and other settings.",
+      "Name": "Can Edit The Info",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user's presence in the chat is hidden",
+      "Name": "Is Anonymous",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "123456",
+      "Description": "The user  ID of you want to set the permissions to.",
+      "Name": "User ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "123456",
+      "Description": "The chat ID which you want the bot to set the permissions to.",
+      "Name": "Chat ID",
+      "Value": "123456",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can invite new users to the chat",
+      "Name": "Can Invite Users",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can delete messages of other users",
+      "Name": "Can Delete Messages",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "true",
+      "Description": "The user can edit messages of other users.",
+      "Name": "Can Edit Messages",
+      "Value": "true",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

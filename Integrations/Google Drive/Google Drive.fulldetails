@@ -1,0 +1,75 @@
+{
+    "Identifier": "Google Drive",
+    "PackageName": "Google Drive",
+    "DisplayName": "Google Drive",
+    "Description": "Google Drive is a cloud-based storage solution that allows you to save files online and access them anywhere from any smartphone, tablet, or computer. You can use Drive on your computer or mobile device to securely upload files and edit them online. Drive also makes it easy for others to edit and collaborate on files.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1614708810727,
+            "Id": 0,
+            "IntegrationIdentifier": "Google Drive",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1614708810727,
+            "PropertyDescription": "View the guide on how to create auth json credentials (service account) - provide access for Google Drive\nhttps://gspread.readthedocs.io/en/latest/oauth2.html#enable-api-access",
+            "PropertyDisplayName": "Credentials Json",
+            "PropertyName": "Credentials Json",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [
+        "Add Permission",
+        "Delete File",
+        "Download File To Base64",
+        "Download File To Path",
+        "Get File Metadata",
+        "Permission List",
+        "Ping",
+        "Remove Permission",
+        "Upload File From Base64",
+        "Upload File From Path"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "GoogleDriveManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 4.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Google Drive Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602421220000
+        },
+        {
+            "Items": [
+                "Fixed bug in Integration Manager"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1606730784000
+        },
+        {
+            "Items": [
+                "Json credentials parameter was changed to password"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1614795380000
+        },
+        {
+            "Items": [
+                "Changed Category"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1629722429000
+        }
+    ]
+}

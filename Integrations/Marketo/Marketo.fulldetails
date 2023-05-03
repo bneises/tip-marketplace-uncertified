@@ -1,0 +1,85 @@
+{
+    "Identifier": "Marketo",
+    "PackageName": "Marketo",
+    "DisplayName": "Marketo",
+    "Description": "Marketo, Inc. is an American software company, headquartered in San Mateo, California. Marketo develops and sells marketing automation software for account-based marketing and other marketing services and products including SEO and content creation.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Marketo",
+            "PropertyName": "Client Secret",
+            "PropertyDescription": " The client secret of the Marketo account",
+            "PropertyDisplayName": "Client Secret",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "Client Secret",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1628081926268,
+            "ModificationTimeUnixTimeInMs": 1628081926268
+        },
+        {
+            "IntegrationIdentifier": "Marketo",
+            "PropertyName": "Client Id",
+            "PropertyDescription": " The client id of the Marketo account",
+            "PropertyDisplayName": "Client Id",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "Client Id",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1628081926268,
+            "ModificationTimeUnixTimeInMs": 1628081926268
+        },
+        {
+            "IntegrationIdentifier": "Marketo",
+            "PropertyName": "Munchkin Id",
+            "PropertyDescription": "  The Munchkin Id of the Marketo account",
+            "PropertyDisplayName": "Munchkin Id",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "Munchkin Id",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1628081926268,
+            "ModificationTimeUnixTimeInMs": 1628081926268
+        }
+    ],
+    "Actions": [
+        "Create lead",
+        "Get Lead By Email Param",
+        "Get Lead By Entity Email",
+        "Ping",
+        "Request Campaign"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 15.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "New Actions - Marketo Integrations"
+            ],
+            "Version": 13.0,
+            "PublishTimeUnixTime": 1628170080000
+        },
+        {
+            "Items": [
+                "Bug fix - Marketo Integrations"
+            ],
+            "Version": 14.0,
+            "PublishTimeUnixTime": 1628170080000
+        },
+        {
+            "Items": [
+                "Bug fix - Request Campaign Action"
+            ],
+            "Version": 15.0,
+            "PublishTimeUnixTime": 1629629262000
+        }
+    ]
+}

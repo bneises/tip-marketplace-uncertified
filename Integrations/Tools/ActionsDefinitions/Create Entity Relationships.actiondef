@@ -1,0 +1,126 @@
+{
+  "Name": "Create Entity Relationships",
+  "Description": "Creates a relationship between the supplied entities and the linked entities.  If the supplied entities do not exist, it will create them.\nSupports Siemplify 5.6+ ONLY.",
+  "Script": "from SiemplifyUtils import output_handler, add_prefix_to_dict, dict_to_flat, convert_dict_to_json_result_dict\nfrom SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport requests\nimport json\nimport time\nfrom datetime import datetime\nimport re\n\nEXTEND_GRAPH_URL = '{}/external/v1/investigator/ExtendCaseGraph'\nACTION_NAME = \"Create Entity Relationships\"\n\ndef get_alert_entities(siemplify):\n    alert_entities = []\n    for alert in siemplify.case.alerts:\n        for entity in alert.entities:\n            if entity.alert_identifier == siemplify.current_alert.identifier:\n                alert_entities.append(entity)\n    return alert_entities\n    \n    \ndef create_entity_relationship_by_type(siemplify, new_entity, entity_type, json_payload):\n        payload = json_payload.copy()\n        payload[\"typesToConnect\"].append(entity_type)\n        payload[\"entityIdentifier\"] = new_entity\n        created_entity = siemplify.session.post(EXTEND_GRAPH_URL.format(siemplify.API_ROOT), json=payload)\n        created_entity.raise_for_status()\n\n\ndef create_entity_relationship_by_entity(siemplify, new_entity, linked_entity, json_payload):\n        payload = json_payload.copy()\n        payload[\"entityToConnectRegEx\"] = \"{}$\".format(re.escape(linked_entity))\n        payload[\"entityIdentifier\"] = new_entity\n        payload[\"typesToConnect\"].append('USERUNIQNAME')\n        created_entity = siemplify.session.post(EXTEND_GRAPH_URL.format(siemplify.API_ROOT), json=payload)\n        created_entity.raise_for_status()\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ACTION_NAME\n    output_message = \"No Entity was created\"\n    result_value = \"False\"\n    status = EXECUTION_STATE_COMPLETED\n    entity_identifiers = list(filter(None, [x.strip() for x in siemplify.extract_action_param(\"Entity Identifier(s)\", \" \").split(',')]))\n    linked_entities = list(filter(None, [x.strip() for x in siemplify.extract_action_param(\"Target Entity Identifier(s)\", \" \").split(',')]))\n    linked_entity_type = siemplify.extract_action_param(\"Target Entity Type\", None)\n    \n    entity_type = siemplify.extract_action_param('Entity Identifier(s) Type')\n    is_relation_type = False\n    is_source = False\n    rel_direction = siemplify.extract_action_param('Connect As')\n    \n    if rel_direction == \"Source\":\n        is_source = True\n        is_relation_type = True\n        \n    if rel_direction == \"Destination\":\n        is_source = False\n        is_relation_type = True\n        \n    if rel_direction == \"Linked\":\n        is_relation_type = False\n        \n        \n    enrichment_json = {}\n    enrich_dict = {}\n    updated_entities = []\n    \n    json_results = {}\n    entities_to_enrich = []\n    case_id = siemplify.case_id\n    alert_identifier = siemplify.current_alert.identifier\n    output_message = \"\"\n    \n    json_payload = {\n        \"caseId\": case_id,\n        \"alertIdentifier\": alert_identifier,\n        \"entityType\": entity_type,\n        \"isPrimaryLink\": is_relation_type,\n        \"isDirectional\": is_source,\n        \"typesToConnect\": []\n    }\n    \n    target_entities = []\n    \n    for entity in entity_identifiers:\n        json_results[entity] = {}\n    \n    enrichment_entities = {}\n    siemplify.LOGGER.info(\"Entities to create:{}\".format(entity_identifiers))\n    alert_entities = get_alert_entities(siemplify)\n\n    for entity in alert_entities:\n        if len(linked_entities) > 0:\n            for l_entity in linked_entities:\n                if entity.entity_type == linked_entity_type and entity.identifier == l_entity:\n                    target_entities.append(entity.identifier)\n        else:\n            if entity.entity_type == linked_entity_type:\n                target_entities.append(entity.identifier)\n            \n    \n    siemplify.LOGGER.info(\"Possible Relationship entities:{}\".format(target_entities))\n    \n    if len(target_entities) == 0:\n        output_message = \"No entity relationships found. Did not create entity.\"\n\n    \n    if len(target_entities) == len(entity_identifiers) and len(linked_entities) > 0:\n        \n        for linked_entity, new_entity_identifier in zip(target_entities, entity_identifiers):\n            linked_entities_arr = []    \n            try:\n                create_entity_relationship_by_entity(siemplify, new_entity_identifier, linked_entity, json_payload)\n                result_value = True\n                linked_entities_arr.append(linked_entity)\n                output_message += f\"The Entity {new_entity_identifier} was created and linked to {linked_entity} : {linked_entity_type} successfully\\n\"\n            except Exception as e:\n                siemplify.LOGGER.error(\"Error creating entity:{}, error: {}\".format( linked_entity,e))\n                status = EXECUTION_STATE_FAILED\n            \n            siemplify.LOGGER.info(f\"The Entity {new_entity_identifier} was created and linked to {linked_entity} : {linked_entity_type} successfully\\n\")\n            \n            json_results[new_entity_identifier]['status'] = 'created'\n            linked_entity_obj = {}\n            linked_entity_obj['entity_type'] = linked_entity_type\n            linked_entity_obj['entities'] = linked_entities_arr\n            \n            json_results[new_entity_identifier]['linked_entities'] = linked_entity_obj\n            json_results[new_entity_identifier]['entity_type'] = entity_type\n            \n    elif len(target_entities) > len(entity_identifiers) and len(entity_identifiers) == 1 and len(linked_entities) > 0:\n        linked_entities_arr = []\n        for target_entity in target_entities:\n            try:\n                create_entity_relationship_by_entity(siemplify, entity_identifiers[0], target_entity, json_payload)\n                result_value = True\n                linked_entities_arr.append(target_entity)\n            except Exception as e:\n                siemplify.LOGGER.error(\"Error creating entity:{}, error: {}\".format( target_entity,e))\n                status = EXECUTION_STATE_FAILED\n            output_message += f\"The Entity {entity_identifiers[0]} was created and linked to {target_entity} : {linked_entity_type} successfully\\n\"\n            \n            siemplify.LOGGER.info(f\"The Entity {entity_identifiers[0]} was created and linked to {target_entity} : {linked_entity_type} successfully\\n\")\n        \n        json_results[entity_identifiers[0]]['status'] = 'created'\n        linked_entity_obj = {}\n        linked_entity_obj['entity_type'] = linked_entity_type\n        linked_entity_obj['entities'] = linked_entities_arr\n        json_results[entity_identifiers[0]]['linked_entities'] = linked_entity_obj\n\n            \n    elif len(entity_identifiers) > len(target_entities) and len(target_entities) == 1 and len(linked_entities) > 0:\n        \n        for new_entity_identifier in entity_identifiers:\n            linked_entities_arr = []\n            linked_entity = target_entities[0]\n            try:\n                create_entity_relationship_by_entity(siemplify, new_entity_identifier, linked_entity, json_payload)\n                result_value = True\n                linked_entities_arr.append(linked_entity)\n            except Exception as e:\n                siemplify.LOGGER.error(\"Error creating entity:{}, error: {}\".format( linked_entity,e))\n                status = EXECUTION_STATE_FAILED\n            output_message += f\"The Entity {entity_identifiers[0]} was created and linked to {linked_entity} : {linked_entity_type} successfully\\n\"\n            \n            siemplify.LOGGER.info(f\"The Entity {entity_identifiers[0]} was created and linked to {linked_entity} : {linked_entity_type} successfully\\n\")\n        \n            json_results[new_entity_identifier]['status'] = 'created'\n            linked_entity_obj = {}\n            linked_entity_obj['entity_type'] = linked_entity_type\n            linked_entity_obj['entities'] = linked_entities_arr\n            json_results[new_entity_identifier]['linked_entities'] = linked_entity_obj\n            json_results[new_entity_identifier]['entity_type'] = entity_type        \n            \n    elif not linked_entities and target_entities != 0:\n        linked_entities_arr = target_entities\n        for new_entity_identifier in entity_identifiers:\n            try:\n                create_entity_relationship_by_type(siemplify, new_entity_identifier,linked_entity_type, json_payload)\n            except Exception as e:\n                siemplify.LOGGER.error(\"Error creating entity:{}, error: {}\".format( linked_entity,e))\n                status = EXECUTION_STATE_FAILED\n            result_value = True\n            target_entities_str = \",\".join(target_entities)\n            siemplify.LOGGER.info(f\"The Entity {new_entity_identifier} was created and linked to {target_entities_str} successfully\\n\")\n            output_message += f\"The Entity {new_entity_identifier} was created and linked to {target_entities_str} successfully\\n\"    \n            json_results[new_entity_identifier]['status'] = 'created'\n            \n            linked_entity_obj = {}\n            linked_entity_obj['entity_type'] = linked_entity_type\n            linked_entity_obj['entities'] = linked_entities_arr\n            json_results[new_entity_identifier]['linked_entities'] = linked_entity_obj\n            json_results[new_entity_identifier]['entity_type'] = entity_type        \n        \n    \n    time.sleep(3)\n    siemplify.load_case_data()\n    alert_entities = get_alert_entities(siemplify)\n    for new_entity in json_results:\n        if 'enrichment' in json_results[new_entity]:\n            for entity in alert_entities:\n                if new_entity.strip() == entity.identifier.strip():\n                    entity.additional_properties.update(json_results[new_entity]['enrichment'])\n                    updated_entities.append(entity)\n                    output_message += \"Enrichment added for entity: {}.\\n\".format(entity.identifier)\n                    break\n    \n    siemplify.update_entities(updated_entities)\n    siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_results))\n    siemplify.result.add_json(\"Json\", json_results)\n\n    siemplify.end(output_message, result_value, status)\n    \n\n        \nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[{\"Entity\": \"EMK\", \"EntityResult\": {\"status\": \"created\", \"enrichment\": {\"attachment\": 0, \"linked_entities\": \"SIEMPLIFY_PS@YAHOO.COM\"}}}]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 290.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Create new or use existing entity identifier or comma-separated list of identifiers (Example: value1, value2, value3)",
+      "Name": "Entity Identifier(s)",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620568,
+      "ModificationTimeUnixTimeInMs": 1614012620568
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "USERUNIQNAME",
+      "Description": "Siemplify Entity type. Example: Host Name / User Name / etc.",
+      "Name": "Entity Identifier(s) Type",
+      "Value": "USERUNIQNAME",
+      "Type": 13,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620568,
+      "ModificationTimeUnixTimeInMs": 1614012620568
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Source",
+      "Description": "Connect entity identifiers using source, destination, or linked relationship to the target entity identifiers.",
+      "Name": "Connect As",
+      "Value": "Source",
+      "Type": 15,
+      "OptionalValues": [
+        "Source",
+        "Destination",
+        "Linked"
+      ],
+      "OptionalValuesJson": "[\"Source\",\"Destination\",\"Linked\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620568,
+      "ModificationTimeUnixTimeInMs": 1614012620568
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "ADDRESS",
+      "Description": "Connect the entity identifier(s) to entities of this type.  ",
+      "Name": "Target Entity Type",
+      "Value": "ADDRESS",
+      "Type": 13,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620568,
+      "ModificationTimeUnixTimeInMs": 1614012620568
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "",
+      "Description": "Entities in this comma separated list, of the type from Target Entity Type, will be linked to the entities in the Entities Identifier(s) parameter.  ",
+      "Name": "Target Entity Identifier(s)",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620568,
+      "ModificationTimeUnixTimeInMs": 1614012620568
+    },
+        {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "An optional JSON object containing key / value pairs of attributes that can be added to the newly created entities. ",
+      "Name": "Enrichment JSON",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635856485755,
+      "ModificationTimeUnixTimeInMs": 1635856485755
+    },
+        {
+            "CustomActionId": 0,
+            "IsMandatory": false,
+            "DefaultValue": null,
+            "Description": "The character to separate the list of entities in Entity Identifiers and/or Target Entity Identifiers by.  Defaults to comma.",
+            "Name": "Separator Character",
+            "Value": null,
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620565,
+  "ModificationTimeUnixTimeInMs": 1614012620565
+}

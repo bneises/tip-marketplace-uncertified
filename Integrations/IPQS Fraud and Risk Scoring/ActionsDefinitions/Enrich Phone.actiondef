@@ -1,0 +1,48 @@
+{
+	"Name": "Enrich Phone",
+	"Description": "This action accurately verify phone numbers worldwide and retrieve a combination of carrier and line type details with risk analysis data to assess phone number reputation. IPQS collects phone validation and verification data from a wide variety of carriers and tier 1 telecommunication providers, with support for all regions. Detect inactive and disconnected phone numbers for easy user validation similar to HLR & LRN lookups. Accurately identify virtual and disposable phone numbers along with numbers associated with abusive behavior online.",
+	"Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom IPQSManager import IPQSManager, PROVIDER\nfrom SiemplifyDataModel import EntityTypes\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    data_json = {}\n    api_key = siemplify.extract_configuration_param(PROVIDER,\"API Key\")\n    strictness = int(siemplify.extract_action_param(param_name=\"Strictness\", print_value=True))\n    country = siemplify.extract_action_param(param_name=\"Country\", print_value=True)\n    data_json['strictness'] = strictness\n    if country:\n        data_json['country'] = country\n    ipqs_manager = IPQSManager(siemplify, api_key, data_json)\n    ipqs_manager.enrich([EntityTypes.PHONENUMBER])\n\nif __name__ == \"__main__\":\n    main()\n",
+	"IntegrationIdentifier": "IPQS Fraud and Risk Scoring",
+	"ScriptResultName": "ScriptResult",
+	"DynamicResultsMetadata": [{
+		"ResultName": "JsonResult",
+		"ResultExample": "{}",
+		"ShowResult": true
+	}],
+	"Creator": "IPQS",
+	"IsEnabled": true,
+	"IsCustom": false,
+	"IsSystem": false,
+	"Version": 11.0,
+	"TimeoutSeconds": 300,
+	"IsAsync": null,
+	"AsyncPollingIntervalInSeconds": 3600,
+	"TotalIntervalTimeoutForAsyncInSeconds": 86400,
+	"Parameters": [{
+		"CustomActionId": 0,
+		"IsMandatory": true,
+		"DefaultValue": "0",
+		"Description": "How in depth (strict) do you want this reputation check to be? Stricter checks may provide a higher false-positive rate.",
+		"Name": "Strictness",
+		"Value": "0",
+		"Type": 15,
+		"OptionalValues": ["0", "1", "2"],
+		"OptionalValuesJson": "[\"0\",\"1\",\"2\"]"
+	}, {
+		"CustomActionId": 0,
+		"IsMandatory": false,
+		"DefaultValue": "None",
+		"Description": "You can optionally provide us with the default country or countries(comma separated) this phone number is suspected to be associated with.",
+		"Name": "Country(For multiple countries, provide comma-separated values)",
+		"Value": "None",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}],
+	"DefaultResultValue": "",
+	"PythonVersion": "None",
+	"SimulationData": {
+		"Entities": null
+	},
+	"SimulationDataJson": null
+}

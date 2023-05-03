@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Check connectivity",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nimport requests\n\nINTEGRATION_NAME = \"Whois XML API\"\n\nSCRIPT_NAME = \"Whois XML API Ping\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,\n                                                    param_name=\"API Key\")\n\n    url = \"https://www.whoisxmlapi.com/whoisserver/WhoisService?apiKey={api_key}&domainName=google.com\".format(api_key=api_key)\n\n    res = requests.get(url)\n    res.raise_for_status()\n\n    if \"ApiKey authenticate failed\" in res.content.decode(\"utf-8\"):\n        raise Exception(\"Error, bad credentials\")\n\n\n    siemplify.end(\"Successful Connection\", True)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "WHOIS XML API",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Yoav Tal",
+  "IsEnabled": false,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 3.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1595164994632,
+  "ModificationTimeUnixTimeInMs": 1595358706174
+}

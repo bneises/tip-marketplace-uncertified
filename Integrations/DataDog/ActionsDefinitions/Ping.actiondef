@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test connectivity with DataDog",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom DataDogManager import DataDogManager\n\nIDENTIFIER=\"DataDog\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n    app_key = siemplify.extract_configuration_param(IDENTIFIER,\"APP Key\")\n\n    datadog_manager = DataDogManager(api_key, app_key)\n    \n    connection_response = datadog_manager.test_connectivity()\n\n    if connection_response.get('valid')==True:\n        return_value = True\n        output_message = 'Connected successfully'\n\n    else:\n        return_value = False\n        output_message = 'The Connection failed'\n\n    siemplify.end(output_message, return_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DataDog",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 13.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1615195532198,
+  "ModificationTimeUnixTimeInMs": 1615195532198
+}

@@ -1,0 +1,118 @@
+{
+	"Name": "Add User",
+	"Description": "Add user with all it's details to Vanilla",
+	"Script": "from VanillaManager import VanillaManager\r\nfrom SiemplifyAction import SiemplifyAction\r\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\r\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\r\nimport re\r\n\r\n# Consts:\r\nINTEGRATION_NAME = \"VanillaForums\"\r\nSCRIPT_NAME = \"Add User\"\r\n\r\n\r\ndef check_pass_valid(password):\r\n    return re.search('[a-zA-Z]', password) is not None and re.search('[0-9]', password) is not None and len(password) >= 6\r\n\r\n\r\n@output_handler\r\ndef main():\r\n    siemplify = SiemplifyAction()\r\n    siemplify.script_name = SCRIPT_NAME\r\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\r\n\r\n    # Extract integration params:\r\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\r\n    apiToken = conf.get(\"API Token\")\r\n    baseUrl = conf.get(\"URL\")\r\n\r\n    # Extract action params:\r\n    new_firstName = siemplify.extract_action_param(param_name=\"First Name\").strip()\r\n    new_lastName = siemplify.extract_action_param(param_name=\"Last Name\").strip()\r\n    new_email = siemplify.extract_action_param(param_name=\"Email\").lower().strip()\r\n    new_role_id = siemplify.extract_action_param(param_name=\"Role ID\").strip()\r\n    same_names_allowed = siemplify.extract_action_param(param_name=\"Override Name Duplicity\",\r\n                                                        input_type=bool)  # true -> True , false -> False\r\n    special_chars = siemplify.extract_action_param(\r\n        param_name=\"Additional Identifiers\").strip()  # (default value is ' ')\r\n    photo_url = siemplify.extract_action_param(param_name=\"Photo URL\")\r\n    email_confirmed = siemplify.extract_action_param(param_name=\"Email Confirmed\").lower()\r\n    password = siemplify.extract_action_param(param_name=\"Password\", input_type=str).strip()\r\n\r\n    special_chars_list = special_chars.split(\",\")\r\n    print(special_chars_list)\r\n    # Init result json:\r\n    result_json_obj = {}\r\n    # Init result values:\r\n    status = EXECUTION_STATE_FAILED\r\n    output_message = f\"The user <{new_email}> was not added to Vanilla.\"\r\n    result_value = False\r\n\r\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\r\n    try:\r\n        if not check_pass_valid(password):\r\n            raise Exception(\r\n                f'Password parameter is not by needed standard. Please make sure it includes letters and digits and is at least 6 characters long.')\r\n\r\n        # Create manager instance for method:\r\n        vanillaManager = VanillaManager(apiToken, baseUrl)\r\n\r\n        # Search for username in system:\r\n        search_regular_res_json = vanillaManager.search_user_by_name(new_firstName + \" \" + new_lastName)\r\n        special_char = \"\"\r\n        if len(search_regular_res_json) > 0:  # Found with space\r\n            for char in special_chars_list:\r\n                print(char)\r\n                search_special_chars_json = vanillaManager.search_user_by_name(new_firstName + char + new_lastName)\r\n                if len(search_special_chars_json) == 0:  # Not found with current char\r\n                    print(\"found\")\r\n                    special_char = char  # good identifier\r\n                    break\r\n            if special_char == \"\":  # All given chars are already in use\r\n                raise Exception(\"Username with all given characters is already in Vanilla.\")\r\n\r\n        # Char needed only if allowed and name exists:\r\n        char_needed = True if same_names_allowed and len(search_regular_res_json) > 0 else False\r\n\r\n        # Add user to Vanilla users:\r\n        res_json = vanillaManager.add_new_user(new_email, new_firstName, new_lastName, password, new_role_id,\r\n                                               char_needed,\r\n                                               special_char, photo_url, email_confirmed)\r\n        # Success adding user:\r\n        result_json_obj[\"user_details\"] = res_json\r\n        result_json_obj[\"Email\"] = res_json.get(\"email\")\r\n        result_json_obj[\"Password\"] = res_json.get(\"password\")\r\n\r\n        status = EXECUTION_STATE_COMPLETED\r\n        output_message = 'User <' + new_email + '> was succesfully registered as a member in Vanilla.'\r\n        result_value = True\r\n\r\n    except Exception as e:\r\n        siemplify.LOGGER.error(e)\r\n        output_message += \" Error: \" + str(e)\r\n\r\n    finally:\r\n        siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\r\n        siemplify.result.add_result_json(result_json_obj)\r\n        siemplify.end(output_message, result_value, status)\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    main()\r\n",
+	"IntegrationIdentifier": "VanillaForums",
+	"ScriptResultName": "ScriptResult",
+	"DynamicResultsMetadata": [{
+		"ResultName": "JsonResult",
+		"ResultExample": "{\r\n\t\"user_details\": {\r\n\t\t\"countDiscussions\": 0,\r\n\t\t\"dateInserted\": \"2021-01-28T08:39:03+00:00\",\r\n\t\t\"name\": \"FirstName LastName\",\r\n\t\t\"roles\": [{\r\n\t\t\t\"roleID\": 35,\r\n\t\t\t\"name\": \"Customer\"\r\n\t\t}],\r\n\t\t\"photoUrl\": \"PhotoURL\",\r\n\t\t\"url\": \"UserURL\",\r\n\t\t\"banned\": 0,\r\n\t\t\"rankID\": null,\r\n\t\t\"userID\": 1830,\r\n\t\t\"countComments\": 0,\r\n\t\t\"emailConfirmed\": true,\r\n\t\t\"showEmail\": false,\r\n\t\t\"points\": 0,\r\n\t\t\"bypassSpam\": false,\r\n\t\t\"dateUpdated\": null,\r\n\t\t\"label\": \"\",\r\n\t\t\"dateLastActive\": \"2021-01-28T08:39:03+00:00\",\r\n\t\t\"email\": \"UserEmail\"\r\n\t},\r\n\t\"Password\": \"UserPassword\",\r\n\t\"Email\": \"UserEmail\"\r\n}",
+		"ShowResult": true
+	}],
+	"Creator": "tehila",
+	"IsEnabled": true,
+	"IsCustom": false,
+	"IsSystem": false,
+	"Version": 204.0,
+	"TimeoutSeconds": 30,
+	"IsAsync": false,
+	"AsyncPollingIntervalInSeconds": 30,
+	"TotalIntervalTimeoutForAsyncInSeconds": 86400,
+	"Parameters": [{
+		"CustomActionId": 1194,
+		"IsMandatory": false,
+		"DefaultValue": "false",
+		"Description": "'True'- if another user in the system has the same username- if the email addresses differ- allow both to exist.\n'False'- don't allow that.",
+		"Name": "Override Name Duplicity",
+		"Value": "false",
+		"Type": 1,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": false,
+		"DefaultValue": "_,~,-",
+		"Description": "If username is already in Vanilla, one of these characters will replace the gap between first and last name. 1st is 1st priority.\nExample:\nCom_Munity",
+		"Name": "Additional Identifiers",
+		"Value": "_,~,-",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": true,
+		"DefaultValue": "Com",
+		"Description": "New user's first name",
+		"Name": "First Name",
+		"Value": "Com",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": true,
+		"DefaultValue": "Munity",
+		"Description": "New user's last name",
+		"Name": "Last Name",
+		"Value": "Munity",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": true,
+		"DefaultValue": "8",
+		"Description": "The ID of the role you want to assign to the user",
+		"Name": "Role ID",
+		"Value": "8",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": true,
+		"DefaultValue": "mail@mail.com",
+		"Description": "New user's email address",
+		"Name": "Email",
+		"Value": "mail@mail.com",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": false,
+		"DefaultValue": "true",
+		"Description": "Check this as true if the email address of the new user is confirmed.",
+		"Name": "Email Confirmed",
+		"Value": "true",
+		"Type": 1,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": false,
+		"DefaultValue": null,
+		"Description": "URL of the new user's picture",
+		"Name": "Photo URL",
+		"Value": null,
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 1194,
+		"IsMandatory": true,
+		"DefaultValue": "Aa1234",
+		"Description": "Password for the new User.\nMust be at least 6 characters and include both letters and digits.",
+		"Name": "Password",
+		"Value": "Aa1234",
+		"Type": 12,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}],
+	"DefaultResultValue": "",
+	"PythonVersion": "None",
+	"SimulationData": {
+		"Entities": null
+	},
+	"SimulationDataJson": null
+}

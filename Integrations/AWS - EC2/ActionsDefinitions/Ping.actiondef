@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test connectivity with EC2 - AWS",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom EC2Manager import EC2Manager\n\nIDENTIFIER = u\"AWS - EC2\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    access_key_id = siemplify.extract_configuration_param(IDENTIFIER,\"Access Key ID\")\n    secret_access_key = siemplify.extract_configuration_param(IDENTIFIER, \"Secret Access Key\")\n    default_region = siemplify.extract_configuration_param(IDENTIFIER, \"Default Region\")\n    \n    \n    #Creating an instance of EC2Manager object\n    ec2_manager = EC2Manager(access_key_id, secret_access_key, default_region)\n    \n    #Calling the function test_connectivity() from the EC2Manager\n    response = ec2_manager.test_connectivity()\n\n    if response:\n        return_value = True\n        output_message = 'Connected successfully'\n\n    else:\n        return_value = False\n        output_message = 'The Connection failed'\n\n    siemplify.end(output_message, return_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "AWS - EC2",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 20.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1609172159792,
+  "ModificationTimeUnixTimeInMs": 1609172159792
+}

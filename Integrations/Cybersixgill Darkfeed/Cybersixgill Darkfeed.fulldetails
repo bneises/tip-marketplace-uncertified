@@ -1,0 +1,73 @@
+{
+    "Identifier": "Cybersixgill Darkfeed",
+    "PackageName": "Cybersixgill Darkfeed",
+    "DisplayName": "Cybersixgill Darkfeed",
+    "Description": "Powered by the broadest, automated collection from the deep and dark web, Cybersixgill Darkfeed is a feed of malicious indicators of compromise (IOCs), including domains, URLs, hashes and IP addresses. IOCs are automatically extracted and delivered in real-time, and it is actionable, allowing Siemplify customers to receive and preemptively block items that threaten their organization.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "PropertyName": "Client Id",
+            "PropertyDescription": "Client Id",
+            "PropertyDisplayName": "Client Id",
+            "IntegrationIdentifier": "Cybersixgill Darkfeed",
+            "ModificationTimeUnixTimeInMs": 1621857347612,
+            "IsMandatory": true,
+            "PropertyType": 2,
+            "Value": "Client_id",
+            "CreationTimeUnixTimeInMs": 1621857347612,
+            "Id": 0
+        },
+        {
+            "PropertyName": "Client Secret",
+            "PropertyDescription": "Secret Key",
+            "PropertyDisplayName": "Client Secret",
+            "IntegrationIdentifier": "Cybersixgill Darkfeed",
+            "ModificationTimeUnixTimeInMs": 1621857347612,
+            "IsMandatory": true,
+            "PropertyType": 3,
+            "Value": null,
+            "CreationTimeUnixTimeInMs": 1621857347612,
+            "Id": 0
+        }
+    ],
+    "Actions": [
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Cybersixgill - Darkfeed Connector"
+    ],
+    "Managers": [
+        "CybersixgillManager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Cybersixgill Darkfeed Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1621942701000
+        },
+        {
+            "Items": [
+                "Updated SVG of Cybersixgill Darkfeed Integration."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1626774317000
+        },
+        {
+            "Items": [
+                "Updated SVG of Cybersixgill Darkfeed Integration."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1635775784000
+        }
+    ]
+}

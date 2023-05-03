@@ -1,0 +1,104 @@
+{
+  "Name": "Get All Records",
+  "Description": "Retrieves all the records from a given table",
+  "Script": "from SiemplifyAction import *\nfrom airtable import Airtable\nfrom airtable.auth import AirtableAuth\nimport json, sys\nfrom datetime import datetime\nfrom datetime import timedelta\n\nINTEGRATION_NAME = \"AirTable\"\n\n\ndef main():\n    siemplify = SiemplifyAction()\n\n    api_key = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME,param_name=\"Api key\")\n    base_id = siemplify.parameters[\"Base Id\"]\n    table_name = siemplify.parameters[\"Table name\"]\n    max_records = siemplify.parameters[\"Max Records\"]\n    sort_by = siemplify.parameters[\"Sort by\"]\n    sort_direction = siemplify.parameters[\"Sort Direction\"]\n    airtable = Airtable(base_id, table_name, api_key)\n\n    sort_direction_value = 'desc'\n    if sort_direction == 'Ascending':\n        sort_direction_value = 'asc'\n    if sort_by:\n        results = airtable.get_all(maxRecords=max_records,sort=[(sort_by, sort_direction_value)])\n    else:\n        results = airtable.get_all(maxRecords=max_records)\n\n    records_count = len(results)\n    print(json.dumps(results))\n    siemplify.result.add_result_json(json.dumps(results))\n    siemplify.result.add_json(\"Search Results\", json.dumps(results))\n    output_message = '{0} records from table {1} were fetched successfully.'.format(records_count,table_name)\n    siemplify.end(output_message, records_count)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "AirTable",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 7.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<base_id>",
+      "Description": "Base is a database in Airtable in which you store data. The base ID can be found in the URL of the API page of the base.",
+      "Name": "Base Id",
+      "Value": "<base_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603733402166,
+      "ModificationTimeUnixTimeInMs": 1603733402166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<table_name>",
+      "Description": "Each Base can include multiple tables. The parameter indicates the name of the table within the base.",
+      "Name": "Table name",
+      "Value": "<table_name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603733402166,
+      "ModificationTimeUnixTimeInMs": 1603733402166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "5",
+      "Description": "The maximum rows that will be affected by the action",
+      "Name": "Max Records",
+      "Value": "5",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603733402166,
+      "ModificationTimeUnixTimeInMs": 1603733402166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "<column_name>",
+      "Description": "The column name you would like to sort by",
+      "Name": "Sort by",
+      "Value": "<column_name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603733402166,
+      "ModificationTimeUnixTimeInMs": 1603733402166
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Descending",
+      "Description": "The direction of the records you would like to sort by - Descending\\Ascending",
+      "Name": "Sort Direction",
+      "Value": "Descending",
+      "Type": 15,
+      "OptionalValues": [
+        "Descending",
+        "Ascending"
+      ],
+      "OptionalValuesJson": "[\"Descending\",\"Ascending\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1603733402166,
+      "ModificationTimeUnixTimeInMs": 1603733402166
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1603733402155,
+  "ModificationTimeUnixTimeInMs": 1603733402158
+}

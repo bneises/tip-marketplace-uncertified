@@ -1,0 +1,86 @@
+{
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Integration": "PerimeterX",
+  "DocumentationLink": null,
+  "Name": "Slack Connector For Code Defender",
+  "Description": "This connector is used to connect to a Slack Channel that has been configured to receive PerimeterX Code Defender alerts. Any alerts discovered on the channel are imported into Siemplify via this connector.",
+  "Creator": "Admin",
+  "Script": "from SiemplifyConnectors import SiemplifyConnectorExecution\nfrom SiemplifyConnectorsDataModel import AlertInfo\nfrom SiemplifyUtils import output_handler, unix_now\nfrom PerimeterXManager import PerimeterXManager,PerimeterXManagerException\n\nimport sys\n\nCONNECTOR_NAME = \"PerimeterX Code Defender Connector\"\nVENDOR = \"PerimeterX\"\nPRODUCT = \"Code Defender\"\n\nclass BasePXCodeDefenderConnector(object):\n    \"\"\"\n    Base class for PerimeterX Slack Code Defender Connector containing most common functionality\n    \"\"\"\n\n    def __init__(self, config=None, is_test=False, connector_name=None):\n        \"\"\"\n        Common constructor for PerimeterX Slack Code Defender Connector\n        \"\"\"\n        self.connector_scope = SiemplifyConnectorExecution()\n        self.connector_scope.script_name = connector_name\n        self.logger = self.connector_scope.LOGGER\n        self.environment_name = self.connector_scope.context.connector_info.environment\n\n        self.is_test = is_test\n        if self.is_test:\n            self.logger.info(u\"***** This is an \\\"IDE Play Button\\\"\\\\\\\"Run Connector once\\\" test run ******\")\n\n        self._load_connector_configuration(config)\n        # self._load_connector_whitelist_rules()\n        self._initialize_managers()\n\n\n    def _get_connector_param(self, param_name, config, default_value=None, is_mandatory=False, print_value=False, input_type=str):\n        return self.connector_scope.extract_connector_param(\n            param_name=param_name,\n            input_type=input_type,\n            default_value=default_value,\n            is_mandatory=is_mandatory,\n            print_value=print_value)\n\n    def _load_connector_configuration(self, config):\n        \"\"\"\n        Loads all connector configurations from Siemplify\n        \"\"\"\n        self.logger.info(u\"==================== Main - Param Init ====================\")\n\n        conf = self.connector_scope.parameters if not config else config\n        self.param_slack_channel = self._get_connector_param(param_name=\"Slack Channel\",\n                                                   config=conf,\n                                                   is_mandatory=True)\n        self.param_slack_api_key = self._get_connector_param(param_name=\"Slack API Key\",\n                                                   config=conf,\n                                                   is_mandatory=True)\n        \n        self.last_run_time = self._get_last_calculated_run_time()\n\n\n    def _initialize_managers(self):\n        \"\"\"\n        Abstract method to initialize all required managers\n        \"\"\"\n        raise NotImplementedError()\n\n\n    def run(self):\n        \"\"\"\n        Main method of Connector execution. It uses template pattern.\n        \"\"\"\n        self.logger.info(u\"------------------- Main - Started -------------------\")\n\n        self.logger.info(u\"Last execution time: {:.6f}\".format(self.last_run_time))\n\n        alerts = [] # The main output of each connector run\n\n        if (is_test_run):\n            self.logger.info(\"***** This is an \\\"IDE Play Button\\\"\\\\\\\"Run Connector once\\\" test run ******\")\n\n        self.logger.info(\"==================== Main - Param Init ====================\")\n        self.logger.info(\"------------------- Main - Started -------------------\")\n\n        # Let's fetch the alerts\n        my_alerts = self.px_manager.get_cd_alerts(self.px_manager.get_connector_type())\n    \n\n        # First check to make sure we got some alerts\n        if not my_alerts:\n            self.logger.info(\"No Alerts to Process - Generic Error\")\n            self.connector_scope.return_package(alerts)\n            return\n\n        if len(my_alerts) < 1:\n            self.logger.info(\"No Alerts to Process - Zero Alerts\")\n            self.connector_scope.return_package(alerts)\n            return\n        \n        self.logger.info(my_alerts)\n    \n        # Walk through the alerts    \n        for my_alert in my_alerts:\n            try:\n            \n                alert_details = self._fetch_alert(my_alert)\n\n                if alert_details:\n                    alerts.append(alert_details)\n                    self.logger.info(\"Added Alert {} to package results\".format(round(float(my_alert['ts'])*100000)))\n\n            except Exception as e:\n                self.logger.error(\"Failed to process alert {}\".format(round(float(my_alert['ts'])*100000)), my_alert=round(float(my_alert['ts'])*100000))\n                self.logger.exception(e)\n\n        self._save_last_run_timestamp(alerts, self.last_run_time, self.is_test)\n\n        self.logger.info(\"------------------- Main - Finished -------------------\")\n        self.connector_scope.return_package(alerts)\n\n\n    def _fetch_alert(self, alert):\n        raise NotImplementedError()\n\n\n    def _get_last_calculated_run_time(self):\n        \"\"\"\n        Allows to fetch last run time for connector.\n        It's important to work from last successful timestamp to effectively process events.\n        \"\"\"\n        last_run_time = self.connector_scope.fetch_timestamp(datetime_format=False)\n\n        self.logger.info(\n            u\"Received last run time. Last run time is: {}\".format(\n                last_run_time))\n\n        if last_run_time > 0:\n            last_run_time = round(float(last_run_time / 10000), 6)\n        else:\n            last_run_time = 0\n\n        self.logger.info(\n            u\"Calculated last run time. Last run time is: {:.6f}\".format(\n                last_run_time))\n\n        return last_run_time\n\n    def _save_last_run_timestamp(self, all_alerts, previous_timestamp, is_test=False):\n        # type: (list, arrow.datetime, bool) -> None\n        \"\"\"\n        Calculates current run timestamp and saves it\n        :param all_alerts: {list} List of cases, which have been created during this run\n        :param previous_timestamp: {arrow.datetime} Timestamp, which has been used as\n        a starting point for the current round retrieval\n        :param is_test: {bool} Allows to handle special cases, when running Test\n        in Connector configuration\n        \"\"\"\n        # Get last successful execution time.\n        if all_alerts and len(all_alerts) > 0:\n            # Sort the cases by the end time of each case.\n            all_alerts = sorted(all_alerts, key=lambda event: event.slack_time)\n            # Last execution time is set to the newest message time\n            new_last_run_time = all_alerts[-1].slack_time\n            self.logger.info(u\"New Run Time From alerts: {:.6f}\".format(new_last_run_time))\n        else:\n            # previous_timestamp is datetime object. Convert it to milliseconds timestamp.\n            self.logger.info(u\"New Run Time From previous_timestamp: {:.6f}\".format(new_last_run_time))\n            new_last_run_time = previous_timestamp\n\n        if not self.is_test:\n            # update last execution time\n            self.connector_scope.save_timestamp(new_timestamp=new_last_run_time)\n            self.logger.info(u\"Saved last run timestamp: {}\".format(new_last_run_time))\n\n\nclass PXCodeDefenderConnector(BasePXCodeDefenderConnector):\n    \"\"\"\n    Class wrapping logic of PXCodeDefenderConnector.\n    \"\"\"\n    \n    VENDOR_RISK_MAP = {\n        'Informative': -1,\n        'Low': 40,\n        'Medium': 60,\n        'High': 80,\n        'Critical': 100\n    }\n\n    def __init__(self, config=None, is_test=False):\n        # type: (dict, bool) -> None\n        \"\"\"\n        Default constructor for the PXCodeDefenderConnector\n        :param is_test: Runs collection in a limited manner in test purposes\n        \"\"\"\n        super(PXCodeDefenderConnector, self).__init__(\n            config=config,\n            is_test=is_test,\n            connector_name=CONNECTOR_NAME)\n\n\n    def _initialize_managers(self):\n        # type: () -> None\n        \"\"\"\n        Initializes PerimeterXManager\n        \"\"\"\n\n        self.logger.info(u\"Connecting to PerimeterX manager\")\n        self.px_manager = PerimeterXManager(\n            slack_channel=self.param_slack_channel,\n            slack_api_key=self.param_slack_api_key,\n            connector_type='slack',\n            offset_in_ms=self.last_run_time\n        )\n\n\n    def _fetch_alert(self, alert):\n        \"\"\"Returns an alert, which is an aggregation of basic events. (ie: Arcsight's correlation, QRadar's Offense)\"\"\"\n        self.logger.info(\"-------------- Started processing Alert {}\".format(round(float(alert['ts'])*100000)), alert_id=round(float(alert['ts'])*100000))\n\n        alert_info = AlertInfo()\n\n        # ----------------------------- Alert Fields initilization START -----------------------------\n        # ... Replace this DUMMY VALUES !!! ...\n\n        # Each alert_info has a unique key composed of alert_info.name+alert_info.display_id. This key is used to validate data is digested only once by the Siemplify System - to avoid duplicates.\n        # If an alert_info has a uniqe_key that has already been digested, it will be ignored.\n        # The uniqueness must be persistent, even after server restart\\ refetching of the same alert, multiple runs of the same API queries, etc.\n        alert_info.display_id = round(float(alert['ts'])*1000000)\n        alert_info.ticket_id = round(float(alert['ts'])*1000000)  # In default, ticket_id = display_id. But, if for some reason the external alert id, is different then the composite's key display_id, you can save the original external alert id in this \"ticket_id\" field.\n        alert_info.name = 'Code Defender ' + alert['severity'] + ' Alert'\n        alert_info.rule_generator = alert['title']  # Describes the name of the siem's rule, that caused the aggregation of the alert.\n        alert_info.start_time = round(float(alert['ts'])*1000) # Times should be saved in UnixTime. You may use SiemplifyUtils.convert_datetime_to_unix_time, or SiemplifyUtils.convert_string_to_datetime\n        alert_info.end_time = round(float(alert['ts'])*1000) # Take the current time from Slack but we need to +1 ms since slack timestamps are finer and we could end up in a loop\n        alert_info.slack_time = round(float(alert['ts'])*1000000)\n        alert_info.priority = self.VENDOR_RISK_MAP[alert['severity']]  # Informative = -1,Low = 40,Medium = 60,High = 80,Critical = 100.\n        alert_info.device_vendor = VENDOR  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source vendor of the data. (ie: Microsoft, Mcafee)\n        alert_info.device_product = PRODUCT  # This field, may be fetched from the Original Alert. If you build this alert manualy, Describe the source product of the data. (ie: ActiveDirectory, AntiVirus)\n        # ----------------------------- Alert Fields initilization END -----------------------------\n\n        self.logger.info(\"---------- Events fetching started for alert  {}\".format(round(float(alert['ts'])*100000)))\n\n        # Gather the Event Details\n        event = {}\n        event[\"StartTime\"] = round(float(alert['ts'])*1000)\n        event[\"EndTime\"] = round(float(alert['ts'])*1000)\n        event[\"category\"] = alert['text']\n        event[\"name\"] = alert['title']\n        event[\"scriptName\"] = alert['script']\n        event[\"hostDomain\"] = alert['domain']\n        event[\"portalDeepLink\"] = alert['deepLink']\n        event[\"fullURL\"] = alert['script'][2:-2]\n        event[\"details\"] = alert['fullText']\n        alert_info.events.append(event)\n\n        self.logger.info(\"-------------- Finished processing Alert {}\".format(round(float(alert['ts'])*100000)), alert_id=round(float(alert['ts'])*100000))\n        return alert_info\n\n\n\n@output_handler\ndef main(is_test=False):\n    px_cd_connector = PXCodeDefenderConnector(is_test=is_test)\n    px_cd_connector.run()\n\n\n\nif __name__ == \"__main__\":\n    # Connectors are run in iterations. The interval is configurable from the ConnectorsScreen UI.\n    is_test_run = not (len(sys.argv) < 2 or sys.argv[1] == 'True')\n    main(is_test_run)",
+  "Version": 95,
+  "MappingRules": [],
+  "ProductToVisualFamilyRecords": [],
+  "SimulationUseCases": {
+    "CasesForUseCase": [],
+    "UseCaseName": null
+  },
+  "Parameters": [
+    {
+      "ConnectorDefinitionId": 1,
+      "IsMandatory": true,
+      "DefaultValue": "cd_alerts",
+      "Name": "Slack Channel",
+      "Type": 2,
+      "Mode": 2,
+      "Description": "Enter the slack channel name without the preceding \"#\". If your slack channel name is \"#cd_alerts\", then enter \"cd_alerts\"",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609954084099,
+      "ModificationTimeUnixTimeInMs": 1609954084099
+    },
+    {
+      "ConnectorDefinitionId": 1,
+      "IsMandatory": true,
+      "DefaultValue": "this-is-not-a-valid-key",
+      "Name": "Slack API Key",
+      "Type": 3,
+      "Mode": 2,
+      "Description": "API Key used to connect to Slack",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609954084099,
+      "ModificationTimeUnixTimeInMs": 1609954084099
+    },
+    {
+      "ConnectorDefinitionId": 1,
+      "IsMandatory": true,
+      "DefaultValue": "30",
+      "Name": "PythonProcessTimeout",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The timeout limit (in seconds) for the python process running current script",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609954084099,
+      "ModificationTimeUnixTimeInMs": 1609954084099
+    },
+    {
+      "ConnectorDefinitionId": 1,
+      "IsMandatory": true,
+      "DefaultValue": "event_type",
+      "Name": "EventClassId",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the event name (sub-type)",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609954084099,
+      "ModificationTimeUnixTimeInMs": 1609954084099
+    },
+    {
+      "ConnectorDefinitionId": 1,
+      "IsMandatory": true,
+      "DefaultValue": "PerimterXCodeDefender",
+      "Name": "DeviceProductField",
+      "Type": 2,
+      "Mode": 0,
+      "Description": "The field name used to determine the device product",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609954084099,
+      "ModificationTimeUnixTimeInMs": 1609954084099
+    }
+  ],
+  "Rules": [],
+  "IsConnectorRulesSupported": true,
+  "IsSystem": false,
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1609954084089,
+  "ModificationTimeUnixTimeInMs": 1609954084092
+}

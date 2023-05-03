@@ -1,0 +1,91 @@
+{
+    "Identifier": "Logzio",
+    "PackageName": "Logzio",
+    "DisplayName": "Logzio",
+    "Description": "Automatically remediate security incidents identified by Logz.io and increase observability into incident details.\nFor more information on configuration and integration details:\nhttps://docs.logz.io/user-guide/cloud-siem/integration/siemplify/",
+    "DocumentationLink": "https://docs.logz.io/user-guide/cloud-siem/integration/siemplify/",
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1614762904528,
+            "Id": 0,
+            "IntegrationIdentifier": "Logzio",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1614762904528,
+            "PropertyDescription": "API token for your Logz.io security account.",
+            "PropertyDisplayName": "logzio_security_token",
+            "PropertyName": "logzio_security_token",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1614762904528,
+            "Id": 0,
+            "IntegrationIdentifier": "Logzio",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1614762904528,
+            "PropertyDescription": "2-letter region code for your Logz.io account.",
+            "PropertyDisplayName": "logzio_region",
+            "PropertyName": "logzio_region",
+            "PropertyType": 2,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1614762904528,
+            "Id": 0,
+            "IntegrationIdentifier": "Logzio",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1614762904528,
+            "PropertyDescription": "API token for your Logz.io operations account.",
+            "PropertyDisplayName": "logzio_operations_token",
+            "PropertyName": "logzio_operations_token",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1614762904528,
+            "Id": 0,
+            "IntegrationIdentifier": "Logzio",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1614762904528,
+            "PropertyDescription": "Optional. Relevant if you use a custom URL with the Logz.io API. Overrides logzio_region.",
+            "PropertyDisplayName": "logzio_custom_endpoint",
+            "PropertyName": "logzio_custom_endpoint",
+            "PropertyType": 2,
+            "Value": null
+        }
+    ],
+    "Actions": [
+        "json-adapter",
+        "logzio-get-logs-by-event-id",
+        "logzio-search-logs",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "LOGZIO fetch-security-events"
+    ],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Logz.io integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1614766659000
+        },
+        {
+            "Items": [
+                "Updated the integration's categories."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1630051933000
+        }
+    ]
+}

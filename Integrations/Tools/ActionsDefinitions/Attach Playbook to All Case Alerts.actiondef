@@ -1,0 +1,45 @@
+{
+  "Name": "Attach Playbook to All Case Alerts",
+  "Description": "Attach a specific playbook to all alerts in a case",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import *\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    workflow_name = siemplify.parameters[\"Playbook Name\"]\n    \n    for alert in siemplify.case.alerts:\n        alert_identifier = alert.identifier\n        success = super(SiemplifyAction, siemplify).attach_workflow_to_case(workflow_name, siemplify.case_id, alert_identifier)\n    if (str(success) == \"True\"):\n    \toutput_message = \"Attached Playbook [%s] to all alerts in Case [%s]\" % (workflow_name, siemplify.case_id)\n    else:\n    \toutput_message = \"Failed to attach Playbook [%s] to alerts in Case [%s]\" % (workflow_name, siemplify.case_id)\n    \n    siemplify.end(output_message, str(success))\n\nif __name__ == '__main__':\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Playbook, which should be attached to all alerts",
+      "Name": "Playbook Name",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635340016601,
+      "ModificationTimeUnixTimeInMs": 1635340016601
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635340016589,
+  "ModificationTimeUnixTimeInMs": 1635340016592
+}

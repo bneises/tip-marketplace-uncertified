@@ -1,0 +1,59 @@
+{
+  "Name": "Upload File From Path",
+  "Description": "Uploads a file from a specific path to Google Drive",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleDriveManager import GoogleDriveManager\n\nIDENTIFIER = u'Google Drive'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    file_path = siemplify.extract_action_param(param_name=u'File Path', is_mandatory=True)\n    share_to_emails = siemplify.extract_action_param(param_name=u'Share with emails')\n\n    google_drive_manager = GoogleDriveManager(credentials_json)\n    res = google_drive_manager.upload_file_from_path(file_path)\n    file_id = res['id']\n    if share_to_emails:\n        emails = share_to_emails.split(\";\")\n        for email in emails:\n            google_drive_manager.insert_permission(file_id,'writer',email)\n\n    siemplify.result.add_result_json(res)\n\n    siemplify.end('File was uploaded to Google Drive successfully', res['id'], EXECUTION_STATE_COMPLETED)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Drive",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"kind\": \"drive#file\",\n  \"id\": \"1bVDM43X43X4Ogfzzvb_PmPRobMmRdAsmOOgk\",\n  \"name\": \"test.png\",\n  \"mimeType\": \"image/png\",\n  \"starred\": false,\n  \"trashed\": false,\n  \"explicitlyTrashed\": false,\n  \"parents\": [\n    \"0ADdNAjNcLms6Uk9PVA\"\n  ],\n  \"spaces\": [\n    \"drive\"\n  ],\n  \"version\": \"1\",\n  \"webContentLink\": \"https://drive.google.com/uc?id=1bVDMXX4Og434fzzvb_PmPRobMmRdAsmOOgk&export=download\",\n  \"webViewLink\": \"https://drive.google.com/file/d/1bVDMXX4Ogfz43zvb_PmPRobfdMmRdAsmOOgk/view?usp=drivesdk\",\n  \"iconLink\": \"https://drive-thirdparty.googleusercontent.com/16/type/image/png\",\n  \"hasThumbnail\": true,\n  \"thumbnailLink\": \"https://lh3.googleusercontent.com/c2mMhnOEjpc4gfaHwYG9bIL_34-w952oa43C9IsiUg--NAyYlranEDibh_1qwJSBmS4327iDhNxFLnPUs=s220\",\n  \"thumbnailVersion\": \"1\",\n  \"viewedByMe\": false,\n  \"createdTime\": \"2020-10-03T08:42:26.734Z\",\n  \"modifiedTime\": \"2020-10-03T08:42:26.734Z\",\n  \"modifiedByMeTime\": \"2020-10-03T08:42:26.734Z\",\n  \"modifiedByMe\": true,\n  \"owners\": [\n    {\n      \"kind\": \"drive#user\",\n      \"displayName\": \"test@quickstart-155094408020996.iam.gserviceaccount.com\",\n      \"me\": true,\n      \"permissionId\": \"02214475487724192531\",\n      \"emailAddress\": \"test@quickstart-1553240908020996.iam.gserviceaccount.com\"\n    }\n  ],\n  \"lastModifyingUser\": {\n    \"kind\": \"drive#user\",\n    \"displayName\": \"test-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n    \"me\": true,\n    \"permissionId\": \"02214475487724192531\",\n    \"emailAddress\": \"test-api@quickstart-1550908020996.iam.gserviceaccount.com\"\n  },\n  \"shared\": false,\n  \"ownedByMe\": true,\n  \"capabilities\": {\n    \"canAddChildren\": false,\n    \"canAddMyDriveParent\": false,\n    \"canChangeCopyRequiresWriterPermission\": true,\n    \"canChangeViewersCanCopyContent\": true,\n    \"canComment\": true,\n    \"canCopy\": true,\n    \"canDelete\": true,\n    \"canDownload\": true,\n    \"canEdit\": true,\n    \"canListChildren\": false,\n    \"canModifyContent\": true,\n    \"canMoveChildrenWithinDrive\": false,\n    \"canMoveItemIntoTeamDrive\": true,\n    \"canMoveItemOutOfDrive\": true,\n    \"canMoveItemWithinDrive\": true,\n    \"canReadRevisions\": true,\n    \"canRemoveChildren\": false,\n    \"canRemoveMyDriveParent\": true,\n    \"canRename\": true,\n    \"canShare\": true,\n    \"canTrash\": true,\n    \"canUntrash\": true\n  },\n  \"viewersCanCopyContent\": true,\n  \"copyRequiresWriterPermission\": false,\n  \"writersCanShare\": true,\n  \"permissions\": [\n    {\n      \"kind\": \"drive#permission\",\n      \"id\": \"02214475487724192531\",\n      \"type\": \"user\",\n      \"emailAddress\": \"test-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n      \"role\": \"owner\",\n      \"displayName\": \"test-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n      \"deleted\": false\n    }\n  ],\n  \"permissionIds\": [\n    \"02214475487724192531\"\n  ],\n  \"originalFilename\": \"test.png\",\n  \"fullFileExtension\": \"png\",\n  \"fileExtension\": \"png\",\n  \"md5Checksum\": \"d6419f2547edda03b7ce948d7356baf7\",\n  \"size\": \"226429\",\n  \"quotaBytesUsed\": \"226429\",\n  \"headRevisionId\": \"0BzdNAjNcLms6TGdlUlFmeTJUc0Q0UExXeS9FQ1NRL2FEMTBvPQ\",\n  \"imageMediaMetadata\": {\n    \"width\": 996,\n    \"height\": 359,\n    \"rotation\": 0\n  },\n  \"isAppAuthorized\": true\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 18.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "/temp/image.png",
+      "Description": "The file path from which the file will be uploaded to Google Drive",
+      "Name": "File Path",
+      "Value": "/temp/image.png",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810812,
+      "ModificationTimeUnixTimeInMs": 1614708810812
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email1@gmail.com;email2@gmail.com",
+      "Description": "Email address of the person you would like to add permission to the file. You can add multiple emails by adding \";\" as a separator. ",
+      "Name": "Share with emails",
+      "Value": "email1@gmail.com;email2@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810812,
+      "ModificationTimeUnixTimeInMs": 1614708810812
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1611736073216,
+  "ModificationTimeUnixTimeInMs": 1614708810808
+}

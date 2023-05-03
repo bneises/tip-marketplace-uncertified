@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "NEW! Workflow Tools integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Workflow Tools",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1626356148
+    }
+]

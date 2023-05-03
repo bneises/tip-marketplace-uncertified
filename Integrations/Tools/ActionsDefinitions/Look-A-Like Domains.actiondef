@@ -1,0 +1,30 @@
+{
+    "Name": "Look-A-Like Domains",
+    "Description": "This action will compare domain entities against the list of domains defined for the environment.  If the domains are similar the entity will be marked as suspicious and enriched with the matching domain.",
+    "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler, convert_dict_to_json_result_dict\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport nltk\n\nENV_DOMAIN_URL = '{}/external/v1/settings/GetDomainAliases?format=camel'\nTHRESHOLD = 2\n\ndef get_page_results(siemplify, url):\n    payload = {\"searchTerm\": \"\", \"requestedPage\": 0, \"pageSize\": 100}\n    res = siemplify.session.post(url.format(siemplify.API_ROOT), json=payload)\n    res.raise_for_status()\n    results = res.json()['objectsList']\n    if res.json()['metadata']['totalNumberOfPages'] > 1:\n        for page in range(res.json()['metadata']['totalNumberOfPages'] - 1):\n            payload['requestedPage'] = page + 1\n            res = siemplify.session.post(url.format(siemplify.API_ROOT), json=payload)\n            res.raise_for_status()\n            results.extend(res.json()['objectsList'])\n    return results\n    \n\ndef get_domains(siemplify):\n    res = get_page_results(siemplify, ENV_DOMAIN_URL)\n    env_domains = []\n    for domain in res:\n        if siemplify._environment in domain['environments']:\n            env_domains.append(domain)\n    return env_domains\n    \n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = \"Look-A-Like Domains\"\n    status = EXECUTION_STATE_COMPLETED  #\n    output_message = \"output message :\"  \n    result_value = \"false\"\n    domains = get_domains(siemplify)\n    updated_entities = []\n    json_result = {}\n    for entity in siemplify.target_entities:\n        if entity.entity_type == \"DOMAIN\":\n            json_result[entity.identifier] = {}\n            look_a_like_domains = []\n            for domain in domains:\n                distance = nltk.edit_distance(entity.identifier.lower(), domain['domain'].lower())\n                if distance >=1 and distance < 4:\n                    look_a_like_domains.append(domain['domain'])\n                    output_message += f\"Domain {entity.identifier} is a look alike to {domain['domain']} with a score of {distance}.  \\n\"\n                    entity.is_suspicious = True\n                    entity.additional_properties['look_a_like_domain'] = domain['domain']\n                    updated_entities.append(entity)\n                    result_value = \"true\"\n                json_result[entity.identifier]['look_a_like_domains'] = look_a_like_domains\n\n    count_updated_entities = len(updated_entities)\n    \n    if count_updated_entities > 0:\n        siemplify.update_entities(updated_entities)\n    \n    for updated_entity in updated_entities:\n        siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_result))\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "Tools",
+    "ScriptResultName": "look_a_like_domain_found",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[\r\n    {\r\n        \"Entity\": \"SIEMPLIFY.CO\",\r\n        \"EntityResult\": {\r\n            \"look_a_like_domains\": []\r\n        }\r\n    },\r\n    {\r\n        \"Entity\": \"0utl00k.com\",\r\n        \"EntityResult\": {\r\n            \"look_a_like_domains\": [\r\n                \"outlook.com\"\r\n            ]\r\n        }\r\n    }\r\n]",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "Rob",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 8.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 30,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

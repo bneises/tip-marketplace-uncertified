@@ -1,0 +1,95 @@
+{
+  "RunIntervalInSeconds": 900,
+  "Parameters": [
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625596983731,
+      "ModificationTimeUnixTimeInMs": 1625596983731,
+      "DefaultValue": "",
+      "Description": "Commit message",
+      "IsMandatory": true,
+      "Name": "Commit",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625596983731,
+      "ModificationTimeUnixTimeInMs": 1625596983731,
+      "DefaultValue": "",
+      "Description": "List of connectors, seperated by a comma, to push to the repo",
+      "IsMandatory": true,
+      "Name": "Connectors",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625596983731,
+      "ModificationTimeUnixTimeInMs": 1625596983731,
+      "DefaultValue": "",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Branch",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625596983731,
+      "ModificationTimeUnixTimeInMs": 1625596983731,
+      "DefaultValue": "",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Repo URL",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625596983731,
+      "ModificationTimeUnixTimeInMs": 1625596983731,
+      "DefaultValue": "false",
+      "Description": "Whether to include related visual families that the connector alerts use",
+      "IsMandatory": false,
+      "Name": "Include Visual Families",
+      "Type": 0
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625596983731,
+      "ModificationTimeUnixTimeInMs": 1625596983731,
+      "DefaultValue": "false",
+      "Description": "Whether to include related mappings that the connector alerts use",
+      "IsMandatory": false,
+      "Name": "Include Mappings",
+      "Type": 0
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1625653885423,
+      "ModificationTimeUnixTimeInMs": 1625653885423,
+      "DefaultValue": "",
+      "Description": "Appends markdown to the end of the readme file of all connectors pushed this run",
+      "IsMandatory": false,
+      "Name": "Readme Addon",
+      "Type": 2
+    }
+  ],
+  "Integration": "GitSync",
+  "Name": "Push Connectors",
+  "Description": "Exports a connector to the repo.",
+  "CreationTimeUnixTimeInMs": 1625596983709,
+  "ModificationTimeUnixTimeInMs": 1625596983723,
+  "Script": "from GitSyncManager import GitSyncManager\nfrom SiemplifyJob import SiemplifyJob\nfrom SiemplifyUtils import output_handler\nfrom definitions import Mapping, VisualFamily, Connector\n\nSCRIPT_NAME = \"Push Connector\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyJob()\n    siemplify.script_name = SCRIPT_NAME\n\n    commit_msg = siemplify.extract_job_param(\"Commit\")\n    connector_names = list(\n        filter(None, [x.strip() for x in siemplify.extract_job_param(\"Connectors\", \" \").split(',')]))\n    include_vf = siemplify.extract_job_param(\"Include Visual Families\", input_type=bool)\n    include_mappings = siemplify.extract_job_param(\"Include Mappings\", input_type=bool)\n\n    try:\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\n        for connector in gitsync.api.get_connectors():\n            if connector.get(\"displayName\") in connector_names:\n                gitsync.push_connector(Connector(connector))\n\n                if include_mappings or include_vf:\n                    integrationName = connector.get(\"integration\")\n                    records = [x for x in gitsync.api.get_ontology_records() if x.get(\"source\") == integrationName]\n                    visual_families = set([x.get(\"familyName\") for x in records])\n                    if include_mappings:\n                        rules = []\n                        for record in records:\n                            record[\"exampleEventFields\"] = []  # remove event assets\n                            rule = gitsync.api.get_mapping_rules(record[\"source\"], record[\"product\"],\n                                                                 record[\"eventName\"])\n                            for r in rule['familyFields'] + rule['systemFields']:\n                                # remove bad rules with no source\n                                if r['mappingRule']['source'] and r['mappingRule'][\n                                    'source'].lower() == integrationName.lower():\n                                    rules.append(rule)\n                                    break\n\n                        gitsync.push_mapping(Mapping(integrationName, records, rules))\n\n                    if include_vf:\n                        for visualFamily in gitsync.api.get_custom_families():\n                            if visualFamily['family'] in visual_families:\n                                gitsync.push_visual_family(\n                                    VisualFamily(gitsync.api.get_custom_family(visualFamily['id'])))\n\n        gitsync.commit_and_push(commit_msg)\n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        raise\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1,
+  "PythonVersion": "None",
+  "Id": 0
+}

@@ -1,0 +1,59 @@
+{
+  "Name": "Update Badge",
+  "Description": "Give a badge to a given user by User ID",
+  "Script": "from VanillaManager import VanillaManager\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n# Consts:\nINTEGRATION_NAME = \"VanillaForums\"\nSCRIPT_NAME = \"Update Badge\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    \n    # INIT INTEGRATION PARAMETERS:\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    apiToken = conf.get(\"API Token\")\n    baseUrl = conf.get(\"URL\")\n    \n    # INIT ACTION PARAMETERS:\n    user_id = siemplify.extract_action_param(param_name=\"User ID\").strip()\n    badge_id=siemplify.extract_action_param(param_name=\"Badge ID\").strip()\n    \n    # Init result json:\n    given_badge_details = {}\n    # Init result values:\n    status = EXECUTION_STATE_FAILED\n    output_message = f\"The badge <rankID: {badge_id}> wasn't given to the user <userID: {user_id}. \"\n    result_value = False\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    \n    try:\n        # CREATE MANAGER INSTANCE (FOR METHODS):\n        vanilla_manager = VanillaManager(apiToken,baseUrl)\n        \n        # GIVE USER WANTED BADGE:\n        given_badge_details = vanilla_manager.give_user_badge(badge_id, user_id)\n        status = EXECUTION_STATE_COMPLETED\n        output_message = f\"The badge <badgeID: {badge_id}> was given to the user <userID: {user_id}>\"\n        result_value = True\n       \n        \n    except Exception as e:\n        siemplify.LOGGER.error(e)\n        output_message += \"Error\" + str(e)\n    \n    finally:\n        siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n        siemplify.LOGGER.info(output_message)\n        siemplify.result.add_result_json(given_badge_details)\n        siemplify.end(output_message, result_value, status)\n    \nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "VanillaForums",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"userID\": 1111,\r\n\t\"user\": {\r\n\t\t\"userID\": 1111,\r\n\t\t\"name\": \"User Name\",\r\n\t\t\"url\": \"UserURL\",\r\n\t\t\"photoUrl\": \"https://us.v-cdn.JPG\",\r\n\t\t\"dateLastActive\": \"2021-03-09T09:43:29+00:00\",\r\n\t\t\"label\": \"Team\"\r\n\t},\r\n\t\"badgeID\": 101,\r\n\t\"badge\": {\r\n\t\t\"badgeID\": 101,\r\n\t\t\"type\": \"Manual\",\r\n\t\t\"key\": \"CourseSlug\",\r\n\t\t\"name\": \"Siemplify Certified SOAR Operator Course\",\r\n\t\t\"body\": \"You have completed the \\\"Siemplify Certified SOAR Operator\\\" course. \",\r\n\t\t\"photoUrl\": \"https://us.v-c.png\",\r\n\t\t\"points\": 20,\r\n\t\t\"enabled\": true,\r\n\t\t\"canDelete\": true,\r\n\t\t\"countUsers\": 28,\r\n\t\t\"class\": \"\",\r\n\t\t\"classLevel\": null,\r\n\t\t\"insertUserID\": 8,\r\n\t\t\"insertUser\": {\r\n\t\t\t\"userID\": 8,\r\n\t\t\t\"name\": \"CreatorName\",\r\n\t\t\t\"url\": \"\",\r\n\t\t\t\"photoUrl\": \"https://us.v-cdn.ne.jpg\",\r\n\t\t\t\"dateLastActive\": \"2021-03-09T08:28:20+00:00\",\r\n\t\t\t\"label\": \"Team\"\r\n\t\t},\r\n\t\t\"dateInserted\": \"2020-09-23T09:23:44+00:00\",\r\n\t\t\"updateUserID\": null,\r\n\t\t\"dateUpdated\": null,\r\n\t\t\"attributes\": [],\r\n\t\t\"url\": \"/badge/ID/Slug\"\r\n\t},\r\n\t\"reasonBody\": null,\r\n\t\"dateEarned\": \"2021-03-09T10:03:48+00:00\",\r\n\t\"insertUserID\": 8,\r\n\t\"insertUser\": {\r\n\t\t\"userID\": 8,\r\n\t\t\"name\": \"ShakedTal\",\r\n\t\t\"url\": \"https://X\",\r\n\t\t\"photoUrl\": \"https://us.v-cdn.ne.jpg\",\r\n\t\t\"dateLastActive\": \"2021-03-09T08:28:20+00:00\",\r\n\t\t\"label\": \"\"\r\n\t},\r\n\t\"dateInserted\": \"2021-03-09T10:03:48+00:00\"\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 296.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0000",
+      "Description": "The ID of the user to be awarded the badge.",
+      "Name": "User ID",
+      "Value": "0000",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841645167,
+      "ModificationTimeUnixTimeInMs": 1630841645167
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "0000",
+      "Description": "ID of badge to be awarded to the user",
+      "Name": "Badge ID",
+      "Value": "0000",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1630841645167,
+      "ModificationTimeUnixTimeInMs": 1630841645167
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1629101810655,
+  "ModificationTimeUnixTimeInMs": 1630841645162
+}

@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "NEW! AWS - EC2 Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "AWS - EC2",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1609175329
+    }
+]

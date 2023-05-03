@@ -1,0 +1,77 @@
+{
+    "Identifier": "Google Docs",
+    "PackageName": "Google Docs",
+    "DisplayName": "Google Docs",
+    "Description": "Google Docs is an online word processor that lets you create and format documents and work with other people.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "PropertyName": "Credentials Json",
+            "PropertyDescription": "View the guide on how to create auth json credentials (service account) - provide access for Google Docs\nhttps://gspread.readthedocs.io/en/latest/oauth2.html#enable-api-access\n",
+            "PropertyDisplayName": "Credentials Json",
+            "IntegrationIdentifier": "Google Docs",
+            "ModificationTimeUnixTimeInMs": 1602148520853,
+            "IsMandatory": true,
+            "PropertyType": 2,
+            "Value": "{}",
+            "CreationTimeUnixTimeInMs": 1602148520853,
+            "Id": 0
+        }
+    ],
+    "Actions": [
+        "Create Content",
+        "Create Document",
+        "Ping",
+        "Remove Content",
+        "Replace Content"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "GoogleDocs Manager"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 5.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Google Docs Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602157280000
+        },
+        {
+            "Items": [
+                "Fixed the Integration Manager in Google Docs"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1619703213000
+        },
+        {
+            "Items": [
+                "Fixed the Category"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1629722429000
+        },
+        {
+            "Items": [
+                "Fixed the Category"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1630236349000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG"
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1635784177000
+        }
+    ]
+}

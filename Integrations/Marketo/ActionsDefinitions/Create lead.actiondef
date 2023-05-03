@@ -1,0 +1,87 @@
+{
+  "Name": "Create lead",
+  "Description": "Create Lead in Marketo for a given user details",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nimport json\nfrom marketorestpython.client import MarketoClient\n\n\nSCRIPT_NAME = \"Create lead\"\nINTEGRATION = \"Marketo\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    json_result = {}\n    \n    # INIT INTEGRATION PARAMETERS:\n    client_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Id\")\n    client_secret = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Secret\")\n    munchkin_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Munchkin Id\")\n    \n    # INIT ACTION PARAMETERS:\n    email = siemplify.extract_action_param(param_name=\"Email\").lower()\n    first_name = siemplify.extract_action_param(param_name=\"First Name\")\n    last_name = siemplify.extract_action_param(param_name=\"Last Name\")\n    country = siemplify.extract_action_param(param_name=\"Country\")\n    \n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"\"  # human readable message, showed in UI as the action result\n    result_value = False  # Set a simple result value, used for playbook if\\else and placeholders.\n    \n    try:\n        input_data = [{\n            'email': email,\n            'firstName': first_name,\n            'lastName': last_name,\n            'country': country\n        }]\n        \n        mc = MarketoClient(munchkin_id, client_id, client_secret, None, None)\n        response = mc.execute(leads=input_data, method='create_update_leads', action='createOnly', lookupField='email')\n        json_result = response[0]\n        \n        if 'reasons' in response[0]:\n            output_message = f\"Failed to create the user <{email}> as a lead. Error: {response[0]}\" \n            result_value = False\n        else:\n            output_message = f\"The lead was created successfully for the user <{email}>, the lead ID is <{response[0].get('id')}>\"\n            result_value = True\n            \n    except Exception as e:\n        output_message = f\"Failed to create the user <{email}> as a lead. Error: {e}\" \n        result_value = False\n        status = EXECUTION_STATE_FAILED\n        raise Exception(f\"Failed to create the user <{email}> as a lead. Error: {e}\" )\n        \n    siemplify.result.add_result_json(json_result)\n    \n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Marketo",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n \"id\":123456,\n \"status\":\"created\"\n}\n",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 51.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": " The email address of the new lead you want to create",
+      "Name": "Email",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628169281178,
+      "ModificationTimeUnixTimeInMs": 1628169281178
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": null,
+      "Description": "  The first name of the new lead you want to create",
+      "Name": "First Name",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628169281178,
+      "ModificationTimeUnixTimeInMs": 1628169281178
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": " The country of the new lead you want to create",
+      "Name": "Country",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628169281178,
+      "ModificationTimeUnixTimeInMs": 1628169281178
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "The last name of the new lead you want to create",
+      "Name": "Last Name",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628169281178,
+      "ModificationTimeUnixTimeInMs": 1628169281178
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1628169281144,
+  "ModificationTimeUnixTimeInMs": 1628169281151
+}

@@ -1,0 +1,58 @@
+{
+    "Identifier": "Google Safe Browsing",
+    "PackageName": "Google Safe Browsing",
+    "DisplayName": "Google Safe Browsing",
+    "Description": "Safe Browsing is a Google service that lets client applications check URLs against Google's constantly updated lists of unsafe web resources. Examples of unsafe web resources are social engineering sites (phishing and deceptive sites) and sites that host malware or unwanted software. Any URL found on a Safe Browsing list is considered unsafe.\n\nGetting start - https://developers.google.com/safe-browsing/v4/get-started",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1602148777452,
+            "Id": 0,
+            "IntegrationIdentifier": "Google Safe Browsing",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1602148777452,
+            "PropertyDescription": "Api Key",
+            "PropertyDisplayName": "Api Key",
+            "PropertyName": "Api Key",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [
+        "Lookup",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Google Safe Browsing Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602150072000
+        },
+        {
+            "Items": [
+                "Updated SVG of Google Safe Browsing Integration."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1626774317000
+        },
+        {
+            "Items": [
+                "Updated SVG of Google Safe Browsing Integration."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1635784459000
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "Name": "Detect IP Type",
+    "Description": "This action checks if an IP is an IPv4 address or IPv6 address.  IP Address entities will be enriched with IPType field.",
+    "Script": "# ==============================================================================\n# title          :Detect IP Type.py\n# description    :This action detects the IP type of entities.\n# author         :elisv@siemplify.co\n# date           :15-06-2021\n# python_version :3.7\n# ==============================================================================\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport re\n\nIPV4 = \"^(\\d|[1-9]\\d|1\\d\\d|2([0-4]\\d|5[0-5]))\\.(\\d|[1-9]\\d|1\\d\\d|2([0-4]\\d|5[0-5]))\\.(\\d|[1-9]\\d|1\\d\\d|2([0-4]\\d|5[0-5]))\\.(\\d|[1-9]\\d|1\\d\\d|2([0-4]\\d|5[0-5]))$\"\nIPV6 = \"(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"IP types found\"  # human readable message, showed in UI as the action result\n    result_value = \"true\"  # Set a simple result value, used for playbook if\\else and placeholders.\n\n    res = []\n    to_enrich = []\n    \n    addresses = siemplify.parameters.get(\"IP Addresses\")\n    if addresses:\n        addresses = addresses.split(\",\")\n    try:\n        for address in addresses:\n            match = re.match(IPV4, address)\n            if match:\n                res.append({\"Address\": address, \"IPType\": \"IPV4\"})\n            else:\n                match = re.match(IPV6, address)\n                if match:\n                    res.append({\"Address\": address, \"IPType\": \"IPV6\"})\n                else:\n                    res.append({\"Address\": address, \"IPType\": \"UNDETECTED\"})\n    \n    \n        for entity in siemplify.target_entities:\n            if entity.entity_type == \"ADDRESS\":\n                match = re.match(IPV4, entity.identifier)\n                if match:\n                    d = {\"IPType\": \"IPV4\"}\n                else:\n                    match = re.match(IPV6, entity.identifier)\n                    if match:\n                        d = {\"IPType\": \"IPV6\"}\n                    else:\n                        d = {\"IPType\": \"UNDETECTED\"}\n                entity.additional_properties.update(d)\n                to_enrich.append(entity)\n                d[\"Address\"] = entity.identifier\n                res.append(d)\n\n\n        if to_enrich:\n            siemplify.update_entities(to_enrich)\n        siemplify.result.add_result_json(res)\n        siemplify.result.add_json(\"IP Types\", res)\n    except Exception as e:\n        status = EXECUTION_STATE_FAILED\n        output_message = f\"Error: {e}\"\n        result_value = False\n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "Functions",
+    "ScriptResultName": "IsSuccess",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[{\"Address\": \"2.2.2.2\", \"IPType\": \"IPV4\"}, {\"Address\": \"2001:db8:3333:4444:CCCC:DDDD:EEEE:FFFF\", \"IPType\": \"IPV6\"}, {\"IPType\": \"IPV4\", \"Address\": \"1.1.1.1\"}]",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "f56aefe2-fa00-4424-b2ce-de40f122b9c4",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 18.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 3600,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 968,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "Comma-separated",
+            "Name": "IP Addresses",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

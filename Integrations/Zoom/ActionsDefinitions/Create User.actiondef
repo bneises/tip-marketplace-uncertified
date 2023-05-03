@@ -1,0 +1,79 @@
+{
+  "Name": "Create User",
+  "Description": "Creating a new user in zoom",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom ZoomManager import ZoomManager\n\n\nINTEGRATION_NAME = u\"Zoom\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    jwt_token = conf.get(\"JWT Token\")\n    account_id = conf.get(\"Account ID\")\n    client_id = conf.get(\"Client ID\")\n    client_secret = conf.get(\"Client Secret\")\n\n    #Extracting the action params\n\n    first_name = siemplify.extract_action_param(\"First Name\")\n    \n    last_name = siemplify.extract_action_param(\"Last Name\")\n    \n    user_email = siemplify.extract_action_param(\"Email\")\n    \n    user_type = siemplify.extract_action_param(\"User Type\")\n    \n    #Creating a ZoomManager object instance\n    zoom_manager = ZoomManager(jwt_token, account_id, client_id, client_secret)\n    \n    json_result = {}\n\n    created_user_details = zoom_manager.create_user(first_name, last_name, user_email, user_type)\n\n    if created_user_details:\n        json_result['createdUserDetails'] = created_user_details\n        output_message = \"The user was created successfully\"\n        result_value = True\n\n    #Adding json result to the action\n    siemplify.result.add_result_json(json_result)\n    \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Zoom",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"id\": \"k&KdKr6TLWuxdDtk0hjSzL\",\r\n\t\"meta\": {\r\n\t\t\"resourceType\": \"User\",\r\n\t\t\"location\": \"https://api.zoom.us/scim2/Users/k&KdKr6TLWuxdDtk0hjSzL\",\r\n\t\t\"version\": \"1.0.0\"\r\n\t},\r\n\t\"schemas\": [\r\n\t\t\"urn:ietf:params:scim:schemas:core:2.0:User\"\r\n\t],\r\n\t\"name\": {\r\n\t\t\"givenName\": \"Fancy\",\r\n\t\t\"familyName\": \"Being\"\r\n\t},\r\n\r\n\t\"phoneNumbers\": [{\r\n\t\t\"type\": \"work\",\r\n\t\t\"value\": \"+01 11234567\"\r\n\t}],\r\n\t\"roles\": [{\r\n\t\t\"display\": \"user\",\r\n\t\t\"value\": \"user\",\r\n\t\t\"primary\": true\r\n\t}],\r\n\t\"groups\": [{\r\n\t\t\"display\": \"LA Group\",\r\n\t\t\"type\": \"direct\",\r\n\t\t\"primary\": true\r\n\t}],\r\n\t\"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\r\n\t\t\"department\": \"engineering\",\r\n\t\t\"organization\": \"Cloud\"\r\n\t},\r\n\t\"urn:us:zoom:scim:schemas:extension:1.0:ZoomUser\": {\r\n\t\t\"loginType\": {\r\n\t\t\t\"workEmail\": false,\r\n\t\t\t\"sso\": true\r\n\t\t}\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 54,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "FirstName",
+      "Description": "First Name",
+      "Name": "First Name",
+      "Value": "FirstName",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "LastName",
+      "Description": "Last Name",
+      "Name": "Last Name",
+      "Value": "LastName",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email@gmail.com",
+      "Description": "The user's email you want to create",
+      "Name": "Email",
+      "Value": "email@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Basic",
+      "Description": "The user license type can be:\n'Basic', 'Licensed', 'On-prem'.",
+      "Name": "User Type",
+      "Value": "Basic",
+      "Type": 15,
+      "OptionalValues": [
+        "Basic",
+        "Licensed",
+        "On-prem"
+      ],
+      "OptionalValuesJson": "[\"Basic\",\"Licensed\",\"On-prem\"]"
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

@@ -1,0 +1,97 @@
+{
+  "Name": "Send Email",
+  "Description": "Send email message",
+  "Script": "from SiemplifyDataModel import EntityTypes\nfrom SiemplifyAction import SiemplifyAction\nfrom EmailActions import BaseEmailAction\nfrom SiemplifyUtils import output_handler, utc_now\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\nfrom sendgrid import SendGridAPIClient\nfrom sendgrid.helpers.mail import Mail\n\n\nclass SendEmailAction(BaseEmailAction):\n    \"\"\"\n    This class should be used for execution of flow related to SendEmail action.\n    SendEmail should simply send an email through selected SendGridAPIClient.\n    This action doesn't support any retry logic.\n    \"\"\"\n\n    SCRIPT_NAME = \"SendGrid - Send Email\"\n\n    def __init__(self):\n        \"\"\"\n        SendEmailAction constructor. Loads integration configuration and initializes EmailManager instance\n        \"\"\"\n\n        super(SendEmailAction, self).__init__(SendEmailAction.SCRIPT_NAME)\n\n    def execute_action(self, output_messages, successful_entities, failed_entities):\n        \"\"\"\n        Sends email\n        :param output_messages: {list} Mutable list of output messages (str) to form audit trail for this action\n        :param successful_entities: {list} N/A in case of SendEmail. List of entity.identifier's, which have been processed successfully\n        :param failed_entities: {list} N/A in case of SendEmail. List of entity.identifier's, which have been failed during processing\n        :return: {tuple} 1st value - Status of the operation: {int} 0 - success, 1 - failed, 2 - timed out; 2nd value - Success flag: {bool} True - success, False - failure.\n        \"\"\"\n        # Create a dict with all required attachments to the email\n        #attachments_dict = self.load_attachments_to_dict()\n        #siemplifyAction = SiemplifyAction()\n        \n        message = Mail(\n            from_email=self.email_from,\n            to_emails=self.email_to,\n            subject=self.subject,\n            html_content=self.content)\n        \n        try:\n            self.logger.info(u\"Sending email\")\n            sg = SendGridAPIClient(self.api_token)\n            response = sg.send(message)\n        except Exception as e:\n            message = u\"Failed to send email!\"\n            self.logger.error(message)\n            self.logger.exception(e)\n            output_messages.append(message)\n            return EXECUTION_STATE_FAILED, False\n            \n        message = u\"Email has been sent successfully\"\n        # Save result JSON, if required\n        if self.return_message_status:\n            self.logger.info(u\"Saving result JSON\")\n            json_result = {\n                u\"response\": response.status_code,\n                u\"date\": utc_now(),\n                u\"recipients\": self.email_to\n            }\n            self.siemplify.result.add_result_json(json_result)\n            message = u\"Mail sent successfully. Mail message status is: {0}\".format(response.status_code)\n\n        output_messages.append(message)\n        self.logger.info(message)\n        return EXECUTION_STATE_COMPLETED, True\n\n\n@output_handler\ndef main():\n    action = SendEmailAction()\n    action.run()\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "SendGrid",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Mike",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 29.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Return Message Status",
+      "Name": "Return Message Status",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594891250495,
+      "ModificationTimeUnixTimeInMs": 1594891250495
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "Subject",
+      "Name": "Subject",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594891250495,
+      "ModificationTimeUnixTimeInMs": 1594891250495
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "Email To",
+      "Name": "Email To",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594891250495,
+      "ModificationTimeUnixTimeInMs": 1594891250495
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": " ",
+      "Description": "Email From",
+      "Name": "Email From",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594891250495,
+      "ModificationTimeUnixTimeInMs": 1594891250495
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\"type\":0,\"name\":\"testb\",\"content\":\"<table><tr><td>Techniques found: {{ input_json|join(\\\", \\\") }}</td></tr></table><table><tr><td>Permissions Required</td><td>{{ x_mitre_permissions_required|join(\\\", \\\") }}</td></tr><tr><td>External References</td><td>{{ external_references|map(attribute='url')|first }}</td></tr><tr><td colspan=\\\"2\\\">{{ description }}</td></tr></table>\",\"creatorUserName\":\"Rob\",\"forMigration\":false,\"environments\":[\"*\"],\"id\":3,\"creationTimeUnixTimeInMs\":1591804382641,\"modificationTimeUnixTimeInMs\":1591804382641}",
+      "Description": "Content",
+      "Name": "Content",
+      "Value": "{\"type\":0,\"name\":\"testb\",\"content\":\"<table><tr><td>Techniques found: {{ input_json|join(\\\", \\\") }}</td></tr></table><table><tr><td>Permissions Required</td><td>{{ x_mitre_permissions_required|join(\\\", \\\") }}</td></tr><tr><td>External References</td><td>{{ external_references|map(attribute='url')|first }}</td></tr><tr><td colspan=\\\"2\\\">{{ description }}</td></tr></table>\",\"creatorUserName\":\"Rob\",\"forMigration\":false,\"environments\":[\"*\"],\"id\":3,\"creationTimeUnixTimeInMs\":1591804382641,\"modificationTimeUnixTimeInMs\":1591804382641}",
+      "Type": 10,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1594891250495,
+      "ModificationTimeUnixTimeInMs": 1594891250495
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1594891250480,
+  "ModificationTimeUnixTimeInMs": 1594891250482
+}

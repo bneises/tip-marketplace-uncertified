@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Test Connectivity",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nfrom ScriptResult import EXECUTION_STATE_FAILED, EXECUTION_STATE_COMPLETED\nfrom MicrosoftGraphSecurityManager import MicrosoftGraphSecurityManager\n\n\nINTEGRATION_NAME = \"MicrosoftGraphSecurity\"\nSCRIPT_NAME = \"Ping\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = f\"{INTEGRATION_NAME} - {SCRIPT_NAME}\"\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n\n    client_id = siemplify.extract_configuration_param('Integration',\"Client ID\")\n    secret_id = siemplify.extract_configuration_param('Integration',\"Secret ID\")\n    tenant_id = siemplify.extract_configuration_param('Integration',\"Tenant ID\")\n    certificate_password = siemplify.extract_configuration_param('Integration',\"Certificate Password\")\n    certificate_path = siemplify.extract_configuration_param('Integration',\"Certificate Path\")\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    try:\n        siemplify.LOGGER.info(\"Connecting to Microsoft Graph Security.\")\n        mtm = MicrosoftGraphSecurityManager(client_id, secret_id, certificate_path, certificate_password, tenant_id)\n        siemplify.LOGGER.info(\"Connected successfully.\")\n\n        output_message = \"Connection Established\"\n        result_value = 'true'\n        status = EXECUTION_STATE_COMPLETED\n\n    except Exception as e:\n        siemplify.LOGGER.error(f\"Some errors occurred. Error: {e}\")\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = \"false\"\n        output_message = f\"Some errors occurred. Error: {e}\"\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(f\"Status: {status}:\")\n    siemplify.LOGGER.info(f\"Result Value: {result_value}\")\n    siemplify.LOGGER.info(f\"Output Message: {output_message}\")\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "MicrosoftGraphSecurityTools",
+  "ScriptResultName": "is_connected",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": false
+    }
+  ],
+  "Creator": "daniel.harvey",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 9.0,
+  "TimeoutSeconds": 120,
+  "Parameters": [],
+  "DefaultResultValue": null,
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1608643976742,
+  "ModificationTimeUnixTimeInMs": 1608643976745
+}

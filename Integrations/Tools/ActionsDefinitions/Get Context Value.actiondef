@@ -1,0 +1,58 @@
+{
+  "Name": "Get Context Value",
+  "Description": "The action gets a key and value in a specific context (alert or case)",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    scope = siemplify.extract_action_param(\"Scope\")\n    key = siemplify.extract_action_param(\"Key\")\n    \n    result_value = None\n    \n    if scope == 'Alert':\n        result_value = siemplify.get_alert_context_property(key)\n        result_value = result_value.strip('\"')\n\n    elif scope == 'Case':\n        result_value = siemplify.get_case_context_property(key)\n        result_value = result_value.strip('\"')\n    output_message = \"Not found value for key: {0} in scope {1} :\".format(key,scope)\n\n    if result_value:\n        output_message = \"Successfully found '{0}' for key: {1} in scope {2}.\".format(result_value,key,scope)\n\n    siemplify.end(output_message, result_value, EXECUTION_STATE_COMPLETED)\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Alert",
+      "Description": "Alert or Case or Global",
+      "Name": "Scope",
+      "Value": "Alert",
+      "Type": 15,
+      "OptionalValues": [
+        "Case",
+        "Alert"
+      ],
+      "OptionalValuesJson": "[\"Case\",\"Alert\",\"Global\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620455,
+      "ModificationTimeUnixTimeInMs": 1639492632000
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Key",
+      "Description": "Key",
+      "Name": "Key",
+      "Value": "Key",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620455,
+      "ModificationTimeUnixTimeInMs": 1614012620455
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620451,
+  "ModificationTimeUnixTimeInMs": 1614012620451
+}

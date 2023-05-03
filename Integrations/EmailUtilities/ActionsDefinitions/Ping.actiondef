@@ -1,0 +1,26 @@
+{
+  "Name": "Ping",
+  "Description": "Check connectivity",
+  "Script": "from SiemplifyAction import *\nimport json, requests\n\nINTEGRATION_NAME = \"Email Utilities\"\n\ndef main():\n    siemplify = SiemplifyAction()\n\n\n    siemplify.end('Siemplify is connected', True)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "EmailUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": false,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 11.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610732892886,
+  "ModificationTimeUnixTimeInMs": 1610732892886
+}

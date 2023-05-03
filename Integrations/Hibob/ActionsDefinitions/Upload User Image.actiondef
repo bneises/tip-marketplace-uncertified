@@ -1,0 +1,55 @@
+{
+  "Name": "Upload User Image",
+  "Description": "Uploading an image (URL image) to a specific employee",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom HibobManager import HibobManager\nimport base64\n\nINTEGRATION_NAME = u\"Hibob\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Getting the integration parameters\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    api_root = 'https://api.hibob.com'\n    api_token = conf.get(\"API Token\")\n\n    #declaring an empty dictionary of the json_result\n    json_result = {}\n    \n    #creating an instance of hibobmanager object\n    hibob_manager = HibobManager(api_root, api_token)\n    \n    #Extracting the action params= The employee's email\n    user_email = siemplify.extract_action_param(\"Employee's Email\")\n    \n    #Extracting the action params= The employee's URL image\n    url_image =  siemplify.extract_action_param(\"Url Image\")\n    \n    #Extracting the employee id(the employee id is a serial number that is generated automatically when creating the user)\n    employee_details = hibob_manager.get_user_details(user_email)\n    \n    if employee_details:\n        employee_identifier = employee_details.get('id')\n        user_image_url = hibob_manager.upload_user_image(employee_identifier, url_image)\n    \n    \n        if user_image_url == 404:\n            return_value = False\n            output_message = \"The image of {0} was not uploaded.\".format(user_email)\n\n        else:\n            return_value = True\n            output_message = \"The image of {0} was uploaded successfully.\".format(user_email)\n\n    else:\n        return_value = False\n        output_message = \"The user doesn't exists in Hibob\"\n        \n    siemplify.result.add_result_json(json_result)\n    \n    siemplify.end(output_message, return_value)\n\n    \n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Hibob",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 119.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email@gmail.com",
+      "Description": "The email of the employee that you want to upload an image to.",
+      "Name": "Employee's Email",
+      "Value": "email@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1600337950088,
+      "ModificationTimeUnixTimeInMs": 1600337950088
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "https://",
+      "Description": "The employee URL image",
+      "Name": "Url Image",
+      "Value": "https://",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1600337950088,
+      "ModificationTimeUnixTimeInMs": 1600337950088
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1600337950081,
+  "ModificationTimeUnixTimeInMs": 1600337950084
+}

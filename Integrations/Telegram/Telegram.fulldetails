@@ -1,0 +1,94 @@
+{
+    "Identifier": "Telegram",
+    "PackageName": "Telegram",
+    "DisplayName": "Telegram",
+    "Description": "Telegram is a cloud-based mobile and desktop messaging app with a focus on security and speed.\nSee documentation on how to create a bot in order to use this integration.\nhttps://core.telegram.org/bots",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Telegram",
+            "PropertyName": "API Token",
+            "PropertyDescription": "API Token",
+            "PropertyDisplayName": "API Token",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1671630150678,
+            "ModificationTimeUnixTimeInMs": 1671630150678
+        }
+    ],
+    "Actions": [
+        "Ping",
+        "Set User Permissions",
+        "Get Bot Details",
+        "Wait for poll results",
+        "Get Chat Details",
+        "Send Poll",
+        "Set Default Chat Permissions",
+        "Send Photo",
+        "Send Message",
+        "Send Document",
+        "Send Location",
+        "Get Messages"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Telegram Connector"
+    ],
+    "Managers": [
+        "TelegramManager",
+        "Utils"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 6.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Telegram Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1606210586000
+        },
+        {
+            "Items": [
+                "New actions Send_Document and Wait_for_poll_results, and bug fixes"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1643911969000
+        },
+        {
+            "Items": [
+                "Connector fixed and a new Utils Manager added"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1644937366000
+        },
+        {
+            "Items": [
+                "Updated connector script and description"
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1645118033000
+        },
+        {
+            "Items": [
+                "Security enhancements: Added request timeouts so the script wouldn't stop in case of telegram-side problems, refactoring applied"
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1670851424000
+        },
+        {
+            "Items": [
+                "Publisher name added"
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1673257086000
+        }
+    ]
+}

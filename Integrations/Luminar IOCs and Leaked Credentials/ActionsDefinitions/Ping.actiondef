@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_FAILED\nfrom LuminarManager import LuminarManager\n\n\n@output_handler\ndef main():\n    \"\"\"Testing given API Credentials\"\"\"\n    siemplify = SiemplifyAction()\n    siemplify.LOGGER.info(\"----------------- Main - Param Init -----------------\")\n    client_id = siemplify.extract_configuration_param(\n        \"Luminar IOCs and Leaked Credentials\", \"Luminar API Client ID\"\n    )\n    client_secret = siemplify.extract_configuration_param(\n        \"Luminar IOCs and Leaked Credentials\", \"Luminar API Client Secret\"\n    )\n    account_id = siemplify.extract_configuration_param(\n        \"Luminar IOCs and Leaked Credentials\", \"Luminar API Account ID\"\n    )\n    base_url = siemplify.extract_configuration_param(\n        \"Luminar IOCs and Leaked Credentials\", \"Luminar Base URL\"\n    )\n    try:\n        siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n        return_value, output_message, status = LuminarManager(\n            siemplify, client_id, client_secret, account_id, base_url\n        ).test_connectivity()\n    except Exception as err:\n        output_message = f\"Failed to connect to Luminar API... Error is {err}\"\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(err)\n        status = EXECUTION_STATE_FAILED\n        return_value = False\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\n        f\"\\n  status: {status}\\n  result_value: {return_value}\\n  output_message: {output_message}\"\n    )\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Luminar IOCs and Leaked Credentials",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 6.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": false,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

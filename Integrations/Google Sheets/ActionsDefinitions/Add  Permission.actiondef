@@ -1,0 +1,77 @@
+{
+  "Name": "Add  Permission",
+  "Description": "Adds permission to a Google Sheet for a single user or multiple users\n\n",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport gspread\nimport json\nIDENTIFIER = u'Google Sheet'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    sheet_id = siemplify.extract_action_param(param_name=u'Sheet Id', is_mandatory=True)\n    role = siemplify.extract_action_param(param_name=u'Role', is_mandatory=True)\n    emails = siemplify.extract_action_param(param_name=u'Emails')\n\n    f = open(\"credentials.json\", \"w+\")\n    f.write(credentials_json)\n    f.close()\n\n\n    gc = gspread.service_account(filename='./credentials.json')\n    sh = gc.open_by_key(sheet_id)\n    \n    gc.insert_permission(sheet_id,emails,perm_type='user',role=role.lower())\n\n    siemplify.end(\"The permission was granted successfully\", True)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Sheets",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 41.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Sheet-Id>",
+      "Description": "The sheet id can be found in the sheet url.\nhttps://docs.google.com/spreadsheets/d/{YourSpreadSheetId}/edit#gid=0",
+      "Name": "Sheet Id",
+      "Value": "<Sheet-Id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602514610508,
+      "ModificationTimeUnixTimeInMs": 1602514610508
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Writer",
+      "Description": "\"Owner\"- allows to make any changes to the document\n\"Reader\"- allows to open and view the document\n\"Writer\"- allows to leave comments in the document",
+      "Name": "Role",
+      "Value": "Writer",
+      "Type": 15,
+      "OptionalValues": [
+        "Owner",
+        "Writer",
+        "Reader"
+      ],
+      "OptionalValuesJson": "[\"Owner\",\"Writer\",\"Reader\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602514610508,
+      "ModificationTimeUnixTimeInMs": 1602514610508
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email1@gmail.com;email2@gmail.com",
+      "Description": "Email address of the person you would like to add permission to the Spreadsheet. You can add multiple emails by adding \";\" as a separator. ",
+      "Name": "Emails",
+      "Value": "email1@gmail.com;email2@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602514610508,
+      "ModificationTimeUnixTimeInMs": 1602514610508
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602514610501,
+  "ModificationTimeUnixTimeInMs": 1602514610503
+}

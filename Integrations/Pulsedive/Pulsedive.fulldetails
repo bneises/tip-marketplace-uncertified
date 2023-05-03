@@ -1,0 +1,56 @@
+{
+    "Identifier": "Pulsedive",
+    "PackageName": "Pulsedive",
+    "DisplayName": "Pulsedive",
+    "Description": "Pulsedive is an analyst-centric threat intelligence platform, built with on-demand scanning for live data, risk scoring to reduce false positives, and powerful integration capabilities for disseminating your organization's threat intelligence.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1614032395367,
+            "Id": 0,
+            "IntegrationIdentifier": "Pulsedive",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1614032395367,
+            "PropertyDescription": "API Root that is used to access Pulsedive API",
+            "PropertyDisplayName": "API Root",
+            "PropertyName": "API Root",
+            "PropertyType": 2,
+            "Value": "https://pulsedive.com"
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1614032395367,
+            "Id": 0,
+            "IntegrationIdentifier": "Pulsedive",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1614032395367,
+            "PropertyDescription": "API key used to perform authenticated queries to Pulsedive",
+            "PropertyDisplayName": "API Key",
+            "PropertyName": "API Key",
+            "PropertyType": 3,
+            "Value": null
+        },
+        {
+            "CreationTimeUnixTimeInMs": 1614032395367,
+            "Id": 0,
+            "IntegrationIdentifier": "Pulsedive",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1614032395367,
+            "PropertyDescription": "Verify SSL",
+            "PropertyDisplayName": "Verify SSL",
+            "PropertyName": "Verify SSL",
+            "PropertyType": 0,
+            "Value": "true"
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 9.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

@@ -1,0 +1,68 @@
+{
+	"Name": "Enrich Email",
+	"Description": "This action provides real-time email address reputation scoring and validation with hundreds of syntax & DNS checks. The API can be leveraged to determine if the email address inbox exists with the mail service provider and is able to accept new messages. In addition, users can determine if the email address has a poor reputation or has recently been associated with abuse or threats. Additional risk scoring can detect disposable and temporary mail services as well as emails with a history of fraudulent behavior online.",
+	"Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom IPQSManager import IPQSManager, PROVIDER\nfrom SiemplifyDataModel import EntityTypes\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    data_json = {}\n    api_key = siemplify.extract_configuration_param(PROVIDER,\"API Key\")\n    abuse_strictness = int(siemplify.extract_action_param(param_name=\"Abuse Strictness\", print_value=True))\n    fast = siemplify.extract_action_param(param_name=\"Fast\", print_value=True)\n    timeout = siemplify.extract_action_param(param_name=\"Timeout in seconds\", print_value=True)\n    suggest_domain = siemplify.extract_action_param(param_name=\"Suggest Domain\", print_value=True)\n    data_json['abuse_strictness'] = abuse_strictness\n    if fast:\n        data_json['fast'] = 'true'\n    if timeout and timeout != \"7\":\n        data_json['timeout'] = int(timeout)\n    if suggest_domain:\n        data_json['suggest_domain'] = 'true'\n        \n    ipqs_manager = IPQSManager(siemplify, api_key, data_json)\n    ipqs_manager.enrich([EntityTypes.USER])\n\nif __name__ == \"__main__\":\n    main()\n",
+	"IntegrationIdentifier": "IPQS Fraud and Risk Scoring",
+	"ScriptResultName": "ScriptResult",
+	"DynamicResultsMetadata": [{
+		"ResultName": "JsonResult",
+		"ResultExample": "{}",
+		"ShowResult": true
+	}],
+	"Creator": "IPQS",
+	"IsEnabled": true,
+	"IsCustom": false,
+	"IsSystem": false,
+	"Version": 10.0,
+	"TimeoutSeconds": 300,
+	"IsAsync": null,
+	"AsyncPollingIntervalInSeconds": 3600,
+	"TotalIntervalTimeoutForAsyncInSeconds": 86400,
+	"Parameters": [{
+		"CustomActionId": 0,
+		"IsMandatory": true,
+		"DefaultValue": "0",
+		"Description": "Set the strictness level for machine learning pattern recognition of abusive email addresses with the \"recent_abuse\" data point.",
+		"Name": "Abuse Strictness",
+		"Value": "0",
+		"Type": 15,
+		"OptionalValues": ["0", "1", "2"],
+		"OptionalValuesJson": "[\"0\",\"1\",\"2\"]"
+	}, {
+		"CustomActionId": 0,
+		"IsMandatory": false,
+		"DefaultValue": "false",
+		"Description": "When this parameter is enabled our API will not perform an SMTP check with the mail service provider, which greatly increases the API speed.",
+		"Name": "Fast",
+		"Value": "false",
+		"Type": 1,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 0,
+		"IsMandatory": false,
+		"DefaultValue": "7",
+		"Description": "Maximum number of seconds to wait for a reply from a mail service provider. ",
+		"Name": "Timeout in seconds",
+		"Value": "7",
+		"Type": 0,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}, {
+		"CustomActionId": 0,
+		"IsMandatory": false,
+		"DefaultValue": "false",
+		"Description": "Force analyze if the email addresses domain has a typo and should be corrected to a popular mail service.",
+		"Name": "Suggest Domain",
+		"Value": "false",
+		"Type": 1,
+		"OptionalValues": null,
+		"OptionalValuesJson": null
+	}],
+	"DefaultResultValue": "",
+	"PythonVersion": "None",
+	"SimulationData": {
+		"Entities": null
+	},
+	"SimulationDataJson": null
+}

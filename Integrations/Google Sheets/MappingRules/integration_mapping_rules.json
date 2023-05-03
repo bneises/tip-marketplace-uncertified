@@ -1,0 +1,40 @@
+[
+  {
+    "Source": "Google Sheets",
+    "Product": null,
+    "EventName": null,
+    "SecurityEventFieldName": "SourceUserName",
+    "TransformationFunction": 0,
+    "TransformationFunctionParam": "",
+    "RawDataPrimaryFieldMatchTerm": "Owner",
+    "RawDataPrimaryFieldComparisonType": 0,
+    "RawDataSecondaryFieldMatchTerm": "",
+    "RawDataSecondaryFieldComparisonType": 0,
+    "RawDataThirdFieldMatchTerm": "",
+    "RawDataThirdFieldComparisonType": 0,
+    "IsArtifact": false,
+    "ExtractionFunctionParam": ",",
+    "ExtractionFunction": 2,
+    "CreationTimeUnixTimeInMs": 1625734155471,
+    "ModificationTimeUnixTimeInMs": 1625734155471
+  },
+  {
+    "Source": "Google Sheets",
+    "Product": null,
+    "EventName": null,
+    "SecurityEventFieldName": "SourceDomain",
+    "TransformationFunction": 0,
+    "TransformationFunctionParam": "",
+    "RawDataPrimaryFieldMatchTerm": "Site",
+    "RawDataPrimaryFieldComparisonType": 0,
+    "RawDataSecondaryFieldMatchTerm": "",
+    "RawDataSecondaryFieldComparisonType": 0,
+    "RawDataThirdFieldMatchTerm": "",
+    "RawDataThirdFieldComparisonType": 0,
+    "IsArtifact": false,
+    "ExtractionFunctionParam": ",",
+    "ExtractionFunction": 2,
+    "CreationTimeUnixTimeInMs": 1625734202888,
+    "ModificationTimeUnixTimeInMs": 1625734202888
+  }
+]

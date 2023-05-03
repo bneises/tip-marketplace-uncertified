@@ -1,0 +1,73 @@
+{
+  "Name": "Request Campaign",
+  "Description": "",
+  "Script": "import json\n\nfrom marketorestpython.client import MarketoClient\n\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nINTEGRATION_NAME = \"Marketo\"\n\nSCRIPT_NAME = \"Request Campaign\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"================= Main - Param Init =================\")\n    output_message = \"\"\n    \n    # INIT INTEGRATION PARAMETERS:\n    client_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Id\")\n    client_secret = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Client Secret\")\n    munchkin_id = siemplify.extract_configuration_param(provider_name = INTEGRATION, param_name = \"Munchkin Id\")\n    \n    # INIT ACTION PARAMETERS:\n    campaign_id = siemplify.extract_action_param(param_name=\"Campaign Id\", input_type = int)\n    lead_id = siemplify.extract_action_param(param_name=\"Lead Id\", input_type = int)\n    tokens = siemplify.extract_action_param(param_name=\"Tokens Json\")\n\n    json_tokens = json.loads(tokens)\n\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n    try:\n        failed_entities = []  # In case this actions contains entity based logic, collect failed entity.identifiers\n        successfull_entities = []  # In case this actions contains entity based logic, collect successfull entity.identifiers\n\n        mc = MarketoClient(munchkin_id, client_id, client_secret, None, None)\n        response = mc.execute(method='request_campaign', id=campaign_id, leads=[lead_id], tokens=json_tokens)\n        output_message = f\"The Campaign ID <{campaign_id}> was sent successfully to the Lead ID <{lead_id}>\"\n        result_value = True\n        status = EXECUTION_STATE_COMPLETED \n\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action {}\".format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = False\n        output_message += f\"\\n The Campaign ID <{campaign_id}> wasn't sent to the Lead ID <{lead_id}>\"\n        raise  # used to return entire error details - including stacktrace back to client UI. Best for most usecases\n        # in case you want to handle the error yourself, don't raise, and handle error result ouputs:\n       \n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Marketo",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 19.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": null,
+      "Name": "Tokens Json",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628166418440,
+      "ModificationTimeUnixTimeInMs": 1628166418440
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": null,
+      "Description": null,
+      "Name": "Lead Id",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628166418440,
+      "ModificationTimeUnixTimeInMs": 1628166418440
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": null,
+      "Description": null,
+      "Name": "Campaign Id",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1628166418440,
+      "ModificationTimeUnixTimeInMs": 1628166418440
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1628166418404,
+  "ModificationTimeUnixTimeInMs": 1628166418410
+}

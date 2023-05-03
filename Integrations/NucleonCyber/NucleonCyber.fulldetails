@@ -1,0 +1,95 @@
+{
+    "Identifier": "NucleonCyber",
+    "PackageName": "NucleonCyber",
+    "DisplayName": "NucleonCyber",
+    "Description": "Nucleon is a distributed, high-performance invisible and non-invasive platform that is tailored to secure environments from different common threats such as professional hacking groups, APTs and others. Our platform identifies what your adversaries are doing, how they\u00e2\u20ac\u2122re doing it and whether they\u00e2\u20ac\u2122re targeting you or your extended enterprise. Our platform enables clients to have high quality intelligence feeds with 0% false positive!",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "NucleonCyber",
+            "PropertyName": "Username",
+            "PropertyDescription": "Username received  from NucleonCyber",
+            "PropertyDisplayName": "Username",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "Username",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1620056645897,
+            "ModificationTimeUnixTimeInMs": 1620056645897
+        },
+        {
+            "IntegrationIdentifier": "NucleonCyber",
+            "PropertyName": "Password",
+            "PropertyDescription": "Password received  from NucleonCyber",
+            "PropertyDisplayName": "Password",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1620056645897,
+            "ModificationTimeUnixTimeInMs": 1620056645897
+        },
+        {
+            "IntegrationIdentifier": "NucleonCyber",
+            "PropertyName": "client name",
+            "PropertyDescription": "client name received  from NucleonCyber",
+            "PropertyDisplayName": "client name",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "client name",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1620056645897,
+            "ModificationTimeUnixTimeInMs": 1620056645897
+        },
+        {
+            "IntegrationIdentifier": "NucleonCyber",
+            "PropertyName": "client id",
+            "PropertyDescription": "client id received  from NucleonCyber",
+            "PropertyDisplayName": "client id",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1620056645897,
+            "ModificationTimeUnixTimeInMs": 1620056645897
+        }
+    ],
+    "Actions": [
+        "GetIPs",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! NucleonCyber integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1620098685000
+        },
+        {
+            "Items": [
+                "Updated the integration's categories.\n",
+                "Updated the integration's categories.\n"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1630236349000
+        },
+        {
+            "Items": [
+                "Fixed the action enablement .\n"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1634637486000
+        }
+    ]
+}

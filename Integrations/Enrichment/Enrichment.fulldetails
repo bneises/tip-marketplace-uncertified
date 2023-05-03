@@ -1,0 +1,189 @@
+{
+    "Identifier": "Enrichment",
+    "PackageName": "Enrichment",
+    "DisplayName": "Enrichment",
+    "Description": "A set of entity enrichment actions to assist in the managing of entity attributes.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1610732568061,
+            "Id": 0,
+            "IntegrationIdentifier": "Enrichment",
+            "IsMandatory": false,
+            "ModificationTimeUnixTimeInMs": 1610732568061,
+            "PropertyDescription": "SOAR API Key - Required to Enrich Entities from Explorer",
+            "PropertyDisplayName": "API Key",
+            "PropertyName": "API Key",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [
+        "Enrich Entities from List with Field",
+        "Enrich Entity From Event Field",
+        "Enrich Entity from Explorer Attributes",
+        "Enrich Entity With Field",
+        "Mark Entity as Suspicious",
+        "Enrich FileName Entity with Path",
+        "Enrich Source and Destinations",
+        "Whois",
+        "Enrich Entity From JSON",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "IpLocation",
+        "ToolsCommon"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 23.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Enrichment integration to power up playbook capabilities."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 0
+        },
+        {
+            "Items": [
+                "Bug fix in Enrich Entity with field action."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1608137900000
+        },
+        {
+            "Items": [
+                "Added support for Target Entities parameter in \"Enrich Entity with field\" action."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1610143964000
+        },
+        {
+            "Items": [
+                "Siemplify API Key was added to the integration parameter and is required for \"Enrich Entity from Explorer Attributes\" action.",
+                "NEW! \"Enrich Entity from Explorer Attributes\" action added to Enrichment. Can be used to enrich an entity with historic enrichment data."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1610892558000
+        },
+        {
+            "Items": [
+                "Update! \"Enrich Entity from JSON\" bug fix with target entities."
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1625765853000
+        },
+        {
+            "Items": [
+                "NEW! \"Enrich FileName Entity with Path\" action added to Enrichment. This action will parse out path, filename, and extension from an entity."
+            ],
+            "Version": 7.0,
+            "PublishTimeUnixTime": 1628183241000
+        },
+        {
+            "Items": [
+                "NEW! \"Enrich Entities from List with Field\" action added to Enrichment. This action will enrich a list of entities with a field and value."
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1635270613000
+        },
+        {
+            "Items": [
+                "NEW! \"Mark Entity as Suspicious\" action added to Enrichment. This action will mark the entities in the scope as suspicious."
+            ],
+            "Version": 9.0,
+            "PublishTimeUnixTime": 1635855710000
+        },
+        {
+            "Items": [
+                "Updated SVG."
+            ],
+            "Version": 10.0,
+            "PublishTimeUnixTime": 1637761006000
+        },
+        {
+            "Items": [
+                "New Action! Enrich Source and Destinations.  This action will add the source and destination links to IPs and hostnames in the alert."
+            ],
+            "Version": 11.0,
+            "PublishTimeUnixTime": 1638278922000
+        },
+        {
+            "Items": [
+                "Update! Enrich Source and Destinations.  Supports version 6.0"
+            ],
+            "Version": 12.0,
+            "PublishTimeUnixTime": 1639069745000
+        },
+        {
+            "Items": [
+                "Update! Enrich Entities from List with Field.  Bug Fix"
+            ],
+            "Version": 13.0,
+            "PublishTimeUnixTime": 1639140317000
+        },
+        {
+            "Items": [
+                "New Item! \"Whois\" - Enriches URLS, Usernames, Domains and IPs with information from WHOIS servers."
+            ],
+            "Version": 14.0,
+            "PublishTimeUnixTime": 1640108682000
+        },
+        {
+            "Items": [
+                "Whois - Bugfix."
+            ],
+            "Version": 15.0,
+            "PublishTimeUnixTime": 1640181252000
+        },
+        {
+            "Items": [
+                "New Feature! \"Whois\" - Support for FR domains"
+            ],
+            "Version": 19.0,
+            "PublishTimeUnixTime": 1651860717000
+        },
+        {
+            "Items": [
+                "New Feature! \"Whois\" - Now performs Geo Lookup on IP addresses"
+            ],
+            "Version": 20.0,
+            "PublishTimeUnixTime": 1655320445000
+        },
+        {
+            "Items": [
+                "Fix! Whois - Syntax error."
+            ],
+            "Version": 21.0,
+            "PublishTimeUnixTime": 1655386578000
+        },
+        {
+            "Items": [
+                "Update! Enrich Entity from Explorer Attributes - Now supports: enriching all entity fields, blacklists, and multiple entities."
+            ],
+            "Version": 22.0,
+            "PublishTimeUnixTime": 1664541863000
+        },
+        {
+            "Items": [
+                "Fix! Whois - Support for .BE domains added."
+            ],
+            "Version": 23.0,
+            "PublishTimeUnixTime": 1668424148000
+        },
+        {
+            "Items": [
+                "Fix! Updated dependency that caused installation failures."
+            ],
+            "Version": 24.0,
+            "PublishTimeUnixTime": 1677076642000
+        }
+    ]
+}

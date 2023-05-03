@@ -1,0 +1,171 @@
+{
+    "Identifier": "Functions",
+    "PackageName": "Functions",
+    "DisplayName": "Functions",
+    "Description": "A set of math and data manipulation actions to power up playbook capabilities.  ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [],
+    "Actions": [
+        "Convert Time Format",
+        "Create Thumbnail",
+        "IP to Integer",
+        "Math Arithmetic",
+        "Math Functions",
+        "Ping",
+        "Run JSONPath Query",
+        "SanitizeHTML",
+        "String Functions",
+        "Time Duration Calculator"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "ToolsCommon"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 19.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Functions integration to power up playbook capabilities."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1596290203000
+        },
+        {
+            "Items": [
+                "NEW! Convert Time Format Action added to Functions."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1603807003000
+        },
+        {
+            "Items": [
+                "NEW! EncodeBase64 and DecodeBase64 Actions added to Functions."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1610132366000
+        },
+        {
+            "Items": [
+                "NEW! \"Run JSONPath Query\" action added to Functions. Runs a JSONPath Query on a given json and extracts values according to the expression.  View https://github.com/h2non/jsonpath-ng for more information on JSONPath",
+                "Added \"RemoveNewLines\" function to \"String Functions\" action which will remove any nested newlines from within a string."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1610892914000
+        },
+        {
+            "Items": [
+                "NEW! IP to Integer action.",
+                "Added LogicOperators which will add AND or OR to comma separated list."
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1621167350000
+        },
+        {
+            "Items": [
+                "Fix: Run JSONPath Query was using an incorrect parameter name."
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1621511581000000
+        },
+        {
+            "Items": [
+                "NEW!: Create Thumbnail - Will create a thumbnail out of a image encoded as base64."
+            ],
+            "Version": 7.0,
+            "PublishTimeUnixTime": 1623671099000000
+        },
+        {
+            "Items": [
+                "Fix!: Create Thumbnail - Locked action."
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1623691523000000
+        },
+        {
+            "Items": [
+                "NEW! \"Time Duration Calculator\" action added to Functions. The Time Duration Calculator will calculate the time that has elapsed/difference between two dates with time."
+            ],
+            "Version": 9.0,
+            "PublishTimeUnixTime": 1624041603000000
+        },
+        {
+            "Items": [
+                "BUG FIX!: \"Math Arithmetic\" - Addition of integers now creates an integer."
+            ],
+            "Version": 10.0,
+            "PublishTimeUnixTime": 1624469780000000
+        },
+        {
+            "Items": [
+                "NEW!: \"SanitizeHTML\" - Given a fragment of HTML, SantizeHTML will parse it according to the HTML5 parsing algorithm and sanitize any disallowed tags or attributes. This algorithm also takes care of things like unclosed and (some) misnested tags."
+            ],
+            "Version": 11.0,
+            "PublishTimeUnixTime": 1626179197000000
+        },
+        {
+            "Items": [
+                "UPDATE!: \"Time Duration Calculator\" - Made the now variable timezone aware."
+            ],
+            "Version": 13.0,
+            "PublishTimeUnixTime": 1626269755000000
+        },
+        {
+            "Items": [
+                "UPDATE!: \"Time Duration Calculator\" - Bugfix for timezones."
+            ],
+            "Version": 14.0,
+            "PublishTimeUnixTime": 162636648101000
+        },
+        {
+            "Items": [
+                "Updated SVG."
+            ],
+            "Version": 15.0,
+            "PublishTimeUnixTime": 1637760259000
+        },
+        {
+            "Items": [
+                "Added split method to String Functions."
+            ],
+            "Version": 16.0,
+            "PublishTimeUnixTime": 1643983819000
+        },
+        {
+            "Items": [
+                "Fix to String Functions.  Added Split to options."
+            ],
+            "Version": 17.0,
+            "PublishTimeUnixTime": 1650628035000
+        },
+        {
+            "Items": [
+                "Added base64 encode and decode to String Functions action.",
+                "Fix parameters description in Convert Time Format action."
+            ],
+            "Version": 18.0,
+            "PublishTimeUnixTime": 1657468179000
+        },
+        {
+            "Items": [
+                "New Action - XMLtoJSON"
+            ],
+            "Version": 19.0,
+            "PublishTimeUnixTime": 1665767929000
+        },
+        {
+            "Items": [
+                "NEW! Detect Hash Type: This action detects the most likely hash type of entities. Supported types are SHA256, MD5, SHA1, SHA-512.",
+                "NEW! Detect IP Type: This action checks if an IP is an IPv4 address or IPv6 address.  IP Address entities will be enriched with IPType field."
+            ],
+            "Version": 20.0,
+            "PublishTimeUnixTime": 1674241401000
+        }
+    ]
+}

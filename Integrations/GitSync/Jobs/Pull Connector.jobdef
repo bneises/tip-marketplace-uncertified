@@ -1,0 +1,73 @@
+{
+  "RunIntervalInSeconds": 900,
+  "Parameters": [
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145589,
+      "ModificationTimeUnixTimeInMs": 1624368145589,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Repo URL",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145589,
+      "ModificationTimeUnixTimeInMs": 1624368145589,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Branch",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145589,
+      "ModificationTimeUnixTimeInMs": 1624368145589,
+      "DefaultValue": "",
+      "Description": "Name of the connector to pull",
+      "IsMandatory": true,
+      "Name": "Connector Name",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145589,
+      "ModificationTimeUnixTimeInMs": 1624368145589,
+      "DefaultValue": "false",
+      "Description": "Whether to include related visual families that the connector alert use",
+      "IsMandatory": false,
+      "Name": "Include Visual Families",
+      "Type": 0
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145589,
+      "ModificationTimeUnixTimeInMs": 1624368145589,
+      "DefaultValue": "false",
+      "Description": "Whether to include related mappings that the connector alerts use",
+      "IsMandatory": false,
+      "Name": "Include Mappings",
+      "Type": 0
+    }
+  ],
+  "Integration": "GitSync",
+  "Name": "Pull Connector",
+  "Description": "Imports a connector from the repo.",
+  "CreationTimeUnixTimeInMs": 1623773334163,
+  "ModificationTimeUnixTimeInMs": 1624368145584,
+  "Script": "from GitSyncManager import GitSyncManager\r\nfrom SiemplifyJob import SiemplifyJob\r\n\r\nSCRIPT_NAME = \"Pull Connector\"\r\n\r\n\r\ndef main():\r\n    siemplify = SiemplifyJob()\r\n    siemplify.script_name = SCRIPT_NAME\r\n\r\n    connector_name = siemplify.extract_job_param(\"Connector Name\")\r\n    include_vf = siemplify.extract_job_param(\"Include Visual Families\", input_type=bool)\r\n    include_mappings = siemplify.extract_job_param(\"Include Mappings\", input_type=bool)\r\n\r\n    try:\r\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\r\n\r\n        connector = gitsync.pull_connector(connector_name)\r\n        gitsync.api.update_connector(connector)\r\n\r\n        if include_vf or include_mappings:\r\n            mappings = gitsync.pull_mapping(connector.get('integration'))\r\n            installed_visual_families = [x.get('family') for x in gitsync.api.get_custom_families(True)]\r\n            visual_families = set(\r\n                [x.get(\"familyName\") for x in mappings.records if x.get(\"familyName\") not in installed_visual_families])\r\n\r\n            if include_vf:\r\n                for vf in visual_families:\r\n                    gitsync.api.add_custom_family(gitsync.pull_visual_family(vf))\r\n\r\n            if include_mappings:\r\n                for rule in mappings.rules:\r\n                    gitsync.api.add_mapping_rules(rule['familyFields'])\r\n                    gitsync.api.add_mapping_rules(rule['systemFields'])\r\n\r\n                for record in mappings.records:\r\n                    gitsync.api.set_mappings_visual_family(record.get(\"source\"), record.get(\"product\"),\r\n                                                           record.get(\"eventName\"), record.get(\"familyName\"))\r\n\r\n    except Exception as e:\r\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\r\n        siemplify.LOGGER.exception(e)\r\n        raise\r\n\r\n    siemplify.end_script()\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    main()\r\n",
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1,
+  "PythonVersion": "None",
+  "Id": 0
+}

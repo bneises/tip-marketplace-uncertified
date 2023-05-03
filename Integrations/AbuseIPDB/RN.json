@@ -1,0 +1,36 @@
+[
+    {
+        "ChangeDescription": "NEW! Abuse IPDB Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Abuse IPDB",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1608201500
+    },{
+        "ChangeDescription": "- Entity Explorer: Added functionality to update the entity properties/metadata under the relevant prefix.\n- Fixed a bug due to not parsing create insight parameter as a bool, which caused the check to always return true.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Abuse IPDB",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1630051933
+    },{
+        "ChangeDescription": "Updated Integration SVG",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Abuse IPDB",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635762436
+    }
+]

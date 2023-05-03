@@ -1,0 +1,75 @@
+{
+  "Name": "Create Archive",
+  "Description": "Creates an archive file from a list of provided files or a directories.  Supports: zip, tar, gztar, bztar, xtar.\nReturns the location of the archive file.",
+  "Script": "# ==============================================================================\n# title           : Create Archive\n# description     : This action will create an archive from a list of supplied files or directories.\n# author          : robb@siemplify.co\n# date            : 2021-01-08\n# python_version  : 3.7\n# libraries       : shutil, os, tempfile, pathlib\n# requirements    :\n# product_version :\n# ==============================================================================\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\n\n\nimport shutil\nimport os\nimport tempfile\nimport pathlib\n\nDEST_DIR = '/opt/siemplify/siemplify_server/Scripting/FileUtilities/Archives'\n\ndef copy_files_to_temp_dir(archive_input):\n    tmp_dir = tempfile.mkdtemp()\n    for file in archive_input:\n        shutil.copy2(file, tmp_dir)\n    return tmp_dir\n\n    \n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    \n    archive_type =  siemplify.extract_action_param(\"Archive Type\", print_value=True)\n    archive_input = list(filter(None, [x.strip() for x in siemplify.extract_action_param(\"Archive Input\",print_value=True).split(',')]))\n    archive_name       = siemplify.extract_action_param(\"Archive Base Name\", print_value=True)\n    \n    \n    status              = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message      = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value        = None  # Set a simple result value, used for playbook if\\else and placeholders.\n\n    #Does directory exist? If not, then create it.\n    \n    if not os.path.exists(DEST_DIR):\n        try: \n            pathlib.Path(DEST_DIR).mkdir(parents=True, exist_ok=True)\n        except OSError:\n            siemplify.LOGGER.error(\"Creation of the directory %s failed\" % path)\n            status      = EXECUTION_STATE_FAILED\n    \n    try:\n        archive_path = os.path.join(DEST_DIR, archive_name)\n        \n        if os.path.isdir(archive_input[0]):\n            archive_output =  shutil.make_archive(archive_path, archive_type, archive_input[0])\n            \n        elif os.path.isfile(archive_input[0]):\n            tmp_dir = copy_files_to_temp_dir(archive_input)\n            archive_output = shutil.make_archive(archive_path, archive_type, tmp_dir)\n            shutil.rmtree(tmp_dir)\n            \n            \n        else:\n            siemplify.LOGGER.error(\"Archive input is not file or directory.\")\n            raise Exception('Unknown Input Type', \"Archive input is not file or directory\")\n        \n        json_result =  {\"success\": True, \"archive\": archive_output} \n        result_value = archive_output\n        siemplify.result.add_result_json(json_result)\n        output_message = \"Successfully created archive: {}\".format(archive_output)\n    except Exception as e:\n        siemplify.LOGGER.error(\"General error performing action:\\r\")\n        siemplify.LOGGER.exception(e)\n        status          = EXECUTION_STATE_FAILED\n        result_value    = \"Failed\"\n        output_message += \"\\n\" + e\n        raise\n       \n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "FileUtilities",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n    \"success\": true,\n    \"archive\": \"/opt/siemplify/siemplify_server/Scripting/FileUtilities/Archives/testarchive.zip\"\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 5.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "zip",
+      "Description": "The type of archive to create.  \n\nSupports: \nzip,\nuncompressed tar-file\ngzip'ed tar-file\nbzip2'ed tar-file\nxz'ed tar-file",
+      "Name": "Archive Type",
+      "Value": "zip",
+      "Type": 15,
+      "OptionalValues": [
+        "zip",
+        "tar",
+        "gztar",
+        "bztar",
+        "xztar"
+      ],
+      "OptionalValuesJson": "[\"zip\",\"tar\",\"gztar\",\"bztar\",\"xztar\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236887,
+      "ModificationTimeUnixTimeInMs": 1610399236887
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<filename>",
+      "Description": "The name of the archive file that will be created without the extension.",
+      "Name": "Archive Base Name",
+      "Value": "<filename>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236887,
+      "ModificationTimeUnixTimeInMs": 1610399236887
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<archive input>",
+      "Description": "Either a comma delimited list of files or a directory path.",
+      "Name": "Archive Input",
+      "Value": "<archive input>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1610399236887,
+      "ModificationTimeUnixTimeInMs": 1610399236887
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1610399236882,
+  "ModificationTimeUnixTimeInMs": 1610399236882
+}

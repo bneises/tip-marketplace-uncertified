@@ -1,0 +1,62 @@
+[
+    {
+        "ChangeDescription": "NEW! Cybersixgill Actionable Alerts.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Cybersixgill Actionable Alerts",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1661949863
+    },
+    {
+        "ChangeDescription": "IsCustom set to false",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Cybersixgill Actionable Alerts",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1662381670
+    },
+    {
+        "ChangeDescription": "The latest edition includes the ability to consume alerts for MSSPs and multi-tenant organizations.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Cybersixgill Actionable Alerts",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1668427212
+    },
+    {
+        "ChangeDescription": "Connector updated, dependencies bumped to the last versions, minor code refactoring",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 4.0,
+        "ItemName": "Cybersixgill Actionable Alerts",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1673866181
+    },
+    {
+        "ChangeDescription": "Updated an internal pip version of sixgill client, allowing passing organization id to the integration",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 5.0,
+        "ItemName": "Cybersixgill Actionable Alerts",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1677595898
+    }
+]

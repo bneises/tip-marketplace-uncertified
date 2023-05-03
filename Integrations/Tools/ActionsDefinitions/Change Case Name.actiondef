@@ -1,0 +1,55 @@
+{
+  "Name": "Change Case Name",
+  "Description": "The action changes the case's name (title)",
+  "Script": "# ============================================================================#\n# title           :Change Case Name\n# description     :This action will change the name of a case.  \n# author          :robb@siemplify.co\n# date            :2020-12-16\n# python_version  :3.7\n# libraries       :\n# requirements     :\n# product_version :1.0\n# ============================================================================#\nfrom SiemplifyAction import *\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = \"ChangeCaseName\"\n    \n    output_message = \"\"\n    result_value = \"false\"\n    try:\n        change = True\n        if siemplify.parameters.get('Only If First Alert', 'false').lower() == 'true':\n            if siemplify.current_alert.identifier != siemplify.case.alerts[-1].identifier:\n                change = False\n        if change:\n            res = siemplify.session.post('{}/external/v1/cases/RenameCase'.format(siemplify.API_ROOT),\n                                        json={\"caseId\": siemplify.case_id, \n                                              \"title\": siemplify.parameters['New Name']})\n\n        \n            res.raise_for_status()\n        \n            output_message = \"Case's title changed to: {}\".format(siemplify.parameters['New Name'])\n            result_value = 'true'\n        else:\n            output_message = \"Case's title not changed, not first alert in the case\"\n            result_value = 'true'\n    except Exception as e:\n        output_message = \"An error occured: \" + e.message\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(e)\n    \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Description": "The new name of the case",
+      "Name": "New Name",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620557,
+      "ModificationTimeUnixTimeInMs": 1614012620557
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "If marked as True, will only change the case's name if the action was executed on the first alert in the case",
+      "Name": "Only If First Alert",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620557,
+      "ModificationTimeUnixTimeInMs": 1614012620557
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620554,
+  "ModificationTimeUnixTimeInMs": 1614012620554
+}

@@ -1,0 +1,42 @@
+{
+    "Identifier": "Lists",
+    "PackageName": "Lists",
+    "DisplayName": "Lists",
+    "Description": "A set of tools to facilitate managing custom lists within Chronicle SOAR.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [],
+    "Actions": [
+        "Add String to Custom List",
+        "Is String In Custom List",
+        "Remove String from Custom List",
+	"Search Custom List",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 1623255029000,
+            "Items": [
+                "Update! Add String to Custom List now supports Siemplify 5.6.2 and newer.",
+                "Update! Is String In Custom List now supports Siemplify 5.6.2 and newer.",
+                "Update! Remove String from Custom List now supports Siemplify 5.6.2 and newer."
+            ],
+            "Version": 2.0
+        },
+        {
+            "PublishTimeUnixTime": 1674647953000,
+            "Items": [
+                "New! Search Custom List - Search for a string in a custom list or get all custom list values if no search query is provided."
+            ],
+            "Version": 3.0
+        }
+    ]
+}

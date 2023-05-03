@@ -1,0 +1,32 @@
+{
+    "Identifier": "SendGrid",
+    "PackageName": "SendGrid",
+    "DisplayName": "SendGrid",
+    "Description": "SendGrid integration is a web API email delivery service",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [
+        {
+            "CreationTimeUnixTimeInMs": 1594890849024,
+            "Id": 0,
+            "IntegrationIdentifier": "SendGrid",
+            "IsMandatory": true,
+            "ModificationTimeUnixTimeInMs": 1594890849024,
+            "PropertyDescription": "The API Token for SendGrid",
+            "PropertyDisplayName": "API Token",
+            "PropertyName": "API Token",
+            "PropertyType": 3,
+            "Value": null
+        }
+    ],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 30.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

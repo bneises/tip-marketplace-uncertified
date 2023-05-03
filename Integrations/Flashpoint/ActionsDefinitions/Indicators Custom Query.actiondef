@@ -1,0 +1,150 @@
+{
+  "Name": "Indicators Custom Query",
+  "Description": "Custom query for specific indicators (events and attributes)\nSee the documentation: \"https://docs.fp.tools/#!/indicators/\"",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom FlashpointManager import FlashpointManager\nimport json\n\nIDENTIFIER = u\"Flash Point\"\nSCRIPT_NAME = \"Flashpoint - Custom Query\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    api_key = siemplify.extract_configuration_param(IDENTIFIER,\"API Key\")\n\n    results_limit = siemplify.extract_action_param(\"Limit\")\n    start_date = siemplify.extract_action_param(\"Start Date\")\n    end_date = siemplify.extract_action_param(\"End Date\")\n    search_tags = siemplify.extract_action_param(\"Search Tags\")\n    query = siemplify.extract_action_param(\"Query\")\n    sort_timestamp = siemplify.extract_action_param(\"Sort By Time\")\n    attributes_types = siemplify.extract_action_param(\"Entity Types\")\n    basetypes_path = siemplify.extract_action_param(\"Indicator Type\")\n\n    #Creating an instance of FlashPoint object\n    flashpoint_manager = FlashpointManager(api_key)\n    \n    try:\n        #Sending the query by the function indicators_custom_query().\n        query_results = flashpoint_manager.indicators_custom_query(results_limit, start_date, end_date, search_tags, query, sort_timestamp, attributes_types, basetypes_path)\n        if query_results:\n            return_value = True\n            output_message = 'The query results were fetched successfully'\n            siemplify.result.add_result_json(query_results)\n        else:\n            return_value = False\n            output_message = \"The Entities were not found in Flashpoint\"\n\n    except Exception as e:\n        output_message = \"Error fetching results from Flashpoint\"\n        siemplify.LOGGER.error(f\"Error fetching results from the Flashpoint, Error: {e}.\")\n        siemplify.LOGGER.exception(e)\n        \n\n    siemplify.end(output_message, return_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Flashpoint",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\r\n  {\r\n    \"Attribute\": [\r\n      {\r\n        \"category\": \"string\",\r\n        \"comment\": \"string\",\r\n        \"fpid\": {},\r\n        \"href\": {},\r\n        \"timestamp\": 0,\r\n        \"type\": \"string\",\r\n        \"uuid\": \"string\",\r\n        \"value\": {}\r\n      }\r\n    ],\r\n    \"RelatedEvent\": {},\r\n    \"Tag\": [\r\n      {\r\n        \"name\": \"string\"\r\n      }\r\n    ],\r\n    \"attribute_count\": 0,\r\n    \"date\": \"string\",\r\n    \"event_creator_email\": \"string\",\r\n    \"href\": \"string\",\r\n    \"uuid\": \"string\"\r\n  }\r\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 62.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "Descending",
+      "Description": "Presents the data in a descending or ascending order.",
+      "Name": "Sort By Time",
+      "Value": "Descending",
+      "Type": 15,
+      "OptionalValues": [
+        "Ascending",
+        "Descending"
+      ],
+      "OptionalValuesJson": "[\"Ascending\",\"Descending\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "url,domain,ip-src",
+      "Description": "Entity types to retrieve data for (comma separated)\nFor example: url,domain,ip-src.\nMore info : https://www.circl.lu/doc/misp/categories-and-types/",
+      "Name": "Entity Types",
+      "Value": "url,domain,ip-src",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "10",
+      "Description": "The maximum number of result objects to return.",
+      "Name": "Limit",
+      "Value": "10",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "2020-02-26T14:49:07Z",
+      "Description": "Retrieves values created after the specified date. \nFor example: 2020-02-26T14:49:07Z\nFor more info: https://docs.fp.tools/",
+      "Name": "Start Date",
+      "Value": "2020-02-26T14:49:07Z",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "2020-02-25T14:49:07Z",
+      "Description": "Retrieves values created before the specified date. \nFor example: 2020-11-25T14:49:07Z\nFor more info:https://docs.fp.tools/",
+      "Name": "End Date",
+      "Value": "2020-02-25T14:49:07Z",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "malware,ransomware",
+      "Description": "Search for a specific keyword (comma separated).\nFor example: malware,ransomware.",
+      "Name": "Search Tags",
+      "Value": "malware,ransomware",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "malicious",
+      "Description": "Custom query to retrieve data for.\nFor example:\nFor more info:",
+      "Name": "Query",
+      "Value": "malicious",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "attribute",
+      "Description": "Simple-simplified list of indicators of compromise\nAttribute- indicators of compromise (IOCs)\nEvent- groupings of different indicators of compromise.",
+      "Name": "Indicator Type",
+      "Value": "attribute",
+      "Type": 15,
+      "OptionalValues": [
+        "simple",
+        "event",
+        "attribute"
+      ],
+      "OptionalValuesJson": "[\"simple\",\"event\",\"attribute\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561013,
+      "ModificationTimeUnixTimeInMs": 1616671561013
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616671561009,
+  "ModificationTimeUnixTimeInMs": 1617199845697
+}

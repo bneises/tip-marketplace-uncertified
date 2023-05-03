@@ -1,0 +1,73 @@
+{
+  "Name": "Update Event",
+  "Description": "Updates a given event in Google Calendar",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleCalendarManager import GoogleCalendarManager\nimport json\nIDENTIFIER = u'Google Calendar'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    behalf_email = siemplify.extract_action_param(param_name=u'Organizer', is_mandatory=True)\n    event_id = siemplify.extract_action_param(param_name=u'Event Id', is_mandatory=True)\n    event_json_str = siemplify.extract_action_param(param_name=u'Event Json', is_mandatory=True)\n\n\n    event_json = json.loads(event_json_str)\n    \n    google_calendar_manager = GoogleCalendarManager(credentials_json,behalf_email)\n    event_details = google_calendar_manager.update_event(event_id,event_json)\n\n\n    output_message = \"\"\n    ret_val = False\n    \n    if event_details != None:\n        res_json = json.dumps(event_details)\n        siemplify.result.add_result_json(res_json)\n        ret_val = True\n        output_message = \"Calendar event with id <{0}> succesfully updated.\".format(event_id)\n    else:\n        ret_val = False\n        output_message = \"Couldn't find Calendar event with id <{0}>.\".format(event_id)\n\n\n    siemplify.end(output_message, ret_val)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Calendar",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"kind\": \"calendar#event\",\n  \"etag\": \"\\\"3204470818552000\\\"\",\n  \"id\": \"r6fc566i21ajtroe2sb1rcj7vc\",\n  \"status\": \"confirmed\",\n  \"htmlLink\": \"https://www.google.com/calendar/event?eid=cjZmYzU2NmkyMWFqdHJvZTJzYjFyY2o3dmNfMjAxNTA1MjhUMTYwMDAwWiBhbG9uQHNpZW1wbGlmeS5jbw\",\n  \"created\": \"2020-10-09T09:23:29.000Z\",\n  \"updated\": \"2020-10-09T09:23:29.305Z\",\n  \"summary\": \"Google I/O 2015\",\n  \"description\": \"Test Event.\",\n  \"location\": \"800 Howard St., San Francisco, CA 94103\",\n  \"creator\": {\n    \"email\": \"alon@siemplify.co\",\n    \"displayName\": \"Alon Cohen\",\n    \"self\": true\n  },\n  \"organizer\": {\n    \"email\": \"alon@siemplify.co\",\n    \"displayName\": \"Alon Cohen\",\n    \"self\": true\n  },\n  \"start\": {\n    \"dateTime\": \"2015-05-28T19:00:00+03:00\",\n    \"timeZone\": \"America/Los_Angeles\"\n  },\n  \"end\": {\n    \"dateTime\": \"2015-05-29T03:00:00+03:00\",\n    \"timeZone\": \"America/Los_Angeles\"\n  },\n  \"recurrence\": [\n    \"RRULE:FREQ=DAILY;COUNT=2\"\n  ],\n  \"iCalUID\": \"r6fc566i21ajtroe2sb1rcj7vc@google.com\",\n  \"sequence\": 0,\n  \"attendees\": [\n    {\n      \"email\": \"user@gmail.com\",\n      \"responseStatus\": \"needsAction\"\n    }\n  ],\n  \"reminders\": {\n    \"useDefault\": false,\n    \"overrides\": [\n      {\n        \"method\": \"email\",\n        \"minutes\": 1440\n      },\n      {\n        \"method\": \"popup\",\n        \"minutes\": 10\n      }\n    ]\n  }\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 33.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "user@gmail.com",
+      "Description": "The email address of the user that will be the organizer of the event. ",
+      "Name": "Organizer",
+      "Value": "user@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602434372254,
+      "ModificationTimeUnixTimeInMs": 1602434372254
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\n  \"summary\": \"Google I/O 2015\",\n  \"location\": \"800 Howard St., San Francisco, CA 94103\",\n  \"description\": \"Test Event.\",\n  \"start\": {\n    \"dateTime\": \"2015-05-28T09:00:00-07:00\",\n    \"timeZone\": \"America/Los_Angeles\"\n  },\n  \"end\": {\n    \"dateTime\": \"2015-05-28T17:00:00-07:00\",\n    \"timeZone\": \"America/Los_Angeles\"\n  },\n  \"recurrence\": [\n    \"RRULE:FREQ=DAILY;COUNT=2\"\n  ],\n  \"attendees\": [\n    {\n      \"email\": \"user@gmail.com\"\n    }\n  ],\n  \"reminders\": {\n    \"useDefault\": false,\n    \"overrides\": [\n      {\n        \"method\": \"email\",\n        \"minutes\": 1440\n      },\n      {\n        \"method\": \"popup\",\n        \"minutes\": 10\n      }\n    ]\n  }\n}",
+      "Description": "The details of the event in a json format. See more details in the following link - https://developers.google.com/calendar/v3/reference/events/insert",
+      "Name": "Event Json",
+      "Value": "{\n  \"summary\": \"Google I/O 2015\",\n  \"location\": \"800 Howard St., San Francisco, CA 94103\",\n  \"description\": \"Test Event.\",\n  \"start\": {\n    \"dateTime\": \"2015-05-28T09:00:00-07:00\",\n    \"timeZone\": \"America/Los_Angeles\"\n  },\n  \"end\": {\n    \"dateTime\": \"2015-05-28T17:00:00-07:00\",\n    \"timeZone\": \"America/Los_Angeles\"\n  },\n  \"recurrence\": [\n    \"RRULE:FREQ=DAILY;COUNT=2\"\n  ],\n  \"attendees\": [\n    {\n      \"email\": \"user@gmail.com\"\n    }\n  ],\n  \"reminders\": {\n    \"useDefault\": false,\n    \"overrides\": [\n      {\n        \"method\": \"email\",\n        \"minutes\": 1440\n      },\n      {\n        \"method\": \"popup\",\n        \"minutes\": 10\n      }\n    ]\n  }\n}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602434372254,
+      "ModificationTimeUnixTimeInMs": 1602434372254
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<event_id>",
+      "Description": "Event Id",
+      "Name": "Event Id",
+      "Value": "<event_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602434372254,
+      "ModificationTimeUnixTimeInMs": 1602434372254
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602434372247,
+  "ModificationTimeUnixTimeInMs": 1602434372249
+}

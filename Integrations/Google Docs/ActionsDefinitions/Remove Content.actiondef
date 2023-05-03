@@ -1,0 +1,59 @@
+{
+  "Name": "Remove Content",
+  "Description": "Removes content from a specific document ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleDocsManager import GoogleDocsManager\nimport json\nIDENTIFIER = u'Google Docs'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    document_id = siemplify.extract_action_param(param_name=u'Document Id', is_mandatory=True)\n    json_str = siemplify.extract_action_param(param_name=u'Json', is_mandatory=True)\n    \n    json_object = json.loads(json_str)\n    items = json_object['items']\n    requests = []\n\n    for item in items:\n        start_index = item['start_index']\n        end_index = item['end_index']\n\n        item_to_delete ={\n                'deleteContentRange': {\n                    'range': {\n                        'startIndex': start_index,\n                        'endIndex': end_index,\n                    }\n                }\n            }\n        requests.append(item_to_delete)\n    \n    google_doc_manager = GoogleDocsManager(credentials_json)\n    res = google_doc_manager.execute_request(document_id,requests)\n    \n    siemplify.result.add_result_json(res)\n\n\n    siemplify.end('Content was successfully removed', document_id)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Docs",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 34.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<document_id>",
+      "Description": "The document Id can be found in the URL.\nFor example: https://docs.google.com/document/d/{YourDocumentId}/",
+      "Name": "Document Id",
+      "Value": "<document_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602156829222,
+      "ModificationTimeUnixTimeInMs": 1602156829222
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{\n  \"items\": [\n    {\n      \"start_index\": 1,\n      \"end_index\": 2\n    },\n    {\n      \"start_index\": 5,\n      \"end_index\": 7\n    }\n  ]\n}",
+      "Description": "The content you want to remove. Most elements in the body have startIndex and endIndex, these indicate the offset of an element's beginning and end.",
+      "Name": "Json",
+      "Value": "{\n  \"items\": [\n    {\n      \"start_index\": 1,\n      \"end_index\": 2\n    },\n    {\n      \"start_index\": 5,\n      \"end_index\": 7\n    }\n  ]\n}",
+      "Type": 16,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602156829222,
+      "ModificationTimeUnixTimeInMs": 1602156829222
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602156829215,
+  "ModificationTimeUnixTimeInMs": 1602156829217
+}

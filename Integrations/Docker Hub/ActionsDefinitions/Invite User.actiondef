@@ -1,0 +1,69 @@
+{
+  "Name": "Invite User",
+  "Description": "Invite a user to a specific team in a given organization in Docker Hub",
+  "Script": "from DockerHubManager import *\nimport traceback\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\n\n\nINTEGRATION_NAME = 'Docker Hub'\nSCRIPT_NAME = 'Invite User'\n\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    output_message = ''\n    result_value = False\n    status = EXECUTION_STATE_FAILED\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n\n    siemplify.LOGGER.info(u\"----------------- Main - Param Init -----------------\")\n    username = conf['Username']\n    password = conf[\"Password\"]\n    organization = siemplify.parameters['Organization']\n    team = siemplify.parameters['Team']\n    email = siemplify.parameters['Email']\n\n    try:\n        docker_client = DockerHub(username=username, password=password, delete_creds=True)\n        docker_client.send_invite(organization, team, email)\n        output_message += 'User has been invited to the Team!'\n        result_value = True\n        status = EXECUTION_STATE_COMPLETED\n    except Exception:\n        output_message += '{}'.format(traceback.format_exc())\n\n    siemplify.LOGGER.info('\\n  status: {}\\n  result_value: {}\\n  output_message: {}'.format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "IntegrationIdentifier": "Docker Hub",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 22.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Team",
+      "Description": "Teams are groups of Docker Hub users that belong to an organization",
+      "Name": "Team",
+      "Value": "Team",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1595510701815,
+      "ModificationTimeUnixTimeInMs": 1595510701815
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Organization",
+      "Description": "Organizations are collections of teams and repositories that can be managed together",
+      "Name": "Organization",
+      "Value": "Organization",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1595510701815,
+      "ModificationTimeUnixTimeInMs": 1595510701815
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Email",
+      "Description": "Email address of the user you would like to invite to a specific team in a given organization",
+      "Name": "Email",
+      "Value": "Email",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1595510701815,
+      "ModificationTimeUnixTimeInMs": 1595510701815
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1595510701802,
+  "ModificationTimeUnixTimeInMs": 1595510701805
+}

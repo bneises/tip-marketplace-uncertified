@@ -1,0 +1,45 @@
+{
+  "Name": "IOC_Enrichment",
+  "Description": "Enrich indicator attribute Entities.",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import add_prefix_to_dict, convert_dict_to_json_result_dict\nfrom FlashpointManager import FlashpointManager, dict_to_flat\nimport json\n\nSCRIPT_NAME = \"Flashpoint - IOC Enrichment\"\n\n#The sorting can be 'des' for descending and 'asc' ascending\nSORT_RESULTS_TIMESTAMP = 'desc'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    conf = siemplify.get_configuration(\"Flashpoint\")\n    api_key = conf[\"API Key\"]\n\n    results_limit = siemplify.extract_action_param(\"Limit\")\n\n    flashpoint_manager = FlashpointManager(api_key)\n\n    enriched_entities = []\n    output_message = \"\"\n    json_results = {}\n    not_found_entities = []\n    ioc_info_flat ={}\n    result_value = False\n\n    for entity in siemplify.target_entities:\n        try:\n            report = flashpoint_manager.IOC_Enrichment(entity.identifier, results_limit, SORT_RESULTS_TIMESTAMP)\n            if report:\n                # Attach report\n                siemplify.result.add_entity_json(f\"The entity {entity.identifier} was enriched\", json.dumps(report))\n                ioc_info_flat = dict_to_flat(report[0])\n                \n                #adding the FlashPoint prefix to each entity detail to enable the analysis of the entity data\n                ioc_info_flat = add_prefix_to_dict(ioc_info_flat, \"FlashPoint\")\n                entity.additional_properties.update(ioc_info_flat)\n                entity.is_enriched = True\n                \n                #Add Insight and mark as suspicious if risk score exceed threshold\n                entity.is_suspicious = True\n                result_value = True\n                insight_msg = \"Flashpoint - {0} marked as suspicious\".format(entity.identifier)\n                siemplify.add_entity_insight(entity, insight_msg, triggered_by=\"Flashpoint\")\n                json_results[entity.identifier] = report\n                enriched_entities.append(entity)\n                \n            else:\n                not_found_entities.append(entity.identifier)\n                \n        except Exception as e:\n            # An error occurred - skip entity and continue\n            siemplify.LOGGER.error(\"An error occurred on entity: {}.\\n{}.\".format(entity.identifier, str(e)))\n            siemplify.LOGGER.exception(e)\n\n    if not_found_entities:\n        output_message += \"The following entities were not found in Flashpoint: {0}.\".format(\"\\n\".join(not_found_entities))\n        \n    siemplify.result.add_result_json(convert_dict_to_json_result_dict(json_results))\n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Flashpoint",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 108.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "100",
+      "Description": "The maximum number of result objects to return.",
+      "Name": "Limit",
+      "Value": "100",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1616671561006,
+      "ModificationTimeUnixTimeInMs": 1616671561006
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1616671561003,
+  "ModificationTimeUnixTimeInMs": 1617199845697
+}

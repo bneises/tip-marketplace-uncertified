@@ -1,0 +1,125 @@
+{
+    "Identifier": "Google Sheets",
+    "PackageName": "Google Sheets",
+    "DisplayName": "Google Sheets",
+    "Description": "Google Sheets is a spreadsheet program included as part of a free, web-based software office suite offered by Google within its Google Drive service. ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "PropertyName": "Credentials Json",
+            "PropertyDescription": "View the guide on how to create auth json credentials (service account)\nhttps://gspread.readthedocs.io/en/latest/oauth2.html#enable-api-access",
+            "PropertyDisplayName": "Credentials Json",
+            "IntegrationIdentifier": "Google Sheets",
+            "ModificationTimeUnixTimeInMs": 1602088503636,
+            "IsMandatory": true,
+            "PropertyType": 2,
+            "Value": "{}",
+            "CreationTimeUnixTimeInMs": 1602088503636,
+            "Id": 0
+        }
+    ],
+    "Actions": [
+        "Get Row",
+        "Add Row",
+        "Search Row",
+        "Search Rows",
+        "Ping",
+        "Update Rows",
+        "Delete Sheet",
+        "Delete Rows",
+        "Update Row",
+        "Create Sheet",
+        "Update  Cell",
+        "Add or Update Rows",
+        "Add  Permission",
+        "Get All",
+        "Get Range",
+        "Import CSV"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Sheet Connector"
+    ],
+    "Managers": [
+        "google_sheets"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 11.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Google Sheets Integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1602582530000
+        },
+        {
+            "Items": [
+                "Updated Ping action."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1603038206000
+        },
+        {
+            "Items": [
+                "NEW! Add or Update Rows action."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1605005114000
+        },
+        {
+            "Items": [
+                "NEW! Update Rows action."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1605455878000
+        },
+        {
+            "Items": [
+                "Fixed bug"
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1606821783000
+        },
+        {
+            "Items": [
+                "New! Google Sheets connector"
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1620217084000
+        },
+        {
+            "Items": [
+                "Google Sheets connector"
+            ],
+            "Version": 7.0,
+            "PublishTimeUnixTime": 1625075568000
+        },
+        {
+            "Items": [
+                "Google Sheets update"
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1625763391000
+        },
+        {
+            "Items": [
+                "Fixed Category"
+            ],
+            "Version": 10.0,
+            "PublishTimeUnixTime": 1629722429000
+        },
+        {
+            "Items": [
+                "Action improvements: file system based authentication was replaced with in-memory"
+            ],
+            "Version": 11.0,
+            "PublishTimeUnixTime": 1677498532000
+        }
+    ]
+}

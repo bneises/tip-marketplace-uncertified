@@ -1,0 +1,36 @@
+[
+    {
+        "ChangeDescription": "NEW! Cybersixgill Darkfeed Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Cybersixgill Darkfeed",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1621942701
+    },{
+        "ChangeDescription": "Updated SVG of Cybersixgill Darkfeed Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Cybersixgill Darkfeed",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1626774317
+    },{
+        "ChangeDescription": "Updated SVG of Cybersixgill Darkfeed Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Cybersixgill Darkfeed",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635775784
+    }
+]

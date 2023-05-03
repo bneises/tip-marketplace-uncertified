@@ -1,0 +1,87 @@
+{
+  "Name": "Search Rows",
+  "Description": "Finds multiple rows in a sheet",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport gspread\n\nIDENTIFIER = u'Google Sheet'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n    column_number_str= siemplify.extract_action_param(param_name=u'Column Number', is_mandatory=True)\n    search_value = siemplify.extract_action_param(param_name=u'Search value', is_mandatory=True)\n    sheet_id = siemplify.extract_action_param(param_name=u'Sheet Id', is_mandatory=True)\n    worksheet_name = siemplify.extract_action_param(param_name=u'Worksheet Name')\n    column_number_int = int(column_number_str)\n    f = open(\"credentials.json\", \"w+\")\n    f.write(credentials_json)\n    f.close()\n\n\n    gc = gspread.service_account(filename='./credentials.json')\n    sh = gc.open_by_key(sheet_id)\n    \n    print(worksheet_name)\n    if(worksheet_name):\n        worksheet = sh.worksheet(worksheet_name)\n    else:\n        worksheet = sh.sheet1\n\n    row_numbers_to_return = []\n    cell_list = worksheet.findall(search_value)\n    for cell in cell_list:\n        if cell.col == column_number_int:\n            row_numbers_to_return.append(cell.row)\n            values_list = worksheet.row_values(cell.row)\n            print(values_list)\n    print (row_numbers_to_return)\n    \n    \n    output_msg = \".\"\n    output_msg = \"Found {0} rows: {1}, with value {2} in column {3}.\".format(len(values_list),row_numbers_to_return,search_value,column_number_int)\n    try:\n        cell = worksheet.find(search_value)\n        row_values = worksheet.row_values(cell.row)\n        siemplify.result.add_result_json(row_values)\n        ret_val = cell.row\n    except gspread.exceptions.CellNotFound:\n        output_msg = \"Couldn't find row with value {0} in column {1}.\".format(search_value,column_number_int)\n    \n\n    siemplify.result.add_result_json(row_numbers_to_return)\n    founded_rows = len(row_numbers_to_return)\n    siemplify.end(output_msg, founded_rows)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Sheets",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 34.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Sheet-Id>",
+      "Description": "The sheet id can be found in the sheet url.\nhttps://docs.google.com/spreadsheets/d/{YourSpreadSheetId}/edit#gid=0",
+      "Name": "Sheet Id",
+      "Value": "<Sheet-Id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602521331604,
+      "ModificationTimeUnixTimeInMs": 1602521331604
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "<Sheet-Name>",
+      "Description": "The worksheet name is the Sheet tab name. The default Sheet name is \"Sheet1\". Note: it is case sensitive. ",
+      "Name": "Worksheet Name",
+      "Value": "<Sheet-Name>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602521331604,
+      "ModificationTimeUnixTimeInMs": 1602521331604
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "1",
+      "Description": "The column number you would like to search for rows in a given sheet. ",
+      "Name": "Column Number",
+      "Value": "1",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602521331604,
+      "ModificationTimeUnixTimeInMs": 1602521331604
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<Value>",
+      "Description": "The value you would like to search for in the sheet",
+      "Name": "Search value",
+      "Value": "<Value>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602521331604,
+      "ModificationTimeUnixTimeInMs": 1602521331604
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602521331597,
+  "ModificationTimeUnixTimeInMs": 1602521331599
+}

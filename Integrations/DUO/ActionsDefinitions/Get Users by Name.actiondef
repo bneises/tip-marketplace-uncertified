@@ -1,0 +1,45 @@
+{
+  "Name": "Get Users by Name",
+  "Description": "Query the get_users_by_name DUO API endpoint to obtain information on a specified username.",
+  "Script": "'''\nUses DUO's Python SDK: https://github.com/duosecurity/duo_client_python\nUses the DUO Admin API: https://duo.com/docs/adminapi\n\nObtains user, authentication and device data from DUO MFA on a specific user\nNote: Requires DUO Admin API keys\n\nCreated by: jtdepalm@sentara.com\n'''\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\n\nINTEGRATION_NAME = \"DUO\"\nSCRIPT_NAME = \"DUO Get Users by Name\"\n\n@output_handler\ndef main():\n    import duo_client\n    import time\n    import json\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    result = True\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    try:\n        # list to contain results from action\n        res = []\n        user_id = None\n        \n        duoApi = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"API Hostname\")\n        adminSec = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Admin Secret Key\")\n        adminIntKey = siemplify.extract_configuration_param(provider_name=INTEGRATION_NAME, param_name=\"Admin Integration Key\")\n        \n        # ***parameters***\n        # target username to obtain data on\n        username = siemplify.extract_action_param(\"Username\", print_value=True)\n        # Using SDK. Setup initial authentication.\n        admin_api = duo_client.Admin(ikey=adminIntKey, skey=adminSec, host=duoApi)\n        # obtain target user's data from DUO\n        user_data = admin_api.get_users_by_name(username=username)\n        \n        for data in user_data:\n            user_id = data['user_id']\n        \n        results = {\n            \"user_name\":username,\n            \"user_id\":user_id,\n            \"user_data\":user_data\n        }\n        res.append(results)\n        siemplify.result.add_result_json(res)\n        json_result = json.dumps(res)\n        output_message = \"Results: {}\".format(json_result)\n    \n    except Exception as e:\n        result = False\n        status = EXECUTION_STATE_FAILED\n        output_message = \"Failed. Error is : {}\".format(e)\n\n\n\n\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"Output Message: {}\".format(output_message))\n    siemplify.LOGGER.info(\"Result: {}\".format(result))\n    \n    siemplify.end(output_message, result, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "DUO",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n\t\"user_name\": \"username\",\n\t\"user_id\": \"ABC123\",\n\t\"user_data\": [\n\t\t{\n\t\t\t\"alias1\": null,\n\t\t\t\"alias2\": null,\n\t\t\t\"alias3\": null,\n\t\t\t\"alias4\": null,\n\t\t\t\"aliases\": {},\n\t\t\t\"created\": 1488805062,\n\t\t\t\"desktoptokens\": [],\n\t\t\t\"email\": \"username@domain.tld\",\n\t\t\t\"firstname\": \"USER T\",\n\t\t\t\"groups\": [\n\t\t\t\t{\n\t\t\t\t\t\"desc\": \"\",\n\t\t\t\t\t\"group_id\": \"ABC123\",\n\t\t\t\t\t\"mobile_otp_enabled\": false,\n\t\t\t\t\t\"name\": \"GROUP_NAME (from AD sync \\\"CORP AD\\\")\",\n\t\t\t\t\t\"push_enabled\": false,\n\t\t\t\t\t\"sms_enabled\": false,\n\t\t\t\t\t\"status\": \"Active\",\n\t\t\t\t\t\"voice_enabled\": false\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"desc\": \"\",\n\t\t\t\t\t\"group_id\": \"ABC123\",\n\t\t\t\t\t\"mobile_otp_enabled\": false,\n\t\t\t\t\t\"name\": \"GROUP_NAME (from AD sync \\\"CORP AD\\\")\",\n\t\t\t\t\t\"push_enabled\": false,\n\t\t\t\t\t\"sms_enabled\": false,\n\t\t\t\t\t\"status\": \"Active\",\n\t\t\t\t\t\"voice_enabled\": false\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"desc\": \"\",\n\t\t\t\t\t\"group_id\": \"ABC123\",\n\t\t\t\t\t\"mobile_otp_enabled\": false,\n\t\t\t\t\t\"name\": \"GROUP_NAME (from AD sync \\\"CORP AD\\\")\",\n\t\t\t\t\t\"push_enabled\": false,\n\t\t\t\t\t\"sms_enabled\": false,\n\t\t\t\t\t\"status\": \"Active\",\n\t\t\t\t\t\"voice_enabled\": false\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"is_enrolled\": true,\n\t\t\t\"last_directory_sync\": 1625224570,\n\t\t\t\"last_login\": 1625237130,\n\t\t\t\"lastname\": \"LASTNAME\",\n\t\t\t\"notes\": \"\",\n\t\t\t\"phones\": [\n\t\t\t\t{\n\t\t\t\t\t\"activated\": true,\n\t\t\t\t\t\"capabilities\": [\n\t\t\t\t\t\t\"auto\",\n\t\t\t\t\t\t\"push\",\n\t\t\t\t\t\t\"sms\",\n\t\t\t\t\t\t\"phone\",\n\t\t\t\t\t\t\"mobile_otp\"\n\t\t\t\t\t],\n\t\t\t\t\t\"encrypted\": \"Encrypted\",\n\t\t\t\t\t\"extension\": \"\",\n\t\t\t\t\t\"fingerprint\": \"Disabled\",\n\t\t\t\t\t\"last_seen\": \"2021-07-02T14:45:30\",\n\t\t\t\t\t\"model\": \"PHONE MODEL\",\n\t\t\t\t\t\"name\": \"\",\n\t\t\t\t\t\"number\": \"+12223334444\",\n\t\t\t\t\t\"phone_id\": \"ABC123\",\n\t\t\t\t\t\"platform\": \"Phone OS\",\n\t\t\t\t\t\"postdelay\": \"\",\n\t\t\t\t\t\"predelay\": \"\",\n\t\t\t\t\t\"screenlock\": \"Locked\",\n\t\t\t\t\t\"sms_passcodes_sent\": true,\n\t\t\t\t\t\"tampered\": \"Not tampered\",\n\t\t\t\t\t\"type\": \"Mobile\"\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"realname\": \"USER T LASTNAME\",\n\t\t\t\"status\": \"active\",\n\t\t\t\"tokens\": [\n\t\t\t\t{\n\t\t\t\t\t\"serial\": \"ABC123\",\n\t\t\t\t\t\"token_id\": \"123ABC\",\n\t\t\t\t\t\"totp_step\": null,\n\t\t\t\t\t\"type\": \"d1\"\n\t\t\t\t},\n\t\t\t\t{\n\t\t\t\t\t\"serial\": \"123456789\",\n\t\t\t\t\t\"token_id\": \"ABC123\",\n\t\t\t\t\t\"totp_step\": null,\n\t\t\t\t\t\"type\": \"yk\"\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"u2ftokens\": [],\n\t\t\t\"user_id\": \"ABC123\",\n\t\t\t\"username\": \"username\",\n\t\t\t\"webauthncredentials\": []\n\t\t}\n\t]\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "John",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 13.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "admin",
+      "Description": "Username",
+      "Name": "Username",
+      "Value": "admin",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1635867539534,
+      "ModificationTimeUnixTimeInMs": 1635867539534
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1635867539529,
+  "ModificationTimeUnixTimeInMs": 1635867539529
+}

@@ -1,0 +1,41 @@
+{
+  "Name": "Update Case Description",
+  "Description": "This action will update the description of the case.",
+  "Script": "from SiemplifyUtils import output_handler\nfrom SiemplifyAction import SiemplifyAction\nimport requests\nimport json\n\nDESC_URL = '{}/external/v1/cases/ChangeCaseDescription'\nACTION_NAME = \"UpdateCaseDescription\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = ACTION_NAME\n    description = siemplify.parameters['Case Description']\n    case_id = siemplify.case_id\n    json_payload = {\"caseId\": case_id, \"description\": description}\n    update_description = siemplify.session.post(DESC_URL.format(siemplify.API_ROOT), json=json_payload)\n    update_description.raise_for_status()\n   \n    output_message = \"The case description has been updated to: {}\".format(description)\n    siemplify.end(output_message, True)\n\nif __name__ == \"__main__\":\n    main()",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<insert value>",
+      "Description": "The description of the case will be updated to this value.",
+      "Name": "Case Description",
+      "Value": "<insert value>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620429,
+      "ModificationTimeUnixTimeInMs": 1614012620429
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620426,
+  "ModificationTimeUnixTimeInMs": 1614012620426
+}

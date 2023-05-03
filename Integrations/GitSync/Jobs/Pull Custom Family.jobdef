@@ -1,0 +1,51 @@
+{
+  "Name": "Pull Custom Family",
+  "Integration": "GitSync",
+  "Script": "from GitSyncManager import GitSyncManager\r\nfrom SiemplifyJob import SiemplifyJob\r\n\r\nSCRIPT_NAME = \"Pull Custom Family\"\r\n\r\n\r\ndef main():\r\n    siemplify = SiemplifyJob()\r\n    siemplify.script_name = SCRIPT_NAME\r\n\r\n    family_name = siemplify.extract_job_param(\"Family Name\")\r\n\r\n    try:\r\n        gitsync = GitSyncManager.from_siemplify_object(siemplify)\r\n\r\n        family = gitsync.pull_visual_family(family_name)\r\n        gitsync.api.add_custom_family(family)\r\n\r\n    except Exception as e:\r\n        siemplify.LOGGER.error(\"General error performing Job {}\".format(SCRIPT_NAME))\r\n        siemplify.LOGGER.exception(e)\r\n        raise\r\n\r\n    siemplify.end_script()\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    main()\r\n",
+  "Creator": "Admin",
+  "RunIntervalInSeconds": 900,
+  "Description": "Imports a custom family from the repo.",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "Version": 1,
+  "IsSystem": false,
+  "Parameters": [
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Repo URL",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145599,
+      "ModificationTimeUnixTimeInMs": 1624368145599
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": null,
+      "Name": "Branch",
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145599,
+      "ModificationTimeUnixTimeInMs": 1624368145599
+    },
+    {
+      "JobDefinitionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Name": "Family Name",
+      "Description": "Name of the visual family to pull",
+      "Type": 2,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1624368145599,
+      "ModificationTimeUnixTimeInMs": 1624368145599
+    }
+  ],
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1623167328125,
+  "ModificationTimeUnixTimeInMs": 1624368145595
+}

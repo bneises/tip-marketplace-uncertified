@@ -1,0 +1,45 @@
+{
+  "Name": "Delete Sheet",
+  "Description": "Deletes a given sheet",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport gspread\nimport uuid\n\nIDENTIFIER = u'Google Sheet'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n    sheet_id = siemplify.extract_action_param(param_name=u'Sheet Id', is_mandatory=True)\n\n    f = open(\"credentials.json\", \"w+\")\n    f.write(credentials_json)\n    f.close()\n\n    gc = gspread.service_account(filename='./credentials.json')\n    gc.del_spreadsheet(sheet_id)\n\n    siemplify.end('Sheet deleted successfully', True)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Sheets",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": false
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 16.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<sheet_id>",
+      "Description": "The sheet id can be found in the sheet url.\nhttps://docs.google.com/spreadsheets/d/{YourSpreadSheetId}/edit#gid=0",
+      "Name": "Sheet Id",
+      "Value": "<sheet_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1602514637205,
+      "ModificationTimeUnixTimeInMs": 1602514637205
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1602514637199,
+  "ModificationTimeUnixTimeInMs": 1602514637201
+}

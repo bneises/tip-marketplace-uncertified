@@ -1,0 +1,19 @@
+{
+    "Identifier": "Spell Checker",
+    "PackageName": "Spell Checker",
+    "DisplayName": "Spell Checker",
+    "Description": "Pyspellchecker provides a library for determining if a word is misspelled and what the likely correct spelling would be based on word frequency.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0.0,
+    "IntegrationProperties": [],
+    "Actions": [],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 6.0,
+    "IsCustom": false,
+    "ReleaseNotes": []
+}

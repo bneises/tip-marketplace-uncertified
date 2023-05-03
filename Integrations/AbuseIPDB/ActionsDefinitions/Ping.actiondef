@@ -1,0 +1,30 @@
+{
+  "Name": "Ping",
+  "Description": "",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom AbuseIPDB import AbuseIPDBManager, AbuseIPDBInvalidAPIKeyManagerError\n\nIDENTIFIER = \"AbuseIPDB\"\nSCRIPT_NAME = u\"AbuseIPDB - Ping\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    siemplify.LOGGER.info(u\"================= Main - Param Init =================\")\n\n    # INIT INTEGRATION CONFIGURATION:\n    api_key = siemplify.extract_configuration_param(siemplify, param_name=\"Api Key\")\n    verify_ssl = siemplify.extract_configuration_param(siemplify, param_name=\"Verify SSL\",\n                                             default_value=False, input_type=bool)\n\n    siemplify.LOGGER.info(u\"----------------- Main - Started -----------------\")\n\n    try:\n        ipdb = AbuseIPDBManager(api_key, verify_ssl)\n        status = EXECUTION_STATE_COMPLETED\n        ipdb.test_connectivity()\n        output_message = u\"Connection Established\"\n        result_value = u\"true\"\n        siemplify.LOGGER.info(u\"Finished processing\")\n\n    except AbuseIPDBInvalidAPIKeyManagerError as e:\n        siemplify.LOGGER.error(u\"Invalid API key was provided. Access is forbidden.\")\n        status = EXECUTION_STATE_FAILED\n        result_value = u\"false\"\n        output_message = u\"Invalid API key was provided. Access is forbidden.\"\n\n    except Exception as e:\n        siemplify.LOGGER.error(u\"General error performing action {}. Error: {}\".format(SCRIPT_NAME, e))\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = u\"false\"\n        output_message = u\"General error performing action {}. Error: {}\".format(SCRIPT_NAME, e)\n\n    siemplify.LOGGER.info(u\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\n        u\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == '__main__':\n    main()",
+  "IntegrationIdentifier": "AbuseIPDB",
+  "ScriptResultName": "True/False",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 10.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1620051954422,
+  "ModificationTimeUnixTimeInMs": 1622101230922
+}

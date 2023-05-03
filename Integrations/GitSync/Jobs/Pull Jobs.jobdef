@@ -1,0 +1,51 @@
+{
+  "RunIntervalInSeconds": 900,
+  "Parameters": [
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1627810136583,
+      "ModificationTimeUnixTimeInMs": 1627810136583,
+      "DefaultValue": "",
+      "Description": "List of Job names, seperated by a comma, to pull from the repo",
+      "IsMandatory": true,
+      "Name": "Job Whitelist",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145626,
+      "ModificationTimeUnixTimeInMs": 1624368145626,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Repo URL",
+      "Type": 2
+    },
+    {
+      "Id": 0,
+      "JobDefinitionId": 0,
+      "CreationTimeUnixTimeInMs": 1624368145626,
+      "ModificationTimeUnixTimeInMs": 1624368145626,
+      "DefaultValue": null,
+      "Description": "Optional parameter to override the one found in the integration instance",
+      "IsMandatory": false,
+      "Name": "Branch",
+      "Type": 2
+    }
+  ],
+  "Integration": "GitSync",
+  "Name": "Pull Jobs",
+  "Description": "Imports a job from the repo.",
+  "CreationTimeUnixTimeInMs": 1627291526354,
+  "ModificationTimeUnixTimeInMs": 1627291526354,
+  "Script": "",
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1,
+  "PythonVersion": "None",
+  "Id": 0
+}

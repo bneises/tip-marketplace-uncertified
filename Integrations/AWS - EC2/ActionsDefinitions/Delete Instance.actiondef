@@ -1,0 +1,42 @@
+{
+  "Name": "Delete Instance",
+  "Description": "Deletes a specific instance in AWS - EC2.\nNote: the result value is the count of deleted instances.\nDeleted instances remain visible after being deleted (for approximately one hour)\nFor more information:\nhttps://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ec2.html#EC2.Client.terminate_instances",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_INPROGRESS\nfrom EC2Manager import EC2Manager\nimport json\n\nIDENTIFIER = \"AWS - EC2\"\nSCRIPT_NAME = \"AWS EC2 - Delete Instance\"\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n\n    #Extracting the integration parameters\n    access_key_id = siemplify.extract_configuration_param(IDENTIFIER,\"Access Key ID\")\n    secret_access_key = siemplify.extract_configuration_param(IDENTIFIER, \"Secret Access Key\")\n    default_region = siemplify.extract_configuration_param(IDENTIFIER, \"Default Region\")\n    \n    #Extracting the action parameters\n    instances_ids = siemplify.extract_action_param(\"Instance Ids\")\n\n    #Converting the instances_ids string into a list\n    instances_ids_list = instances_ids.split (\",\")\n\n    #Creating an instance of EC2Manager object\n    ec2_manager = EC2Manager(access_key_id, secret_access_key, default_region)\n    \n    deleted_instances_details = []\n    deleted_instances_ids = []\n    not_deleted_instances_ids = []\n    shutting_down_instances_ids = []\n    json_result = {}\n\n    status = EXECUTION_STATE_COMPLETED\n    output_message= [\"\"]\n    result_value = 0\n\n    for instance in instances_ids_list:\n        instance = instance.strip()\n        try:\n            instance_details = ec2_manager.delete_instance(instance)\n            current_state = instance_details.get('TerminatingInstances')[0].get('CurrentState').get('Name')\n            \n            if current_state == 'shutting-down':\n                siemplify.LOGGER.info(f\"The instance {instance} is in the process of shutting-down\")\n                shutting_down_instances_ids.append(instance)\n                \n            if current_state == 'terminated':\n                siemplify.LOGGER.info(f\"The instance {instance} was deleted successfully\" )\n                deleted_instances_ids.append(instance)\n                json_result[instance] = instance_details\n                \n            else:\n                raise Exception(f\"The instance can not be deleted from the current state {current_state}, please try again.\")\n\n            \n        except Exception as e:\n            not_deleted_instances_ids.append(instance)\n            siemplify.LOGGER.error(f\"Error occured when deleting the instance {instance}.\\nError: {e}\")\n\n    if len(shutting_down_instances_ids) > 0:\n        status = EXECUTION_STATE_INPROGRESS\n        output_message.append(f\"The instances {shutting_down_instances_ids} are in the process of shutting down\")\n    \n    \n    if len(deleted_instances_ids) > 0:\n        output_message.append(f\"The instances {deleted_instances_ids} were deleted successfully.\")\n        result_value = True \n        \n    result_value = len(deleted_instances_ids)\n        \n    siemplify.result.add_result_json(json_result)\n    print(json.dumps(json_result))\n    siemplify.end(\"\\n\".join(output_message), result_value, status) \n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "AWS - EC2",
+  "ScriptResultName": "deleted_instances_count",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"i-123456\": {\r\n\t\t\"TerminatingInstances\": [{\r\n\t\t\t\"CurrentState\": {\r\n\t\t\t\t\"Code\": 48,\r\n\t\t\t\t\"Name\": \"terminated\"\r\n\t\t\t},\r\n\t\t\t\"InstanceId\": \"i-123456\",\r\n\t\t\t\"PreviousState\": {\r\n\t\t\t\t\"Code\": 80,\r\n\t\t\t\t\"Name\": \"stopped\"\r\n\t\t\t}\r\n\t\t}],\r\n\t\t\"ResponseMetadata\": {\r\n\t\t\t\"RequestId\": \"2222\",\r\n\t\t\t\"HTTPStatusCode\": 200,\r\n\t\t\t\"HTTPHeaders\": {\r\n\t\t\t\t\"x-amzn-requestid\": \"3333\",\r\n\t\t\t\t\"cache-control\": \"no-cache, no-store\",\r\n\t\t\t\t\"strict-transport-security\": \"max-age=31536000; includeSubDomains\",\r\n\t\t\t\t\"content-type\": \"text/xml;charset=UTF-8\",\r\n\t\t\t\t\"transfer-encoding\": \"chunked\",\r\n\t\t\t\t\"vary\": \"accept-encoding\",\r\n\t\t\t\t\"date\": \"Mon, 28 Dec 2020 15:30:05 GMT\",\r\n\t\t\t\t\"server\": \"AmazonEC2\"\r\n\t\t\t},\r\n\t\t\t\"RetryAttempts\": 0\r\n\t\t}\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 165.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "instance_id1,instance_id2",
+      "Description": "The instance IDs which you want to delete (comma separated).\nFor example: instance_id1, instance_id2",
+      "Name": "Instance Ids",
+      "Value": "instance_id1,instance_id2",
+      "Type": 11,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1609172159593,
+      "ModificationTimeUnixTimeInMs": 1609172159593
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "IsAsync": true,
+  "CreationTimeUnixTimeInMs": 1609172159580,
+  "ModificationTimeUnixTimeInMs": 1609172159580
+}

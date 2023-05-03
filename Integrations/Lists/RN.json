@@ -1,0 +1,61 @@
+[
+    {
+        "ChangeDescription": "NEW! Lists integration to facilitate managing custom lists within Siemplify.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Lists",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx"
+    },
+    {
+        "ChangeDescription": "UPDATE! Now supports all Siemplify versions.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Is String In Custom List",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1623255029
+    },
+    {
+        "ChangeDescription": "UPDATE! Now supports all Siemplify versions.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Remove String from Custom List",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1623255029
+    },
+    {
+        "ChangeDescription": "UPDATE! Now supports all Siemplify versions.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Add String to Custom List",
+        "ItemType": "Action",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1623255029
+    },
+    {
+        "ChangeDescription": "New! Search Custom List - Search for a string in a custom list or get all custom list values if no search query is provided.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Search Custom List",
+        "ItemType": "Action",
+        "New": true,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1674648265
+    }
+]

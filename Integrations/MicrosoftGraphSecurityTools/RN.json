@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "NEW! Microsoft Graph Security Tools Integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "MicrosoftGraphSecurityTools",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1608718107
+    }
+]

@@ -1,0 +1,70 @@
+{
+    "Identifier": "Cybersixgill Darkfeed Enrichment",
+    "PackageName": "Cybersixgill Darkfeed Enrichment",
+    "DisplayName": "Cybersixgill Darkfeed Enrichment",
+    "Description": "The most comprehensive IOC enrichment solution on the market. By enriching Siemplify IOCs with Darkfeed, customers gain unparalleled context and essential explanations in order to accelerate their incident prevention and response. Block threats, enrich endpoint protection in real-time from the Siemplify dashboard.",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "Cybersixgill Darkfeed Enrichment",
+            "PropertyName": "Client Id",
+            "PropertyDescription": "description",
+            "PropertyDisplayName": "Client Id",
+            "PropertyType": 2,
+            "IsMandatory": true,
+            "Value": "clientid",
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1630500261513,
+            "ModificationTimeUnixTimeInMs": 1630500261513
+        },
+        {
+            "IntegrationIdentifier": "Cybersixgill Darkfeed Enrichment",
+            "PropertyName": "Client Secret",
+            "PropertyDescription": "description",
+            "PropertyDisplayName": "Client Secret",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1630500261513,
+            "ModificationTimeUnixTimeInMs": 1630500261513
+        }
+    ],
+    "Actions": [
+        "Enrich Actor",
+        "Enrich Domain",
+        "Enrich Hash",
+        "Enrich IP",
+        "Enrich URL",
+        "Ping"
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "SixgillManager",
+        "SixgillResultProcessor"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 2.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! Cybersixgill Darkfeed Enrichment."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1634829040000
+        },
+        {
+            "Items": [
+                "Updated Integration SVG."
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1635781228000
+        }
+    ]
+}

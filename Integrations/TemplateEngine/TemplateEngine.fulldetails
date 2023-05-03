@@ -1,0 +1,115 @@
+{
+    "Identifier": "TemplateEngine",
+    "PackageName": "TemplateEngine",
+    "DisplayName": "TemplateEngine",
+    "Description": "Template Engine integration provides the ability to render templates using Jinja2. Jinja2 provide fast and flexible ways to create rich templates. These templates can be used in entity insights, emails, ticketing systems, or any action that can take in a text string.\nJinja2 documentation can be found at https://jinja.palletsprojects.com/en/2.11.x/ ",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [],
+    "Actions": [
+        "Entity Insight",
+        "Ping",
+        "Render Template",
+        "Render Template from Array"
+
+    ],
+    "Jobs": [],
+    "Connectors": [],
+    "Managers": [
+        "JinjaFilters",
+        "CustomJinjaFilters"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 15.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                " Added a new parameter named \"Jinja\" to \"Render Template\" action. This parameter can be used instead of the Template parameter to store the Jinja code that will be rendered."
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1610893250000
+        },
+        {
+            "Items": [
+                " Added a new parameter named \"Include Case Data\" to \"Render Template\" action. When enabled, adds entity attributes and event data to the input_json object."
+            ],
+            "Version": 4.0,
+            "PublishTimeUnixTime": 1620102221000
+        },
+        {
+            "Items": [
+                "Fixed bug in Render Template Action."
+            ],
+            "Version": 5.0,
+            "PublishTimeUnixTime": 1620312340000
+        },
+        {
+            "Items": [
+                "Entity Insight now supports all the filters Render Template supports. Added support for {{ entity.ATTRIBUTE }}. "
+            ],
+            "Version": 6.0,
+            "PublishTimeUnixTime": 1621165157000
+        },
+        {
+            "Items": [
+                "UPDATE! Support for removing all HTML br tags from the rendered template.  Support for disabling the creation of insights."
+            ],
+            "Version": 8.0,
+            "PublishTimeUnixTime": 1623259206000
+        },
+        {
+            "Items": [
+                "Locked Render Template action."
+            ],
+            "Version": 9.0,
+            "PublishTimeUnixTime": 1623259206000
+        },
+        {
+            "Items": [
+                "Updated Jinja2 to 3.0.1"
+            ],
+            "Version": 10.0,
+            "PublishTimeUnixTime": 1625081208000
+        },
+        {
+            "Items": [
+                "Updated dependencies"
+            ],
+            "Version": 11.0,
+            "PublishTimeUnixTime": 1625336304000
+        },
+        {
+            "Items": [
+                "Updated Filters"
+            ],
+            "Version": 12.0,
+            "PublishTimeUnixTime": 1635519379000
+        },
+        {
+            "Items": [
+                "Updated SVG"
+            ],
+            "Version": 13.0,
+            "PublishTimeUnixTime": 1637759237000
+        },
+        {
+            "Items": [
+                "Added support for list entity results"
+            ],
+            "Version": 14.0,
+            "PublishTimeUnixTime": 1645615022000
+        },
+        {
+            "Items": [
+                "New Action! Render Template from Array.  The action will loop through a list and apply the template to each item.",
+                "New Feature! CustomFilters. When the integration finds a manager named CustomFilters, it will load in those filters and make them available within the template.  A manager named CustomJinjaFilters has been included and can be used as a template. "
+            ],
+            "Version": 15.0,
+            "PublishTimeUnixTime": 1671123403000
+        }
+    ]
+}

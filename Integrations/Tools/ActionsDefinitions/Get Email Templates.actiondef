@@ -1,0 +1,48 @@
+{
+  "Name": "Get Email Templates",
+  "Description": "Returns all of the email templates in a system.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport json\n\nGET_TEMPLATE_URL = '{}/external/v1/settings/GetEmailTemplateRecords?format=camel'\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.SCRIPT_NAME = \"Get Email Templates\"\n\n    template_type = siemplify.extract_action_param(\"Template Type\", print_value=True)\n\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"output message :\"  # human readable message, showed in UI as the action result\n    result_value = None  # Set a simple result value, used for playbook if\\else and placeholders.\n\n\n    \n\n    \n    email_templates = siemplify.session.get(GET_TEMPLATE_URL.format(siemplify.API_ROOT))\n    siemplify.LOGGER.info(\"temp: {}\".format(email_templates.json()))\n    email_templates.raise_for_status()\n    res = []\n    for template in email_templates.json():\n        if template['type'] == 1 and template_type == 'HTML':\n            res.append(template)\n        elif template['type'] == 0 and template_type == 'Standard':\n            res.append(template)\n    siemplify.result.add_result_json({\"templates\":res})\n    \n    siemplify.LOGGER.info(\"tres: {}\".format(res))\n    \n\n\n    siemplify.end(output_message, json.dumps(res), status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\"templates\":[{\"type\":0,\"name\":\"Standard Template Name\",\"content\":\"This is the content of a standard email template.\",\"creatorUserName\":\"Rob\",\"forMigration\":false,\"environments\":[\"Reed Sales\"],\"id\":1,\"creationTimeUnixTimeInMs\":1618588676723,\"modificationTimeUnixTimeInMs\":1618588676734},{\"type\":0,\"name\":\"All ENV Template\",\"content\":\"All env template\",\"creatorUserName\":\"Rob\",\"forMigration\":false,\"environments\":[\"*\"],\"id\":3,\"creationTimeUnixTimeInMs\":1618588714655,\"modificationTimeUnixTimeInMs\":1618588714655},{\"type\":0,\"name\":\"Reed Sales_Create Record\",\"content\":\"{\\n    \\\"state\\\": \\\"1\\\",\\n    \\\"impact\\\": \\\"3\\\",\\n    \\\"priority\\\": \\\"5\\\",\\n    \\\"short_description\\\": \\\"Incident involving user(s): [Alert.Users]\\\",\\n    \\\"u_incident_insights\\\": \\\"[CaseData.JsonResult| \\\"insights\\\" | filter(\\\"triggeredBy\\\", \\\"=\\\", \\\"VirusTotalV3\\\") | \\\"content\\\"]\\\",\\n    \\\"severity\\\": \\\"3\\\"\\n}\\n\",\"creatorUserName\":\"Rob\",\"forMigration\":false,\"environments\":[\"Reed Sales\"],\"id\":5,\"creationTimeUnixTimeInMs\":1618601564841,\"modificationTimeUnixTimeInMs\":1618601564841}]}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Rob",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 16.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Standard",
+      "Description": "HTML or Standard Template",
+      "Name": "Template Type",
+      "Value": "Standard",
+      "Type": 15,
+      "OptionalValues": [
+        "HTML",
+        "Standard"
+      ],
+      "OptionalValuesJson": "[\"HTML\",\"Standard\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1620046790510,
+      "ModificationTimeUnixTimeInMs": 1620046790510
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1620046790491,
+  "ModificationTimeUnixTimeInMs": 1620046790497
+}

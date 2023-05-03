@@ -1,0 +1,30 @@
+{
+  "Name": "Assign Case to Current User",
+  "Description": "A manual action that when executed, will assign the case to whoever executed the playbook action. Designed to be placed at the start of a playbook, and executed when an analyst starts working on the case.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom WorkflowToolsManager import WorkflowToolsManager\n\n\n@output_handler\ndef main():\n    SYSTEM_USER = \"System\"\n    siemplify = SiemplifyAction()\n\n    # A Siemplify API key is required to interact with the API\n    api_key = siemplify.extract_configuration_param('Workflow Tools',\"Siemplify API Key\")\n    api_root = siemplify.extract_configuration_param('Workflow Tools',\"Siemplify API Root\")\n    siemplify_hostname = siemplify.extract_configuration_param('Workflow Tools',\"Siemplify Instance Hostname\")\n    \n    manager = WorkflowToolsManager(siemplify_hostname=siemplify_hostname, api_root=api_root, api_key=api_key, siemplify=siemplify)\n    # The ID of the case\n    case_id = siemplify.case.identifier\n    # The ID of the current alert\n    alert_id = siemplify.current_alert.identifier\n    # The user that executed this action\n    requesting_user = siemplify.original_requesting_user\n    if(requesting_user!=SYSTEM_USER):\n        siemplify.LOGGER.info(\"Attempting to assign case {} to user: {}\".format(case_id, requesting_user))\n        manager.assign_case(requesting_user, case_id, alert_id)\n    else:\n        e = \"\\\"Assign Case to Current User\\\" action failed on case {} because the user was \\\"{}\\\": This playbook action must be set to manual excecution to work.\".format(case_id, requesting_user)\n        siemplify.LOGGER.error(e)\n        siemplify.LOGGER.exception(e)\n        raise ValueError(e)\n    \n    status = EXECUTION_STATE_COMPLETED\n    output_message = \"output message : Assigned case to {}\".format(requesting_user)\n    result_value = requesting_user\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Workflow Tools",
+  "ScriptResultName": "AssignedUser",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": true,
+  "IsSystem": false,
+  "Version": 24.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1624319275904,
+  "ModificationTimeUnixTimeInMs": 1624319275907
+}

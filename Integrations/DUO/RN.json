@@ -1,0 +1,25 @@
+[
+    {
+        "ChangeDescription": "NEW! DUO integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "DUO",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1631177455
+    },{
+        "ChangeDescription": "Updated action \"Get Authentication Logs for User\" to account for responses from DUO's Authentication Logs that may not be present in all DUO tenants such as \"access_device\" which previously caused the action to fail if the value was missing.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "DUO",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1635933395
+    }
+]

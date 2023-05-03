@@ -1,0 +1,42 @@
+{
+    "Name": "Detect Hash Type",
+    "Description": "This action detects the most likely hash type of entities. Supported types are SHA256, MD5, SHA1, SHA-512.",
+    "Script": "# ==============================================================================\n# title          :Detect Hash Type.py\n# description    :This action detects the most likely hash type of entities. Supported types are SHA256, MD5, SHA1, SHA-512.\n# author         :elisv@siemplify.co\n# date           :19-05-2021\n# python_version :3.7\n# ==============================================================================\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom hashid import *\n\nSUPPORTED_OUTPUT_TYPES = {\"SHA-256\", \"MD5\", \"SHA-1\", \"SHA-512\"}\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"Most likely hash types found\"  # human readable message, showed in UI as the action result\n    result_value = \"true\"  # Set a simple result value, used for playbook if\\else and placeholders.\n\n    res = []\n    to_enrich = []\n    hid = HashID()\n    \n    hashes = siemplify.parameters.get(\"Hashes\")\n    if hashes:\n        hashes = hashes.split(\",\")\n    try:\n        for _hash in hashes:\n            intersection = list(set([x.name for x in hid.identifyHash(_hash)]).intersection(SUPPORTED_OUTPUT_TYPES))\n            if intersection:\n                res.append({\"Hash\": _hash, \"HashType\": intersection[0]})\n            else:\n                res.append({\"Hash\": _hash, \"HashType\": \"UNDETECTED\"})\n    \n        for entity in siemplify.target_entities:\n            if entity.entity_type == \"FILEHASH\":\n                intersection = list(set([x.name for x in hid.identifyHash(entity.identifier)]).intersection(SUPPORTED_OUTPUT_TYPES))\n                if intersection:\n                    d = {\"HashType\": intersection[0]}\n                else:\n                    d = {\"HashType\": \"UNDETECTED\"}\n                entity.additional_properties.update(d)\n                to_enrich.append(entity)\n                d[\"Hash\"] = entity.identifier\n                res.append(d)\n    \n        if to_enrich:\n            siemplify.update_entities(to_enrich)\n        \n        siemplify.result.add_result_json(res)\n        siemplify.result.add_json(\"Hash Types\", res)\n    except Exception as e:\n        status = EXECUTION_STATE_FAILED\n        output_message = f\"Error: {e}\"\n        result_value = False\n\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "Functions",
+    "ScriptResultName": "IsSuccess",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[\n  {\n    \"Hash\": \"275A021BBFB6489E54D471899F7DB9D1663FC695EC2FE2A2C4538AABF651FD0F\",\n    \"HashType\": \"SHA-256\"\n  },\n  {\n    \"Hash\": \"202cb962ac59075b964b07152d234b70\",\n    \"HashType\": \"MD5\"\n  }\n]",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "f56aefe2-fa00-4424-b2ce-de40f122b9c4",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 17.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 3600,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 967,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "One or more hashes that are comma separated. ",
+            "Name": "Hashes",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

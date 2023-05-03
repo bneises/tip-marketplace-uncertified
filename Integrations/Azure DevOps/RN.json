@@ -1,0 +1,62 @@
+[
+    {
+        "ChangeDescription": "NEW! Azure DevOps Integration",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 1.0,
+        "ItemName": "Azure DevOps",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1628012160
+    },
+    {
+        "ChangeDescription": "Fixed Azure DevOps Integration Actions Definitions",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 2.0,
+        "ItemName": "Azure DevOps",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1628415528
+    },
+    {
+        "ChangeDescription": "Fixed Azure DevOps Integration Actions Definitions - IsAsync",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 3.0,
+        "ItemName": "Azure DevOps",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1659434995
+    },
+    {
+        "ChangeDescription": "Security enhancements: Added request timeouts so the script wouldn't stuck in case of server-side problems, code refactoring",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 4.0,
+        "ItemName": "Azure DevOps",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1670851424
+    },
+    {
+        "ChangeDescription": "Updated the publisher name",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 5.0,
+        "ItemName": "Azure DevOps",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1673257086
+    }
+]

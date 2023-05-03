@@ -1,0 +1,14 @@
+[
+    {
+        "ChangeDescription": "SVG updated in Full Contact integration.",
+        "Deprecated": false,
+        "IntroducedInIntegrationVersion": 6.0,
+        "ItemName": "Full Contact",
+        "ItemType": "Integration",
+        "New": false,
+        "Regressive": false,
+        "Removed": false,
+        "TicketNumber": "xxx",
+        "PublishTime": 1627569696
+    }
+]

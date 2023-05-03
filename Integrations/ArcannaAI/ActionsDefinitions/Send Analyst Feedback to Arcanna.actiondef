@@ -1,0 +1,105 @@
+{
+  "Name": "Send Analyst Feedback to Arcanna",
+  "Description": "",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED, EXECUTION_STATE_TIMEDOUT\n\nfrom arcanna_client import *\nfrom constants import SEND_ARCANNA_ANALYST_FEEDBACK_SCRIPT_NAME\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SEND_ARCANNA_ANALYST_FEEDBACK_SCRIPT_NAME\n    siemplify.LOGGER.info(\"----------------- Main - Started -----------------\")\n\n    arcanna_url = siemplify.extract_configuration_param('Integration', \"Url\", is_mandatory=True)\n    api_key = siemplify.extract_configuration_param('Integration', \"Api Key\", is_mandatory=True)\n\n    job_id = int(siemplify.extract_action_param(\"Job Id\", print_value=True, is_mandatory=True))\n    event_id = int(siemplify.extract_action_param(\"Event Id\", print_value=True, is_mandatory=True))\n    username = siemplify.extract_action_param(\"Username\", print_value=True, is_mandatory=True)\n    comments = siemplify.extract_action_param(\"Comments\", print_value=True)\n    feedback = siemplify.extract_action_param(\"Arcanna Feedback\", print_value=True, is_mandatory=True)\n\n    status = EXECUTION_STATE_COMPLETED\n    output_message = \"output message : \"\n    result_value = True\n\n    try:\n        client = ArcannaClient(api_key=api_key, base_url=arcanna_url, verify=False, proxy=False)\n        response_json = client.send_feedback(job_id=job_id, event_id=event_id, username=username, arcanna_label=feedback,\n                                             closing_notes=comments, indicators=None)\n        output_message = output_message + f\"response={response_json}\"\n        siemplify.result.add_result_json(response_json)\n    except Exception as e:\n        output_message = f'Error executing {SEND_ARCANNA_ANALYST_FEEDBACK_SCRIPT_NAME}. Reason {e}'\n        siemplify.LOGGER.error(output_message)\n        siemplify.LOGGER.exception(e)\n        status = EXECUTION_STATE_FAILED\n        result_value = False\n\n    siemplify.end(output_message, result_value, status)\n    siemplify.LOGGER.info(\"----------------- Main - Finished -----------------\")\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status, result_value, output_message))\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "ArcannaAI",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 18.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Arcanna Event id",
+      "Name": "Event Id",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1665043758579,
+      "ModificationTimeUnixTimeInMs": 1665043758579
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Arcanna feedback  based on Analyst action in order to continuously train  ML model\n\n",
+      "Name": "Arcanna Feedback",
+      "Value": "",
+      "Type": 15,
+      "OptionalValues": [
+        "escalate_alert",
+        "drop_alert",
+        "not_sure"
+      ],
+      "OptionalValuesJson": "[\"escalate_alert\",\"drop_alert\",\"not_sure\"]",
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1665043758579,
+      "ModificationTimeUnixTimeInMs": 1665043758579
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Admin",
+      "Description": "Analyst name who uses this action",
+      "Name": "Username",
+      "Value": "Admin",
+      "Type": 3,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1665043758579,
+      "ModificationTimeUnixTimeInMs": 1665043758579
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": " ",
+      "Description": "Additional Analyst comments",
+      "Name": "Comments",
+      "Value": " ",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1665043758579,
+      "ModificationTimeUnixTimeInMs": 1665043758579
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "",
+      "Description": "Arcanna Job Id",
+      "Name": "Job Id",
+      "Value": "",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1665043758579,
+      "ModificationTimeUnixTimeInMs": 1665043758579
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1665043758570,
+  "ModificationTimeUnixTimeInMs": 1665043758572
+}

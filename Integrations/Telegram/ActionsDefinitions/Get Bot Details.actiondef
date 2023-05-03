@@ -1,0 +1,30 @@
+{
+  "Name": "Get Bot Details",
+  "Description": "Gets the configured bot details",
+  "Script": "from ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\nfrom TelegramManager import TelegramManager\n\nIDENTIFIER = \"Telegram\"\nSCRIPT_NAME = \"Get Bot Details\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    siemplify.LOGGER.info('----------------- Main - Param Init -----------------')\n    bot_api_token = siemplify.extract_configuration_param(IDENTIFIER, \"API Token\")\n\n    bot_details = {}\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n    try:\n        telegram_manager = TelegramManager(bot_api_token)\n        bot_details = telegram_manager.get_bot_details()\n\n    except Exception as e:\n        output_message = f\"The Bot details could not be fetched. Error: {e}\"\n        return_value = False\n        status = EXECUTION_STATE_FAILED\n    else:\n        return_value = True\n        output_message = \"The Bot was found successfully\"\n        status = EXECUTION_STATE_COMPLETED\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n\n    siemplify.result.add_result_json(bot_details)\n    siemplify.end(output_message, return_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Telegram",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\r\n\t\"ok\": true,\r\n\t\"result\": {\r\n\t\t\"id\": 11111111,\r\n\t\t\"is_bot\": true,\r\n\t\t\"first_name\": \"bot_name_telegram\",\r\n\t\t\"username\": \"bot_username\",\r\n\t\t\"can_join_groups\": true,\r\n\t\t\"can_read_all_group_messages\": false,\r\n\t\t\"supports_inline_queries\": false\r\n\t}\r\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 38.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

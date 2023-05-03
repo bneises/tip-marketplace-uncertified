@@ -1,0 +1,41 @@
+{
+  "Name": "Re-Attach Playbook",
+  "Description": "This action will remove a playbook from a case, delete any result data in the case from that playbook, and re-attach the playbook so it will run again.\nRequires installation of PostgreSQL integration, configured to the Shared Environment with an instance name of Siemplify.  See CSM / Support for additional details.",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import *\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport os\nimport arrow\nimport requests\n\nINSTANCE_NAME = \"Siemplify\"\nSHARED_ENV = \"*\"\nGET_WFS_QUERY = '''\nselect * from \"WorkflowInstances\" where \"WorkflowName\" = '{}' AND \"CaseId\" = {}\n'''\n\nDELETE_WI_QUERY = '''delete from \"WorkflowInstances\" where \"CaseId\" = {} and \"WorkflowName\" = '{}' and \"IndicatorIdentifier\" = '{}';'''\nDELETE_AR_QUERY = '''delete from \"ActionResults\" where \"CaseId\" = {} and \"WorkflowId\" = '{}' and \"IndicatorIdentifier\" = '{}';'''\nADD_PLAYBOOK_URL = '{}/external/v1/playbooks/AttacheWorkflowToCase?format=camel'\n\nimport psycopg2\n\nclass ConnectToDb(object):\n    def __init__(self, server, username, password, database, port=5432):\n        self.username = username\n        self.password = password\n        self.server = server\n        self.database = database\n        self.port = port\n\n        # Connect to PostgreSQL\n        self.conn = psycopg2.connect(\n            \"dbname='{}' user='{}' host='{}' password='{}'\".format(\n                self.database,\n                self.username,\n                self.server,\n                self.password\n            ))\n\n    def execute(self, query):\n        \"\"\"\n        Execute a query on PostgresSQL database and get results.\n        :param query: {str} SQL query like 'SELECT * FROM exampleDB'\n        :return: {list} JSON like results\n        \"\"\"\n        try:\n            cursor = self.conn.cursor()\n            cursor.execute(query)\n            self.conn.commit()\n\n            if cursor.description:\n                # Fetch column names\n                columns = [column[0] for column in cursor.description]\n\n                # Fetch rows\n                rows = cursor.fetchall()\n                # raise Exception(rows)\n\n                # Construct results\n                data = self.get_data(rows, columns)\n                return data\n        except Exception as e:\n            # Query failed - rollback.\n            self.conn.rollback()\n            raise Exception(e)\n\n    def close(self):\n        \"\"\"\n        Close the connection\n        \"\"\"\n        self.conn.close()\n\n    @staticmethod\n    def get_data(rows, columns):\n        \"\"\"\n        Converts list of rows to JSON like format.\n        :param rows: {list} Data rows from PostgresSQL DB.\n        :param columns: {list} Column names from PostgresSQL DB;\n        :return: {list} JSON like formatted data from query.\n        \"\"\"\n        data = []\n        for row in rows:\n            temp = {column: value for column, value in zip(columns, row)}\n            data.append(temp)\n\n        return data\n\n\n\ndef get_integration_instance(siemplify, integration_name, environment, instance_name):\n    address = \"{0}/{1}\".format(siemplify.API_ROOT, \"external/v1/integrations/GetOptionalIntegrationInstances?format=camel\")\n    response = siemplify.session.post(address, headers={\"AppKey\": siemplify.api_key, \"Accept\": \"application/json\", \"Content-Type\": \"application/json\"}, verify=False, json={\"environments\": [environment], \"integrationIdentifier\": integration_name})\n    response.raise_for_status()\n    filtered = list(filter(lambda x: x[\"instanceName\"] == instance_name, response.json()))\n    return filtered[0] if filtered else {\"identifier\": \"N/A\"}\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    playbook_name = siemplify.extract_action_param(\"Playbook Name\", print_value=True)\n    instance_id = get_integration_instance(siemplify, \"PostgreSQL\", SHARED_ENV, INSTANCE_NAME)[\"identifier\"]\n    if instance_id == \"N/A\":\n        siemplify.end(\"Please configure the Siemplify instance of the PostgreSQL integration.\", \"Please configure the Siemplify instance of the PostgresSQL integration.\")\n    conf = super(SiemplifyAction, siemplify).get_configuration(\"PostgreSQL\", SHARED_ENV, instance_id)\n    server_addr = conf[\"Server Address\"]\n    username = conf[\"Username\"]\n    password = conf[\"Password\"]\n    port = conf.get(\"Port\")\n    orch_mgr = ConnectToDb(username=username,\n                                             password=password,\n                                             server=server_addr,\n                                             database='siemplify_orchestration_db',\n                                             port=port)\n    sys_mgr = ConnectToDb(username=username,\n                                             password=password,\n                                             server=server_addr,\n                                             database='siemplify_system_db',\n                                             port=port)                                             \n    try:\n        res = orch_mgr.execute(GET_WFS_QUERY.format(playbook_name, siemplify.case_id)) or []\n        case = siemplify._get_case()\n        for attached_wf in res:\n            wf_id = attached_wf[\"WorkflowDefinitionIdentifier\"]\n            orch_mgr.execute(DELETE_WI_QUERY.format(siemplify.case_id, playbook_name, attached_wf[\"IndicatorIdentifier\"]))\n            sys_mgr.execute(DELETE_AR_QUERY.format(siemplify.case_id, wf_id, attached_wf[\"IndicatorIdentifier\"]))\n            alert = list(filter(lambda x: x[\"alert_group_identifier\"] == attached_wf[\"IndicatorIdentifier\"], case[\"cyber_alerts\"]))[0]\n            payload = {\n                \"cyberCaseId\": siemplify.case_id,\n                \"alertGroupIdetifier\": attached_wf[\"IndicatorIdentifier\"],\n                \"alertIdentifier\": alert[\"identifier\"],\n                \"shouldRunAutomatic\": True,\n                \"wfName\": playbook_name\n                }\n            res2 = siemplify.session.post(ADD_PLAYBOOK_URL.format(siemplify.API_ROOT), json=payload)\n            res2.raise_for_status()\n    except Exception as err:\n        siemplify.LOGGER.error(\"Error re-running the playbook.\")\n        siemplify.LOGGER.exception(err)                                             \n\n    status = EXECUTION_STATE_COMPLETED  # used to flag back to siemplify system, the action final status\n    output_message = \"Successfully re-attached the playbook to the case.\"  # human readable message, showed in UI as the action result\n    result_value = True  # Set a simple result value, used for playbook if\\else and placeholders.\n    siemplify.LOGGER.info(\"\\n  status: {}\\n  result_value: {}\\n  output_message: {}\".format(status,result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 9.0,
+  "TimeoutSeconds": 600,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "Basic Phishing PB - Zero to Hero",
+      "Description": "This is the name of the playbook that will be removed from the case and re-attached.  Once re-attached, it will run again.",
+      "Name": "Playbook Name",
+      "Value": "Basic Phishing PB - Zero to Hero",
+      "Type": 2,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620382,
+      "ModificationTimeUnixTimeInMs": 1614012620382
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620378,
+  "ModificationTimeUnixTimeInMs": 1614012620378
+}

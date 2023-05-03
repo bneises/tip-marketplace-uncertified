@@ -1,0 +1,33 @@
+{
+    "IntegrationProperties": [], 
+    "DisplayName": "Lacework", 
+    "Description": "Lacework provides visibility into your account security through the continued monitoring and analysis of CloudTrail. It generates alerts based on out-of-the-box rules and custom ones that can be created by customers.", 
+    "CustomFamilies": [], 
+    "Managers": [
+        "constants", 
+        "LaceworkManager"
+    ], 
+    "PackageName": "Lacework", 
+    "IsCustom": false, 
+    "Actions": [], 
+    "Jobs": [], 
+    "ExampleUseCases": [], 
+    "Connectors": [
+        "Lacework Connector"
+    ], 
+    "Version": 1.0, 
+    "MappingRules": [], 
+    "MinimumSystemVersion": 0, 
+    "UploaderProfileLink": null, 
+    "Identifier": "Lacework", 
+    "ReleaseNotes": [
+        {
+            "PublishTimeUnixTime": 1657196516000, 
+            "Items": [
+                "NEW! Lacework Integration"
+            ], 
+            "Version": 1.0
+        }
+    ], 
+    "DocumentationLink": null
+}

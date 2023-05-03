@@ -1,0 +1,45 @@
+{
+  "Name": "Permission List",
+  "Description": "Retrieves the list of users that have permission for a specific file stored in Google Drive",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nfrom GoogleDriveManager import GoogleDriveManager\n\nIDENTIFIER = u'Google Drive'\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    credentials_json = siemplify.extract_configuration_param(IDENTIFIER,\"Credentials Json\")\n\n    file_id = siemplify.extract_action_param(param_name=u'File Id', is_mandatory=True)\n\n    google_drive_manager = GoogleDriveManager(credentials_json)\n    res = google_drive_manager.list_permissions(file_id)\n\n    perms_count = len(res)\n    siemplify.result.add_result_json(res)\n\n    output_message = \"{0} permissions were found for file <{1}>.\".format(perms_count, file_id)\n    siemplify.end(output_message, perms_count)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Google Drive",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "[\n  {\n    \"kind\": \"drive#permission\",\n    \"id\": \"077125055792436618120\",\n    \"type\": \"user\",\n    \"emailAddress\": \"user_1@gmail.com\",\n    \"role\": \"writer\",\n    \"displayName\": \"User 1\",\n    \"photoLink\": \"https://lh3.googleusercontent.com/a-/AOh14GiMxKi43Hd_kj45ZZ1I4Ml43DsZMh4gFeXRmRi6LIg=s64\",\n    \"deleted\": false\n  },\n  {\n    \"kind\": \"drive#permission\",\n    \"id\": \"18131361814365736519\",\n    \"type\": \"user\",\n    \"emailAddress\": \"user_2@gmail.com\",\n    \"role\": \"writer\",\n    \"displayName\": \"User 2\",\n    \"deleted\": false\n  },\n  {\n    \"kind\": \"drive#permission\",\n    \"id\": \"02214475487434192531\",\n    \"type\": \"user\",\n    \"emailAddress\": \"test-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n    \"role\": \"owner\",\n    \"displayName\": \"test-api@quickstart-1550908020996.iam.gserviceaccount.com\",\n    \"deleted\": false\n  }\n]",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 37.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "<file_id>",
+      "Description": "The file Id is presented in the file URL. See example - https://drive.google.com/drive/u/0/folders/{file-id}",
+      "Name": "File Id",
+      "Value": "<file_id>",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614708810785,
+      "ModificationTimeUnixTimeInMs": 1614708810785
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null,
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1611736073189,
+  "ModificationTimeUnixTimeInMs": 1614708810780
+}

@@ -1,0 +1,30 @@
+{
+  "Parameters": [],
+  "IntegrationIdentifier": "GitSync",
+  "ScriptResultName": "is_success",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": true
+    }
+  ],
+  "TimeoutSeconds": 600,
+  "DefaultResultValue": null,
+  "CreationTimeUnixTimeInMs": 1621116607469,
+  "ModificationTimeUnixTimeInMs": 1624368145556,
+  "Name": "Ping",
+  "Description": "Test connectivity to GitSync",
+  "Script": "from GitSyncManager import GitSyncManager\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nSCRIPT_NAME = \"Ping\"\nINTEGRATION_NAME = \"GitSync\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    repo_url = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Repo URL\")\n    branch = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Branch\")\n    working_directory = GitSyncManager.get_working_dir(siemplify, repo_url)\n    smpUsername = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Siemplify Username\")\n    smpPassword = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Siemplify Password\")\n    gitPassword = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Git Password/Token/SSH Key\")\n    gitUsername = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Git Username\")\n    gitUsername = gitUsername if gitUsername else \"Not Relevant\"\n    gitAuthor = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Git Author\")\n    smpVerify = siemplify.extract_configuration_param(INTEGRATION_NAME, \"Siemplify Verify SSL\") == 'True'\n\n    try:\n        gitsync = GitSyncManager(siemplify, repo_url, branch, working_directory, smpUsername, smpPassword, gitPassword,\n                                 gitUsername,\n                                 gitAuthor, smpVerify)\n    except Exception as e:\n        raise Exception(f\"Couldn't connect to git\\nError: {e}\")\n\n    try:\n        gitsync.api.get_bearer_token()\n    except:\n        raise Exception(\"Couln't connect to Siemplify. Check credentials\")\n\n    siemplify.end(\"True\", True, 0)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 1,
+  "PythonVersion": "None",
+  "Id": 0,
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

@@ -1,0 +1,42 @@
+{
+  "Name": "Wait Until Web Resource Is Up",
+  "Description": "Wait until the Web Resource is up",
+  "Script": "import requests\n\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_INPROGRESS\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import output_handler\n\nSCRIPT_NAME = 'WaitUntilWebResourceIsUp'\n\n\ndef is_web_resource_up(url, should_include_content=None):\n    resp = requests.get(url, timeout=5.0)\n\n    if resp.ok and not should_include_content:\n        return True\n\n    if resp.ok and should_include_content and should_include_content.lower() in resp.text.lower():\n        return True\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n\n    result_value = False\n\n    url = siemplify.extract_action_param(param_name='URL')\n\n    siemplify.LOGGER.info('----------------- Main - Started -----------------')\n    try:\n        result_value = is_web_resource_up(url)\n    except Exception as ex:\n        siemplify.LOGGER.error('General error performing action {}'.format(SCRIPT_NAME))\n        siemplify.LOGGER.exception(ex)\n\n    siemplify.LOGGER.info('----------------- Main - Finished -----------------')\n\n    status = EXECUTION_STATE_COMPLETED if result_value else EXECUTION_STATE_INPROGRESS\n    output_message = 'Web resource {} is {}'.format(url, 'up' if result_value else 'down')\n    siemplify.LOGGER.info('\\n  status: {}\\n  result_value: {}\\n  output_message: {}'.format(status, result_value, output_message))\n    siemplify.end(output_message, result_value, status)\n\n\nif __name__ == '__main__':\n    main()\n",
+  "IntegrationIdentifier": "Azure DevOps",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": null,
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Admin",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "IsAsync": true,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": null,
+      "Description": "The URL of the Web Resource",
+      "Name": "URL",
+      "Value": null,
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

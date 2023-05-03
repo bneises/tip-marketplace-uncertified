@@ -1,0 +1,110 @@
+{
+    "Name": "Create Hash From Base64",
+    "Description": "Returns hashes for provided base64s.",
+    "Script": "# ==============================================================================\n# title          :Create Hash From File.py\n# description    :Returns hashes for provided base64s\n# author         :elisv@siemplify.co\n# date           :19-03-2021\n# python_version :3.7\n# ==============================================================================\n\nfrom SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ScriptResult import EXECUTION_STATE_COMPLETED, EXECUTION_STATE_FAILED,EXECUTION_STATE_TIMEDOUT\nimport hashlib\nimport base64\n\n\nSCRIPT_NAME = \"Create Hash From Base64\"\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n    siemplify.script_name = SCRIPT_NAME\n    \n    action_status = EXECUTION_STATE_COMPLETED\n    action_result = True\n    output_message = \"Successfully created hash from base64.\"\n    res = []\n    strings = siemplify.parameters[\"Base64\"].split(siemplify.parameters[\"Base64 Separator\"])\n    hash_algorythm = siemplify.parameters[\"Hash Algorythm\"]\n    names = siemplify.parameters.get(\"Names\")\n    try:\n        if names:\n            names = names.split(siemplify.parameters[\"Names Separator\"])\n    \n            for s, n in zip(strings, names):\n                d = {\"Hash\": getattr(hashlib, hash_algorythm)(base64.b64decode(s)).hexdigest(), \"HashAlgorythm\": hash_algorythm}\n                if siemplify.parameters[\"Include Base64\"].lower() == \"true\":\n                    d[\"Base64\"] = s\n                d[\"Name\"] = n\n                res.append(d)\n        else:\n            for s in strings:\n                d = {\"Hash\": getattr(hashlib, hash_algorythm)(base64.b64decode(s)).hexdigest(), \"HashAlgorythm\": hash_algorythm}\n                if siemplify.parameters[\"Include Base64\"].lower() == \"true\":\n                    d[\"Base64\"] = s\n                res.append(d)\n        siemplify.result.add_json(\"Hashes\", res)\n        siemplify.result.add_result_json(res)\n    except Exception as e:\n        action_status = EXECUTION_STATE_FAILED\n        output_message = f\"Error: {e}\"\n        action_result = False\n\n\n    siemplify.end(output_message, action_result, action_status)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+    "IntegrationIdentifier": "FileUtilities",
+    "ScriptResultName": "ScriptResult",
+    "DynamicResultsMetadata": [
+        {
+            "ResultName": "JsonResult",
+            "ResultExample": "[\n  {\n    \"Path\": \"/path/to/file.extension\",\n    \"Hash\": \"da39a3ee5e6b4b0d3255bfef95601890afd80709\",\n    \"HashAlgorythm\": \"sha1\"\n  }\n]",
+            "ShowResult": true
+        }
+    ],
+    "Creator": "f56aefe2-fa00-4424-b2ce-de40f122b9c4",
+    "IsEnabled": true,
+    "IsCustom": false,
+    "IsSystem": false,
+    "Version": 11.0,
+    "TimeoutSeconds": 300,
+    "IsAsync": false,
+    "AsyncPollingIntervalInSeconds": 3600,
+    "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+    "Parameters": [
+        {
+            "CustomActionId": 983,
+            "IsMandatory": true,
+            "DefaultValue": "-",
+            "Description": "One more more base64 encoded strings. Strings should be separated by the defined separator.",
+            "Name": "Base64",
+            "Value": "-",
+            "Type": 11,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 983,
+            "IsMandatory": true,
+            "DefaultValue": "sha1",
+            "Description": "hash type (sha1, sha256, md5...)",
+            "Name": "Hash Algorythm",
+            "Value": "sha1",
+            "Type": 15,
+            "OptionalValues": [
+                "blake2b",
+                "blake2s",
+                "md5",
+                "sha1",
+                "sha224",
+                "sha256",
+                "sha384",
+                "sha3_224",
+                "sha3_256",
+                "sha3_384",
+                "sha3_512",
+                "sha512"
+            ],
+            "OptionalValuesJson": "[\"blake2b\",\"blake2s\",\"md5\",\"sha1\",\"sha224\",\"sha256\",\"sha384\",\"sha3_224\",\"sha3_256\",\"sha3_384\",\"sha3_512\",\"sha512\"]"
+        },
+        {
+            "CustomActionId": 983,
+            "IsMandatory": false,
+            "DefaultValue": "",
+            "Description": "List of names that identify the base64 strings. Typically filenames. \nList of names must contain the same quantity as the list of base64 strings.",
+            "Name": "Names",
+            "Value": "",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 983,
+            "IsMandatory": true,
+            "DefaultValue": ",",
+            "Description": "A character to separate the list of names by.",
+            "Name": "Names Separator",
+            "Value": ",",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 983,
+            "IsMandatory": false,
+            "DefaultValue": "true",
+            "Description": "Include the base64 input strings in the output.",
+            "Name": "Include Base64",
+            "Value": "true",
+            "Type": 1,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        },
+        {
+            "CustomActionId": 983,
+            "IsMandatory": true,
+            "DefaultValue": ",",
+            "Description": "A character to separate the base64 strings by.",
+            "Name": "Base64 Separator",
+            "Value": ",",
+            "Type": 0,
+            "OptionalValues": null,
+            "OptionalValuesJson": null
+        }
+    ],
+    "DefaultResultValue": "",
+    "PythonVersion": "None",
+    "SimulationData": {
+        "Entities": null
+    },
+    "SimulationDataJson": null
+}

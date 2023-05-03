@@ -1,0 +1,41 @@
+{
+  "Name": "Add Or Update Alert Additional Data",
+  "Description": "The action adds or updates fields in the alert additional data. The result will be all accumulated data that was added to the alert. ",
+  "Script": "from SiemplifyAction import SiemplifyAction\nimport json\n\ndef update_alert_additional_data(siemplify, additional_data):\n    siemplify.update_alerts_additional_data({siemplify.current_alert.identifier: json.dumps(additional_data)})\n\ndef main():\n    siemplify = SiemplifyAction()\n    \n    in_string = siemplify.parameters.get(\"Json Fields\")\n    if in_string:\n        try:\n            data = json.loads(in_string)\n        except:\n            data = in_string\n    else:\n        data = None\n    \n    additional_data = siemplify.current_alert.additional_data\n    if additional_data:\n        alert_data = json.loads(additional_data)\n        if \"list\" not in alert_data:\n            alert_data[\"list\"] = []\n        if \"dict\" not in alert_data:\n            alert_data[\"dict\"] = {}\n        if \"data\" not in alert_data:\n            alert_data[\"data\"] = \"\"\n    else:\n        alert_data = {\"dict\": {}, \"list\": []}\n    \n    if data:\n        try:\n            if isinstance(data, list):\n                alert_data[\"list\"].extend(data)\n            elif isinstance(data, dict):\n                alert_data[\"dict\"].update(data)\n            else:\n                alert_data[\"data\"] = data\n        except:\n            raise\n        \n        update_alert_additional_data(siemplify, alert_data)\n    \n    output_message = \"Alert data attached as JSON to the action result\"\n    siemplify.result.add_result_json(alert_data)\n    result_value = len(alert_data)\n    \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Tools",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{\n  \"list\": [\n    {\n      \"key\": \"PhishingBodyAnalysisUnmatchedDomains\",\n      \"value\": \"onlineservicetech.websit\"\n    },\n    {\n      \"key\": \"PhishingBodyAnalysisSpellingMistakes\",\n      \"value\": \"perfomance\"\n    }\n  ],\n  \"dict\": {},\n  \"data\": \"Just some string\"\n}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "Robert",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 4.0,
+  "TimeoutSeconds": 300,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "{}",
+      "Description": "You can enter either free text (for one variable) or a string representing a JSON (Dict/List - Can be nested)",
+      "Name": "Json Fields",
+      "Value": "{}",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null,
+      "Id": 0,
+      "CreationTimeUnixTimeInMs": 1614012620386,
+      "ModificationTimeUnixTimeInMs": 1614012620386
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "Id": 0,
+  "CreationTimeUnixTimeInMs": 1614012620384,
+  "ModificationTimeUnixTimeInMs": 1614012620384
+}

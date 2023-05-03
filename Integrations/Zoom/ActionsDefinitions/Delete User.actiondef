@@ -1,0 +1,86 @@
+{
+  "Name": "Delete User",
+  "Description": "Deleting a user permanently from Zoom",
+  "Script": "from SiemplifyAction import SiemplifyAction\nfrom SiemplifyUtils import unix_now, convert_unixtime_to_datetime, output_handler\nfrom ZoomManager import ZoomManager\n\nINTEGRATION_NAME = u\"Zoom\"\n\n\n@output_handler\ndef main():\n    siemplify = SiemplifyAction()\n\n    #Extracting the integration params\n    conf = siemplify.get_configuration(INTEGRATION_NAME)\n    jwt_token = conf.get(\"JWT Token\")\n    account_id = conf.get(\"Account ID\")\n    client_id = conf.get(\"Client ID\")\n    client_secret = conf.get(\"Client Secret\")\n\n    #Extracting the action params\n\n    user_email = siemplify.extract_action_param(\"Deleted User Email\")\n    \n    transfer_recording = siemplify.extract_action_param(\"Transfer Recordings\")\n    \n    transfer_webinar = siemplify.extract_action_param(\"Transfer Webinar\")\n    \n    transfer_meeting = siemplify.extract_action_param(\"Transfer Meeting\")\n\n    transfer_email = siemplify.extract_action_param(\"Transfer Email\")\n\n    json_result ={}\n\n    #Creating a ZoomManager object instance\n    zoom_manager = ZoomManager(jwt_token, account_id, client_id, client_secret)\n    \n    if zoom_manager.list_recordings(user_email) == None:\n        transfer_recording = False\n        \n    if zoom_manager.list_webinars(user_email) == None:\n        transfer_webinar = False\n        \n    if zoom_manager.list_meetings(user_email) == None:\n        transfer_meeting = False\n\n    deleted_user = zoom_manager.delete_user(user_email,transfer_recording, transfer_webinar, transfer_meeting, transfer_email )\n\n    output_message = \"The account was deleted successfully\"\n    result_value = True\n    json_result[\"isDeleted\"] = True\n    \n    \n    #Adding json result to the action\n    siemplify.result.add_result_json(json_result)\n    \n    siemplify.end(output_message, result_value)\n\n\nif __name__ == \"__main__\":\n    main()\n",
+  "IntegrationIdentifier": "Zoom",
+  "ScriptResultName": "ScriptResult",
+  "DynamicResultsMetadata": [
+    {
+      "ResultName": "JsonResult",
+      "ResultExample": "{}",
+      "ShowResult": true
+    }
+  ],
+  "Creator": "TehilaGourary",
+  "IsEnabled": true,
+  "IsCustom": false,
+  "IsSystem": false,
+  "Version": 48,
+  "TimeoutSeconds": 300,
+  "IsAsync": null,
+  "AsyncPollingIntervalInSeconds": 3600,
+  "TotalIntervalTimeoutForAsyncInSeconds": 86400,
+  "Parameters": [
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Will transfer all the future meetings scheduled for the user you are deleting to a selected user.",
+      "Name": "Transfer Meeting",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": true,
+      "DefaultValue": "email@gmail.com",
+      "Description": "The email address of the user you would like to permanently delete\n",
+      "Name": "Deleted User Email",
+      "Value": "email@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Will transfer all the past recordings associated with the user you are deleting to a chosen user.",
+      "Name": "Transfer Recordings",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "false",
+      "Description": "Will transfer all the future webinars scheduled for the user you are deleting to a selected user.",
+      "Name": "Transfer Webinar",
+      "Value": "false",
+      "Type": 1,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    },
+    {
+      "CustomActionId": 0,
+      "IsMandatory": false,
+      "DefaultValue": "email@gmail.com",
+      "Description": "The user's email to which all the associated data of the deleted user is transferred",
+      "Name": "Transfer Email",
+      "Value": "email@gmail.com",
+      "Type": 0,
+      "OptionalValues": null,
+      "OptionalValuesJson": null
+    }
+  ],
+  "DefaultResultValue": "",
+  "PythonVersion": "None",
+  "SimulationData": {
+    "Entities": null
+  },
+  "SimulationDataJson": null
+}

@@ -1,0 +1,66 @@
+{
+    "Identifier": "GreyNoise",
+    "PackageName": "GreyNoise",
+    "DisplayName": "GreyNoise",
+    "Description": "GreyNoise tells security analysts what not to worry about. We do this by curating data on IPs that saturate security tools with noise. This unique perspective helps analysts confidently ignore irrelevant or harmless activity, creating more time to uncover and investigate true threats. Includes Actions to allow IP enrichments and GNQL queries via the GreyNoise API.  This integration supports access to both the Paid and Community APIs.  Users with Community API Access will only have access to the Community IP Lookup Action.  For more details, visit https://greynoise.io",
+    "DocumentationLink": null,
+    "MinimumSystemVersion": 0,
+    "UploaderProfileLink": null,
+    "IntegrationProperties": [
+        {
+            "IntegrationIdentifier": "GreyNoise",
+            "PropertyName": "GN API Key",
+            "PropertyDescription": "GreyNoise API Key",
+            "PropertyDisplayName": "GN API Key",
+            "PropertyType": 3,
+            "IsMandatory": true,
+            "Value": null,
+            "Id": 0,
+            "CreationTimeUnixTimeInMs": 1624387491145,
+            "ModificationTimeUnixTimeInMs": 1624387491145
+        }
+    ],
+    "Actions": [
+        "Community IP Lookup",
+        "Context IP Lookup",
+        "Execute GNQL Query",
+        "Ping",
+        "Quick IP Lookup",
+        "RIOT IP Lookup"
+    ],
+    "Jobs": [],
+    "Connectors": [
+        "Generate Alert from GreyNoise GNQL"
+    ],
+    "Managers": [
+        "constants"
+    ],
+    "CustomFamilies": [],
+    "ExampleUseCases": [],
+    "MappingRules": [],
+    "Version": 3.0,
+    "IsCustom": false,
+    "ReleaseNotes": [
+        {
+            "Items": [
+                "NEW! GreyNoise integration."
+            ],
+            "Version": 1.0,
+            "PublishTimeUnixTime": 1613592679000
+        },
+        {
+            "Items": [
+                "Fixed incorrect visualizer link in Context IP Lookup Command. \n Added support for new Quick Lookup endpoint or codes. \n Added new Action for Community IP Lookup, which allows for IP lookups via the free Community API"
+            ],
+            "Version": 2.0,
+            "PublishTimeUnixTime": 1624553004000
+        },
+        {
+            "Items": [
+                "Updated the integration's categories.\n"
+            ],
+            "Version": 3.0,
+            "PublishTimeUnixTime": 1630236349000
+        }
+    ]
+}
